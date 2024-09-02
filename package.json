@@ -1,0 +1,19 @@
+{
+  "name": "chaos-organizer",
+  "version": "1.0.0",
+  "description": "---",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxKrch/Chaos-Organizer.git"
+  },
+  "author": "MaxKrch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxKrch/Chaos-Organizer/issues"
+  },
+  "homepage": "https://github.com/MaxKrch/Chaos-Organizer#readme"
+}
