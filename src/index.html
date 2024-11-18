@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>My Little Organizer</title>
+</head>
+<body class="no-scroll">
+	<div class="1section-overlay app container" id='app'>
+		<article class="sidebar-main 1sidebar-main_show" data-id="sidebarMain">
+<!--
+			<section class="1section-overlay sidebar-main-container">
+				<div class="sidebar-link-item sidebar-all-notes">
+					<span class="sidebar-link-item__name sidebar-all-notes__name" data-id="sidebarAllNotesName">
+						Все записи
+					</span>
+					<span class="sidebar-link-item__count sidebar-favorites__count" data-id="sidebarAllNotesCount">
+						(0)
+					</span>
+				</div>
+
+				<div class="sidebar-link-item sidebar-favorites">
+					<span class="sidebar-link-item__name sidebar-favorites__name" data-id="sidebarFavoritesName">
+						Избранное
+					</span>
+					<span class="sidebar-link-item__count sidebar-favorites__count" data-id="sidebarFavoritesCount">
+						(0)
+					</span>
+				</div>
+				
+				<div class="sidebar-files">
+					<ul class="sidebar-files__list">
+						<li data-id="sidebarVideos" class="sidebar-files sidebar-videos sidebar-link-item">
+							<span class="sidebar-link-item__name sidebar-video__name" data-id="sidebarVideosName">
+								Видео
+							</span>
+							<span class="sidebar-link-item__count sidebar-video__count" data-id="sidebarVideosCount">
+								(0)
+							</span>
+						</li>
+							
+						<li data-id="sidebarAudios" class="sidebar-files sidebar-audios sidebar-link-item">
+							<span class="sidebar-link-item__name sidebar-audio__name" data-id="sidebarAudiosName">
+								Аудио
+							</span>
+							<span class="sidebar-link-item__count sidebar-audio__count" data-id="sidebarAudiosCount">
+								(0)
+							</span>
+						</li>
+						
+						<li data-id="sidebarImgs" class="sidebar-files sidebar-images sidebar-link-item">
+							<span class="sidebar-link-item__name sidebar-image__name" data-id="sidebarImgsName">
+								Картинки
+							</span>
+							<span class="sidebar-link-item__count sidebar-image__count" data-id="sidebarImgsCount">
+								(0)
+							</span>
+						</li>
+							
+						<li data-id="sidebarOtherFiles" class="sidebar-files sidebar-other-files sidebar-link-item">
+							<span class="sidebar-link-item__name sidebar-other-files__name" data-id="sidebarOtherFilesName">
+								Файлы
+							</span>
+							<span class="sidebar-link-item__count sidebar-other-files__count" data-id="sidebarOtherFilesCount">
+								(0)
+							</span>
+						</li>
+					</ul>
+				</div>
+				
+				<div class="sidebar-tags" data-id="sidebarTags">
+					<h2 class="sidebar-tags__title">
+						Мои теги:
+					</h2>
+						
+					<ul class="tags-row sidebar-tags__list">
+						<li class="tag-inline sidebar-tag" data-tag="12354445">
+							<span class="tag-inline__title tag-inline__section">
+								Привет
+							</span>
+
+							<div class="button-icon menu-action menu-action-light tag-inline__section tag-inline__options" data-tag="12354445" data-name="sidebarContextMenuOpen">
+								<span class="menu-action__span menu-action__dot"></span>
+
+								<span class="menu-action__span menu-action__dot"></span>
+								
+								<span class="menu-action__span menu-action__dot"></span>
+							</div>
+						</li>
+							
+						<li class="tag-inline sidebar-tag" data-tag="12354445">
+							<span class="tag-inline__title tag-inline__section">
+								Tag-inline number 2
+							</span>
+								
+							<div class="button-icon menu-action menu-action-light tag-inline__section tag-inline__options" data-tag="12354445" data-name="sidebarContextMenuOpen">
+								<span class="menu-action__span menu-action__dot"></span>
+
+								<span class="menu-action__span menu-action__dot"></span>
+								
+								<span class="menu-action__span menu-action__dot"></span>
+							</div>
+						</li>
+							
+						<li class="tag-inline sidebar-tag" data-tag="12354445">
+							<span class="tag-inline__title tag-inline__section">
+								Tag
+							</span>
+								
+							<div class="button-icon menu-action menu-action-light tag-inline__section tag-inline__options" data-tag="12354445" data-name="sidebarContextMenuOpen">
+								<span class="menu-action__span menu-action__dot"></span>
+
+								<span class="menu-action__span menu-action__dot"></span>
+								
+								<span class="menu-action__span menu-action__dot"></span>
+							</div>
+						</li>
+							
+						<li class="tag-inline sidebar-tag" data-tag="12354445">
+							<span class="tag-inline__title tag-inline__section">
+								Hello
+							</span>
+							
+							<div class="button-icon menu-action menu-action-light tag-inline__section tag-inline__options" data-tag="12354445" data-name="sidebarContextMenuOpen">
+								<span class="menu-action__span menu-action__dot"></span>
+
+								<span class="menu-action__span menu-action__dot"></span>
+								
+								<span class="menu-action__span menu-action__dot"></span>
+							</div>
+						</li>
+							
+						<li class="tag-inline sidebar-tag" data-tag="12354445">
+							<span class="tag-inline__title tag-inline__section">
+								Можно удалить
+							</span>
+						
+							<div class="button-icon menu-action menu-action-light tag-inline__section tag-inline__options" data-tag="12354445" data-name="sidebarContextMenuOpen">
+								<span class="menu-action__span menu-action__dot"></span>
+
+								<span class="menu-action__span menu-action__dot"></span>
+								
+								<span class="menu-action__span menu-action__dot"></span>
+							</div>
+						</li>
+					</ul>
+				</div> 
+			</section>
+			<aside class="context-menu sidebar-tags__context-menu">
+				<ul class="context-menu__list sidebar-tags__context-menu-list" data-tag="12354445">
+					<li class="context-menu__item sidebar-tags__context-menu-remove" data-id="sidebarTagRemove" data-tag="12354445">
+						Удалить
+					</li>
+					<li class="context-menu__item sidebar-tags__context-menu-change" data-id="sidebarTagChange" data-tag="12354445">
+						Изменить
+					</li>
+				</ul>
+			</aside>
+			<aside class="modal__overlay sidebar-modal">
+				<article class="modal__body sidebar-modal__body" data-tag="115478">
+					<h2 class="modal__title sidebar-modal__title" data-id="sidebarModalTitle">
+						Удалить тег: Name tag? 
+					</h2>
+
+					<div class="sidebar-modal__description" data-id="sidebarModalDescription">
+						Записи, к которым прикриплен тег, останутся на месте
+					</div>
+
+					<input type="text" class="modal__input sidebar-modal__input" data-id="sidebarModalInput" data-value="tag">
+					
+					<div class="modal__buttons sidebar-modal__buttons">
+						<button class="button sidebar-modal__button sidebar-modal__cancel" data-id="sidebarModalCancel">
+							Отмена
+						</button>
+						<button class="button sidebar-modal__button sidebar-modal__remove" data-id="sidebarModalRemove" data-tag="115478">
+							Удалить
+						</button>
+						<button class="button sidebar-modal__button sidebar-modal__change" data-id="sidebarModalChange" data-tag="115478">
+							Обновить
+						</button>
+					</div>
+				</article>
+			</aside> 
+--> 	
+		</article> 		
+	
+ 		<article class="1section-overlay sidebar-mini 1sidebar-mini_hide"> 
+			<div class="button-icon sidebar-mini__item menu-action sidebar-mini__slider" data-id="sidebarSlider">
+				<span class="menu-action__span menu-action__line">
+				</span>
+
+				<span class="menu-action__span menu-action__line">
+				</span>
+					
+				<span class="menu-action__span menu-action__line">
+				</span>
+			</div>
+		</article> 
+
+		<article class="1section-overlay feed">
+			<header class="feed-header">
+				<div class="feed-header__block feed-account">
+					<div class="feed-header__item feed-account__user" data-id="feedAccountUser">
+						max.kyrchanov@gmail.com
+					</div>
+			
+					<div class="feed-header__item feed-account__sign" data-id="feedAccountSign">
+						Sign Out
+					</div>	
+				</div>
+				<div class="feed-header__block feed-status">
+					<div class="feed-header__item feed-status__category" data-id="feedStatusCategory">
+						Избранное
+					</div>
+					<div class="feed-header__item feed-status__network feed-status__network_offline" data-id="feedStatusNetwork" data-network="offline">
+						Offline	
+					</div>
+				</div>
+			</header>
+	
+			<main class="feed-main 1feed_no-scroll">
+				<section class="1section-overlay feed-pinned" data-id="feedPinnedNote" data-note="121544">
+					<div class="feed-pinned__item feed-pinned__img">
+						<img src="../../sample/img-2.jpg" alt="name img" class="feed-pinned__img-item" data-id="feedPinnedNoteImg">
+					</div>
+				
+					<div class="feed-pinned__item feed-pinned__text" data-id="feedPinnedNoteText">
+						Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв... Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...Текст какого-то закрепленного собщения, первые Х симв...
+					</div>
+										
+					<div class="feed-pinned__item button-icon figure-button feed-pinned__unpin" data-id="feedPinnedUnpin">
+						<div class="figure-button__item figure-button__cross feed-pinned__unpin-cross">
+						</div>
+					</div>
+				</section>
+
+				<section class="1section-overlay feed-content feed-notes">
+					<ul class="feed-content__list feed-notes__list">
+						<li class="feed-content__item feed-note" data-note="121544">
+							<article class="feed-note__container" data-note="121544">
+								<header class="feed-note__header">
+									<div class="feed-note__geo">
+										14557 54575
+									</div>
+	
+									<div class="button-icon menu-action feed-note__context-menu-open" data-note="5545456">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="
+										menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</header>
+								
+								<main class="feed-note__content  feed-note__empty-attachment-inline">
+									<div class="feed-note__attachment-inline hidden-item">
+									</div>
+
+									<div class="feed-note__text">
+										<p class="feed-note__text-p">
+											Lorem ipsum, dolor. Lorem ipsum dolor sit amet, consectetur.
+										</p>
+									</div>
+
+									<div class="feed-note__attachment-block">
+										<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+											<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+											</audio>
+			
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+											<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+											</audio>
+										
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="feed-content-block-file feed-content-other-file feed-note__attachment-block-file__other-file" data-file="45455">
+											<a href="../../sample/file-1.txt" class="feed-content-block-file feed-content-other-file__link" download="download">
+												Текстовый файл
+											</a>
+							
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="feed-content-block-file feed-content-other-file feed-note__attachment-block-file__other-file" data-file="45455">
+											<a href="../../sample/file-1.txt" class="feed-content-block-file feed-content-other-file__link" download="download">
+												Текстовый файл
+											</a>
+							
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+									</div>
+								</main> 
+
+								<footer class="feed-note__footer" data-note="123445">
+									<ul class="tags-row feed-note__tags">
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+									</ul>
+									
+									<div class="feed-note__footer-info">
+										<div class="feed-note__sending feed-note__sending_processing" data-name="feedNotesending">
+											<span class="feed-note__sending-span feed-note__sending-span-1">
+												&#10004;
+											</span>
+											<span class="feed-note__sending-span feed-note__sending-span-2">
+												&#10004;
+											</span>
+										</div>
+									
+										<span class="feed-note__edited" data-name="noteEdited">
+											Было отредактировано
+										</span>
+									
+										<span class="feed-note__date">
+											10:18 12.10.2024
+										</span>
+									</div>
+								</footer>			
+							</article>
+						</li>
+						
+						<li class="feed-content__item feed-note" data-note="121544">
+							<article class="feed-note__container" data-note="121544">
+								<header class="feed-note__header">
+									<span class="feed-note__geo">
+										14557 54575
+									</span>
+									<div class="button-icon menu-action feed-note__context-menu-open" data-note="5545456">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="
+										menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</header>
+								
+								<main class="feed-note__content">
+									<div class="feed-note__attachment-inline image-mosaic image-mosaic-horizontal-media-muptiple-three-and-one">
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-1.webp" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+									</div>
+
+									<div class="feed-note__text">
+										<p class="feed-note__text-p">
+											Lorem ipsum, dolor.
+										</p>
+										<p class="feed-note__text-p">
+											Lorem, ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum, odio, assumenda! ipsum, dolor.
+										</p>
+										<p class="feed-note__text-p">
+											Lorem ipsum dolor sit amet. ipsum, dolor.
+										</p>
+									</div>
+
+									<div class="feed-note__attachment-block">
+										<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+											<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+											</audio>
+										
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+											<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+											</audio>
+										
+											<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+							
+									</div>
+								</main> 
+
+								<footer class="feed-note__footer" data-note="123445">
+									<ul class="tags-row feed-note__tags">
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+									</ul>
+									
+									<div class="feed-note__footer-info">
+										<div class="feed-note__sending" data-name="feedNotesending">
+											<span class="feed-note__sending-span feed-note__sending-span-1">
+												&#10004;
+											</span>
+											<span class="feed-note__sending-span feed-note__sending-span-2">
+												&#10004;
+											</span>
+										</div>
+									
+										<span class="feed-note__edited" data-name="noteEdited">
+											Было отредактировано
+										</span>
+									
+										<span class="feed-note__date">
+											10:18 12.10.2024
+										</span>
+									</div>
+								</footer>			
+							</article>
+						</li>
+
+						<li class="feed-content__item feed-note" data-note="121544">
+							<article class="feed-note__container" data-note="121544">
+								<header class="feed-note__header">
+									<span class="feed-note__geo">
+										14557 54575
+									</span>
+									<div class="button-icon menu-action feed-note__context-menu-open" data-note="5545456">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="
+										menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</header>
+								
+								<main class="feed-note__content">
+									<div class="feed-note__attachment-inline image-mosaic image-mosaic-vertical-media-muptiple-three-and-two">
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+										
+										<div class="image-mosaic__item feed-content-inline-file">
+											<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+											</video>
+											
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+									
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>										
+									</div>
+
+									<div class="feed-note__text">
+										<p class="feed-note__text-p">
+											Lorem ipsum, dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem doloremque ipsam, explicabo adipisci maiores in, quas velit, aliquid accusantium iste beatae dolores doloribus aperiam. Ex quae quaerat ut id quisquam!
+										</p>
+									</div>
+
+									<div class="feed-note__attachment-block hidden-item">
+									</div>
+								</main> 
+
+								<footer class="feed-note__footer" data-note="123445">
+									<ul class="tags-row feed-note__tags">
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+									</ul>
+									
+									<div class="feed-note__footer-info">
+										<div class="feed-note__sending" data-name="feedNotesending">
+											<span class="feed-note__sending-span feed-note__sending-span-1">
+												&#10004;
+											</span>
+											<span class="feed-note__sending-span feed-note__sending-span-2">
+												&#10004;
+											</span>
+										</div>
+									
+										<span class="feed-note__edited" data-name="noteEdited">
+											Было отредактировано
+										</span>
+									
+										<span class="feed-note__date">
+											10:18 12.10.2024
+										</span>
+									</div>
+								</footer>			
+							</article>
+						</li>
+
+						<li class="feed-content__item feed-note" data-note="121544">
+							<article class="feed-note__container" data-note="121544">
+								<header class="feed-note__header">
+									<span class="feed-note__geo">
+										14557 54575
+									</span>
+									<div class="button-icon menu-action feed-note__context-menu-open" data-note="5545456">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="
+										menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</header>
+								
+								<main class="feed-note__content">
+									<div class="feed-note__attachment-inline image-mosaic image-mosaic-horizontal-media-muptiple-three-and-two">
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+										
+									
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>
+
+										<div class="image-mosaic__item feed-content-inline-file">
+											<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+											<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+												<span class="menu-action__span menu-action__dot"></span>
+											</div>
+										</div>										
+									</div>
+
+									<div class="feed-note__text">
+										<p class="feed-note__text-p">
+											Lorem ipsum, dolor. Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem doloremque ipsam, explicabo adipisci maiores in, quas velit, aliquid accusantium iste beatae dolores doloribus aperiam. Ex quae quaerat ut id quisquam!
+										</p>
+									</div>
+
+									<div class="feed-note__attachment-block hidden-item">
+									</div>
+								</main> 
+
+								<footer class="feed-note__footer" data-note="123445">
+									<ul class="tags-row feed-note__tags">
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+
+										<li class="tag-inline feed-note__tag" data-tag="12354445">
+											<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+												Привет
+											</div>
+										</li>
+									</ul>
+									
+									<div class="feed-note__footer-info">
+										<div class="feed-note__sending" data-name="feedNotesending">
+											<span class="feed-note__sending-span feed-note__sending-span-1">
+												&#10004;
+											</span>
+											<span class="feed-note__sending-span feed-note__sending-span-2">
+												&#10004;
+											</span>
+										</div>
+									
+										<span class="feed-note__edited" data-name="noteEdited">
+											Было отредактировано
+										</span>
+									
+										<span class="feed-note__date">
+											10:18 12.10.2024
+										</span>
+									</div>
+								</footer>			
+							</article>
+						</li>
+					</ul>
+				</section>
+
+				<section class="1section-overlay feed-content feed-files">
+					<ul class="feed-content__list feed-files__list">
+						<li class="feed-content__item feed-file" data-file="44546">
+							<article class="feed-content-inline-file" data-file="44546">
+								<video class="feed-content-inline-file__file" src="../../sample/video.mp4" controls="controls">
+								</video>
+				
+								<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file" data-file="44546">
+							<article class="feed-content-inline-file" data-file="44546">
+								<img class="feed-content-inline-file__file" src="../../sample/img-4.jpg"/>
+
+								<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file" data-file="44546">
+							<article class="feed-content-inline-file" data-file="44546">
+								<img class="feed-content-inline-file__file" src="../../sample/img-5.jpg"/>
+		
+								<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file feed-block-file" data-file="44546">
+							<article class="feed-content-block-file feed-block-file__body" data-file="44546">
+								<audio class="feed-content-block-file__file feed-content-audio-file" src="../../sample/audio.mp3" controls="controls">
+								</audio>
+		
+								<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options feed-block-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>		
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file feed-block-file" data-file="44546">
+							<article class="feed-content-block-file feed-block-file__body" data-file="44546">
+								<audio class="feed-content-block-file__file feed-content-audio-file" src="../../sample/audio.mp3" controls="controls">
+								</audio>
+						
+								<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options feed-block-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file feed-block-file" data-file="44546">
+							<article class="feed-content-block-file feed-content-other-file feed-block-file__body" data-file="44546">
+								<a class="feed-content-block-file feed-content-other-file__link" href="../../sample/file-1.cmd">
+									Name files by link
+								</a>
+
+								<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options feed-block-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>
+								
+						<li class="feed-content__item feed-file feed-block-file" data-file="44546">
+							<article class="feed-content-block-file feed-content-other-file feed-block-file__body" data-file="44546">
+								<a class="feed-content-block-file feed-content-other-file__link" href="../../sample/file-2.txt">
+									Name files by link
+								</a>
+									
+								<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options feed-block-file__options" data-file="1548">
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+									<span class="menu-action__span menu-action__dot"></span>
+								</div>
+							</article>
+						</li>	
+					</ul>
+				</section> 	
+<!--
+				<section class="feed-content__item feed-note editing-note" data-note="121544" data-id="editingNote">
+					<article class="feed-note__container editing-note__container" data-note="121544" data-id="editingNoteBody">
+						<header class="editing-note__header">
+							<div class="button editing-note__button" data-id="editingNoteCancel">
+								<span class="editing-note__button-title">
+									Отменить
+								</span>
+								<span class="figure-button figure-button__cross editing-note__button-icon editing-note__button-icon-cross">
+								</span>
+							</div>
+
+							<div class="button editing-note__button">
+								<span class="editing-note__button-title" data-id="editingNoteRemoveConfirm">
+									Сохранить
+								</span>
+								<span class="figure-button figure-button__chek editing-note__button-icon editing-note__button-icon-chek"></span>
+							</div>
+						</header>
+						
+						<main class="feed-note__content">
+							<div class="feed-note__attachment-inline image-mosaic image-mosaic-horizontal-media-muptiple-three-and-one">
+								<div class="image-mosaic__item feed-content-inline-file">
+									<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+									<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="image-mosaic__item feed-content-inline-file">
+									<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+									<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="image-mosaic__item feed-content-inline-file">
+									<video src="../../sample/video.mp4" controls="controls" preload="metadata" data-file="1225" class="feed-content-inline-file__file">
+									</video>
+									
+									<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="image-mosaic__item feed-content-inline-file">
+									<img src="../../sample/img-1.webp" data-file="165447" alt="name img" class="feed-content-inline-file__file">
+
+									<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+							</div>
+
+							<div class="feed-note__text editing-note__text"  data-id="editingNoteText" contenteditable="true">
+								<p class="feed-note__text-p">
+									Lorem ipsum, dolor. Lorem ipsum dolor sit amet, consectetur.
+								</p>
+							</div>
+
+							<div class="feed-note__attachment-block">
+								<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+									<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+									</audio>
+	
+									<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="feed-content-block-file feed-note__attachment-block-file" data-file="451240">
+									<audio src="../../sample/audio.mp3" controls="controls" preload="metadata" class="feed-content-block-file__file feed-content-audio-file feed-note__attachment-block-file">
+									</audio>
+								
+									<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="feed-content-block-file feed-content-other-file feed-note__attachment-block-file__other-file" data-file="45455">
+									<a href="../../sample/file-1.txt" class="feed-content-block-file feed-content-other-file__link" download="download">
+										Текстовый файл
+									</a>
+					
+									<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+
+								<div class="feed-content-block-file feed-content-other-file feed-note__attachment-block-file__other-file" data-file="45455">
+									<a href="../../sample/file-1.txt" class="feed-content-block-file feed-content-other-file__link" download="download">
+										Текстовый файл
+									</a>
+					
+									<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="editingNoteFileContextMenuOpen" data-file="1548">
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+										<span class="menu-action__span menu-action__dot"></span>
+									</div>
+								</div>
+							</div>
+						</main> 
+
+						<footer class="feed-note__footer" data-note="123445">
+							<ul class="tags-row feed-note__tags">
+								<li class="button-inline editing-note__add-tag feed-note__add-tag" data-note="55555" data-name="editingNoteAddTag">
+									<div class="editing-note__add-tag-text">
+										Добавить тег
+									</div>
+									<div class="editing-note__add-tag-icon">
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+
+								<li class="tag-inline feed-note__tag" data-tag="12354445">
+									<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+										Привет
+									</div>
+									<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="editingNoteTagRemove">
+										<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+										</div>
+									</div>
+								</li>
+							</ul>
+						</footer>			
+					</article>
+				</section>
+-->				
+				<section class="button-icon icon_active-size feed-scroll-down" data-id="feedScrollDown">
+					<div class="feed-scroll-down__button"></div>
+				</section>
+			</main>
+
+ 			<footer class="1section-overlay feed-footer 1feed-create-note_active">		
+				<section class="create-note__main-section create-note_active">	
+					<div class="create-note__text create-note_active">
+						<div contenteditable="true" class="create-note__text-body create-note__text-body_empty" data-id="newNoteText">
+							Your text
+						</div>
+
+						<div class="button-icon icon_active-size create-note__text-send 1hidden-item" data-id="newNoteSend">
+							<div class="create-note__text-send-icon ">
+							</div>
+						</div>
+					</div>
+
+					<div class="create-note__button create-note__geolocation 1hidden-item" data-id="newNoteGeolocation" data-geo="null">
+						<div class="create-note__button-text create-note__geolocation-text">
+							Моя геолокация:
+						</div>
+
+						<div class="slider-button slider-button_active create-note__geolocation-icon" data-id="newNoteGeolocationIcon">
+							<div class="button-icon slider-button__switch create-note__geolocation-icon-switch">
+							</div>
+						</div>
+					</div>
+
+					<div class="create-note__button note__add-tag 1hidden-item" data-id="newNoteAddTag">
+						<div class="create-note__button-text note__add-tag-text">
+							Добавить тег
+						</div>
+
+						<div class="button-icon create-note__button-icon note__add-tag-icon">
+						</div>
+					</div>
+						
+					<div class="create-note__button create-note__start-record-voice" data-id="newNoteRecordVoice">
+						<div class="create-note__button-text create-note__button-text_hide create-note__button-text">
+							Записать войс
+						</div>
+								
+						<div class="button-icon create-note__button-icon create-note__start-record-voice-icon">
+						</div>
+					</div>
+							
+					<div class="create-note__button create-note__start-record-video" data-id="newNoteRecordVideo">
+						<div class="create-note__button-text create-note__button-text_hide create-note__button-text">
+							Записать видео
+						</div>
+						
+						<div class="button-icon create-note__button-icon create-note__start-record-video-icon">
+						</div>
+					</div>
+
+					<label class="create-note__add-files create-note__button" for="create-note-add-files"data-id="newNoteAddFilesIcon">
+						<input id="create-note-add-files" type="file" class="create-note__add-files-input hidden-item" multiple="multiple" data-id="newNoteAddFilesInput">
+							
+						<div class="create-note__button-text create-note__button-text_hide create-note__add-files-text">
+							Добавить файлы
+						</div>
+								
+						<div class="button-icon create-note__button-icon create-note__add-files-icon">
+						</div>
+					</label>
+				</section>
+
+<!--			
+ 	 			<section class="create-note__added-tags">
+					<ul class="tags-row create-note__added-tags-list">
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Привет
+							</span>
+
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Tag-inline number 2
+							</span>
+								
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Tag
+							</span>
+								
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Hello
+							</span>
+							
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Можно удалить
+							</span>
+						
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Привет
+							</span>
+
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Tag-inline number 2
+							</span>
+								
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Tag
+							</span>
+								
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Hello
+							</span>
+							
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+							
+						<li class="tag-inline create-note__added-tag" data-tag="12354445">
+							<span class="tag-inline__section tag-inline__title">
+								Можно удалить
+							</span>
+						
+							<div class="button-icon tag-inline__section tag-inline__options figure-button create-note__added-tag-remove" data-tag="12354445" data-name="newNoteTagRemove">
+								<div class="figure-button__item figure-button__cross create-note__added-tag-remove-cross">
+								</div>
+							</div>
+						</li>
+					</ul>
+				</section>
+			
+				<section class="create-note__attachment">
+					<div class="create-note__attachment-error">
+						<h2 class="create-note__attachment-title">
+							Не все файлы были загружены:
+						</h2>	
+						<div class="create-note__attachment-description">
+							Слишком большие файлы
+						</div>
+
+						<div class="create-note__attachment-description">
+							Слишком много файлов
+						</div>
+					</div>
+			
+					<article class="create-note__attachment-container create-note__attachment-inline">
+						<div class="figure-button create-note__attachment-button create-note__attachment-button-left" data-id="createNoteAttachmentInlineLeft">
+							<div class="figure-button__item figure-button__arrow figure-button__arrow-left create-note__attachment-arrow">
+							</div>
+						</div>
+
+						<ul class="create-note__attachment-list create-note__attachment-inline-list">
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<video src="../../sample/video.mp4" class="create-note__attachment-inline-file feed-note-video__file">
+								</video>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+						
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<video src="../../sample/video.mp4" class="create-note__attachment-inline-file feed-note-video__file">
+								</video>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<video src="../../sample/video.mp4" class="create-note__attachment-inline-file feed-note-video__file">
+								</video>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-1.webp" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-3.jpg" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-2.jpg" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+				
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-4.jpg" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-5.jpg" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-inline-item" data-temp-id="4456">
+								<img src="../../sample/img-2.jpg" class="create-note__attachment-inline-file" alt="name file">
+								</img>
+
+								<div class="button-icon figure-button create-note__attachment-inline-remove" data-temp-id="4456">
+									<div class="figure-button__item figure-button__cross create-note__attachment-inline-remove-cross">
+									</div>
+								</div>
+							</li>
+						</ul>	
+
+						<div class="figure-button create-note__attachment-button create-note__attachment-button-right" data-id="createNoteAttachmentInlineRight">
+							<div class="figure-button__item figure-button__arrow figure-button__arrow-right create-note__attachment-arrow">
+							</div>
+						</div>
+					</article>
+
+					<article class="create-note__attachment-container create-note__attachment-block">
+						<ul class="create-note__attachment-list create-note__attachment-block-list">
+							<li class="create-note__attachment-block-item" data-temp-id="4456">  
+								<audio src="../../sample/audio.mp3" class="create-note__attachment-block-file" controls="controls">
+								</audio>
+								
+								<div class="figure-button create-note__attachment-block-remove">
+									<div class="figure-button__item figure-button__cross create-note__attachment-block-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-block-item" data-temp-id="4456">  
+								<audio src="../../sample/audio.mp3" class="create-note__attachment-block-file" controls="controls">
+								</audio>
+								
+								<div class="figure-button create-note__attachment-block-remove">
+									<div class="figure-button__item figure-button__cross create-note__attachment-block-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-block-item" data-temp-id="4456">  		
+								<a href="../../sample/file-1.cmd" class="feed-content-other-file create-note__attachment-block-file">
+									Name file
+								</a>
+								
+								<div class="figure-button create-note__attachment-block-remove">
+									<div class="figure-button__item figure-button__cross create-note__attachment-block-remove-cross">
+									</div>
+								</div>
+							</li>
+
+							<li class="create-note__attachment-block-item" data-temp-id="4456">  		
+								<a href="../../sample/file-1.cmd" class="feed-content-other-file create-note__attachment-block-file">
+									Name file
+								</a>
+								
+								<div class="figure-button create-note__attachment-block-remove">
+									<div class="figure-button__item figure-button__cross create-note__attachment-block-remove-cross">
+									</div>
+								</div>
+							</li>
+							
+							<li class="create-note__attachment-block-item" data-temp-id="4456">  		
+								<a href="../../sample/file-1.cmd" class="feed-content-other-file create-note__attachment-block-file">
+									Name file
+								</a>
+								
+								<div class="figure-button create-note__attachment-block-remove">
+									<div class="figure-button__item figure-button__cross create-note__attachment-block-remove-cross">
+									</div>
+								</div>
+							</li>
+						</ul>
+					</article>
+				</section> -->
+			</footer>
+
+
+<!--
+			<aside class="record-media__container modal__overlay">
+				<article class="record-media">
+					<div class="record-media__show">
+						<div class="record-media__show-back">
+							<video src="../../sample/video.mp4" data-id="recordVideoShowBack" mute="mute" autoplay="autoplay" class="record-media__show-video record-media__show-back-video">
+							</video>
+						</div>
+
+ 						<div class="record-media__show-main">
+							<video src="../../sample/video.mp4" data-id="recordVideoShowMain" mute="mute" autoplay="autoplay" class="record-media__show-video record-media__show-main-video">
+							</video>
+						</div>
+					</div>
+					
+					<div class="record-media__controll">
+						<div class="button-icon figure-button record-media__button record-media__cancel" data-id="recordMediaCancel">
+							<div class="figure-button__item figure-button__cross record-media__button-icon record-media__cancel-icon">
+							</div>
+						</div>
+
+						<div class="record-media__time" data-id="recordShowTime">
+							00:15
+						</div>
+							
+						<div class="button-icon figure-button  record-media__button record-media__save" data-id="recordMediaSave">
+							<div class="figure-button__item figure-button__chek record-media__button-icon record-media__save-icon">
+							</div>
+						</div>
+					</div>
+				</article>
+			</aside>
+-->
+<!--
+			<aside class="context-menu note-context-menu" data-id="noteContextMenu">
+				<ul class="context-menu__list note-context-menu__list" data-id="noteContextMenuList">
+					<li class="context-menu__item note-context-menu__item" data-note="121544" data-id="noteContextMenuPin">
+						Закрепить
+					</li>
+						
+					<li class="context-menu__item note-context-menu__item" data-note="121544" data-id="noteContextMenuFavorite">
+						Добавить в избранное
+					</li>
+						
+					<li class="context-menu__item note-context-menu__item" data-note="121544" data-id="noteContextMenuEdit">
+						Редактировать
+					</li>
+						
+					<li class="context-menu__item note-context-menu__item" data-note="121544" data-id="noteContextMenuDownloadFiles">
+						Скачать файлы
+					</li>
+						
+					<li class="context-menu__item note-context-menu__item" data-note="121544" data-id="noteContextMenuRemove">
+						Удалить запись
+					</li>
+				</ul>
+			</aside>
+-->
+<!--
+			<aside class="context-menu file-context-menu" data-id="fileContextMenu">
+				<ul class="context-menu__list file-context-menu__list" data-id="fileContextMenuList">
+					<li class="context-menu__item file-context-menu__item" data-id="fileContextMenuFullScreen" data-file="45482">
+						На весь экран
+					</li>
+						
+					<li class="context-menu__item file-context-menu__item" data-id="fileContextMenuDownload" data-file="45482">
+						Скачать
+					</li>
+					
+					<li class="context-menu__item file-context-menu__item" data-id="fileContextMenuRemove" data-file="45482">
+						Удалить
+					</li>
+				</ul>
+			</aside>
+-->
+<!--
+			<aside class="context-menu note-add-tags" data-id="addTagsToNote" data-note="null">
+				<div class="note-add-tags__back" data-id="addTagsToNoteBack">
+					<div class="note-add-tags__back-container">
+						<span class="button-iconnote-add-tags__back note-add-tags__back-icon">
+						</span>
+						
+						<span class="note-add-tags__backnote-add-tags__back-text">
+							Назад
+						</span>
+					</div>
+				</div>
+
+				<ul class="context-menu__list tags-column note-add-tags__list" data-id="addTagsToNoteList">
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						My tag number 1
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Any text
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						My tag number 3
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Another text
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Парам пам пам
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						My tag number 1
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Any text
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						My tag number 3
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Another text
+					</li>
+
+					<li class="context-menu__item tag-block note__add-tag" data-name="addTagsToNoteTag" data-tag="4548">
+						Парам пам пам
+					</li>
+				</ul>
+		
+				<div class="tags-new tags-column-new" data-id="createNewTag">
+					<input type="text" class="tags-new__input" placeholder="Новый тег" data-id="createNewTagInput">
+						
+					<div class="figure-button tags-new__save tags-new__save_inactive1" data-id="createNoteNewTagSave">
+						<div class="figure-button__item figure-button__chek tags-new__save-chek">
+						</div>
+					</div>
+				</div>
+			</aside>
+-->
+<!-- 
+			<aside class="popup feed-note-send-status" data-id="feedNoteSendStatus">
+				<div class="popup__text feed-note-send-status__text feed-note-send-status__await" data-id="feedNoteSendStatusText">
+					Жду подключения к интернету
+				</div>
+				
+				<div class="popup__text feed-note-send-status__text feed-note-send-status__processing" data-id="feedNoteSendStatusText">
+					Запись сохраняется
+				</div>	
+				
+				<div class="popup__text feed-note-send-status__text feed-note-send-status__success" data-id="feedNoteSendStatusText">
+					Заись сохранена
+				</div> 
+			</aside>
+-->
+<!--
+		<aside class="modal__overlay server-response-error" data-id="serverResponseError">
+			<div class="modal__body server-response-error__container">
+				<div class="server-response-error__section server-response-error__title" data-id="serverResponseErrorTitle">
+					Эти файлы не были сохранены – превышен лимит:
+				</div>
+
+				<ul class="server-response-error__section server-response-error__list-files" data-id="serverResponseErrorList">
+					<li class="server-response-error__file">
+						<span class="server-response-error__file-title">
+							Name file number 1Name file number 1Name file number 1
+						</span>
+					</li>
+				
+					<li class="server-response-error__file">
+						<span class="server-response-error__file-title">
+							Еще какой-то там файлик
+						</span>
+					</li>
+					
+					<li class="server-response-error__file">
+						<span class="server-response-error__file-title">
+							Name file
+						</span>
+					</li>
+				</ul>
+
+				<div class="server-response-error__section server-response-error__buttons">
+					<button class="button server-response-error__button"data-id="serverResponseErrorClose">
+						Ок
+					</button>
+				</div>
+			</div>
+		</aside>
+-->
+
+<!-- 
+			<aside class="modal__overlay stream-media-upload-error" data-id="streamMediaUploadError">
+				<div class="modal__body stream-media-upload-error__container">
+					<div class="stream-media-upload-error__section stream-media-upload-error__title" data-id="streamMediaUploadErrorTitle">
+						Запись слишком большая, чтобы сохранить в приложении
+					</div>
+					<div class="stream-media-upload-error__section stream-media-upload-error__video">
+						<video src="../../sample/video.mp4" class="stream-media-upload-error__video-file" controls='controls' data-id="streamMediaUploadErrorVideo">
+						</video>
+					</div>
+
+					<div class="stream-media-upload-error__section stream-media-upload-error__audio">
+						<audio class="stream-media-upload-error__audio-file" src="../../sample/audio.mp3" controls='controls' data-id="streamMediaUploadErrorAudio">
+						</audio> 
+					</div>
+					
+					<div class="stream-media-upload-error__section stream-media-upload-error__description" data-id="streamMediaUploadErrorDescription">
+						Хотите ее скачать?
+					</div>
+
+					
+					<div class="stream-media-upload-error__section stream-media-upload-error__buttons">
+						<button class="button stream-media-upload-error__button" data-id="streamMediaUploadErrorButtonSave">
+							Скачать  
+						</button>
+
+						<button class="button stream-media-upload-error__button" data-id="streamMediaUploadErrorButtonRemove">
+							Удалить
+						</button>
+					</div>
+				</div>
+			</aside>
+-->
+<!--	
+			<aside class="modal__overlay fullscreen-media" data-id="fullscreenMedia">
+				<div class="fullscreen-media__container">
+					
+					<div class="fullscreen-media__media-container">
+						<img src="../../sample/img-4.jpg" alt="name" class="fullscreen-media__media-file" data-file="5545456" data-id="fullscreenMediaFile">
+					</div>
+
+			
+					<div class="fullscreen-media__section fullscreen-media__media-container">
+	 					<video src="../../sample/video.mp4" controls="controls" class="fullscreen-media__media-file" controls='controls' data-file="5545456" data-id="fullscreenMediaFile">
+						</video> 
+					</div>
+
+
+					<div class="fullscreen-media__header fullscreen-media__header_show">
+						<div class="fullscreen-media__header-title" data-id="fullscreenMediaTitle">
+							Название картинки или видео
+						</div>
+					
+						<div class="menu-action fullscreen-media__header-options fullscreen-media__header-options" data-id="fullscreenMediaMenuTitle">
+							<span class="menu-action__dot"></span>
+							<span class="menu-action__dot"></span>
+							<span class="menu-action__dot"></span>
+						</div>
+					</div>
+			
+					<div class="figure-button fullscreen-media__arrow fullscreen-media__arrow-left fullscreen-media__arrow-left_show1" data-name="fullscreenMediaArrow" data-id="fullscreenMediaLeft">
+						<div class="figure-button__item figure-button__arrow figure-button__arrow-left fullscreen-media__arrow-icon">
+						</div>
+					</div>
+						
+					<div class="figure-button fullscreen-media__arrow fullscreen-media__arrow-right fullscreen-media__arrow-right_show1" data-name="fullscreenMediaArrow" data-id="fullscreenMediaRight">
+						<div class="figure-button__item figure-button__arrow figure-button__arrow-right fullscreen-media__arrow-icon">
+						</div>
+					</div>
+							
+					<div class="context-menu fullscreen-media__context-menu hidden-item" data-id="fullscreenMediaContextMenu">
+						<ul class="context-menu__list fullscreen-media__context-menu-list">
+							<li class="context-menu__item fullscreen-media__context-menu-item" data-id="fullscreenMediaClose">
+								Закрыть
+							</li>
+
+							<li class="context-menu__item fullscreen-media__context-menu-item" data-id="fullscreenMediaDownload">
+								Скачать
+							</li>
+
+							<li class="context-menu__item fullscreen-media__context-menu-item" data-id="fullscreenMediaRemove">
+								Удалить
+							</li>
+						</ul>
+					</div>					
+				</div>
+			</aside>
+-->
+<!--
+			<aside class="modal__overlay remove-note-confirm" data-note="2544" data-id="ConfirmRemoveNote">
+				<div class="modal__body remove-note-confirm__container">
+					<h2 class="modal__title remove-note-confirm__section remove-note-confirm__section remove-note-confirm__title">
+						Хотите навсегда удалить запись?
+					</h2>
+					
+					<div class="remove-note-confirm__section remove-note-confirm__attachment-remove" data-id="noteRemoveConfirmAttachmentRemove">
+						<div class="remove-note-confirm__attachemnt-remove-text">
+							Также удалить вложенные файлы
+						</div>
+
+						<div class="slider-button slider-button_active remove-note-confirm__attachemnt-remove-icon" data-id="noteRemoveConfirmAttachmentRemoveIcon" data-confirm="true">
+							<div class="button-icon slider-button__switch remove-note-confirm__attachemnt-remove-switch">
+							</div>
+						</div>
+					</div>
+
+					<div class="modal__buttons remove-note-confirm__section remove-note-confirm__buttons">
+						<button class="button remove-note-confirm__button" data-id="noteRemoveConfirmCancel">
+							Отмена
+						</button>
+
+						<button class="button remove-note-confirm__button" data-id="noteRemoveConfirmConfirm">
+							Удалить
+						</button>
+					</div>
+				</div>
+			</aside>
+-->
+<!--
+			<aside class="modal__overlay geolocation-confirm" data-id="">
+				<div class="modal__body geolocation-confirm__container" data-geo="null">
+					<h2 class="modal__title geolocation-confirm__section geolocation-confirm__title">
+						Добавить к записи геолокацию?
+					</h2>
+					
+					<div class="geolocation-confirm__section geolocation-confirm__coords">
+						<div class="geolocation-confirm__coords-title">
+							Ваша геолокация:
+						</div>			
+
+						<input type="text" class="modal__input geolocation-confirm__coords-input" placeholder="Например, 00.000000 00.000000" value="00.000000 00.000000" data-id="geolocationConfirmCoords">
+			
+						<div class="geolocation-confirm__coords-error">
+							Ззапишите координаты в таком формате: 
+							<p class="geolocation-confirm__coords-error-sample" data-id="geolocationConfirmCoordsSample" data-coords-sample="00.00000 00.00000">
+								00.00000 00.00000
+							</p>
+						</div>
+					</div>
+					
+					<div class="modal__buttons geolocation-confirm__section geolocation-confirm__buttons">
+						<button class="button geolocation-confirm__button" data-id="geolocationConfirmCancel">
+							Отмена
+						</button>
+						<button class="button geolocation-confirm__button" data-id="geolocationConfirmSave">
+							Добавить
+						</button>
+					</div>
+				</div>
+			</aside>
+-->
+		</article> 
+
+<!--
+		<aside class="modal__overlay authorization__overlay">
+			<article class="modal__body authorization__container" data-id="authorizationBody" data-action="signin" data-action2="registration">
+				<div class="authorization__section authorization__target">
+					<h2 class="modal__title authorization__target-title authorization__target-title_passive" data-id="authorizationRegistrationTitle">
+						Регистрация 
+					</h2>
+
+					<h2 class="modal__title authorization__target-title authorization__target-title_active" data-id="authorizationSigninTitle">
+						Вход
+					</h2>
+				</div>
+
+				<div class="authorization__section authorization__data">
+					<label class="authorization__data-label">
+						<div class="authorization__data-title">
+							Email:
+						</div>
+					
+						<input class="modal__input authorization__data-input 1authorization__data-input_invalid" type="text" data-id="authorizationEmailInput">
+						
+						<div class="authorization__data-error authorization__data-error_empty" data-id="authorizationEmailError" data-status="5">
+							Почта уже используется
+						</div>
+					</label>
+
+					<label class="authorization__data-label">
+						<div class="authorization__data-title">
+							Пароль:
+						</div>
+						<input class="modal__input authorization__data-input authorization__data-input_invalid" type="password" data-id="authorizationPasswordInput">
+						
+						<div class="authorization__data-error 1authorization__data-error_empty" data-id="authorizationPasswordError" data-status="5">
+							Слишком короткий пароль
+						</div>	
+					</label>
+				</div>
+
+				<div class="authorization__section authorization__remember" data-id="authorizationRemember">
+					<div class="authorization__remember-text">
+						Чужой компьютер:
+					</div>
+					
+					<div class="slider-button authorization__remember-chek" data-id="authorizationRememberChek" data-save="true">
+						<div class="slider-button__switch 1slider-button_active">
+							
+						</div>
+					</div>
+				</div>
+
+				<div class="authorization__section modal__buttons authorization__buttons">
+					<button class="button authorization__button" data-id="authorizationCancel">
+						Отмена
+					</button>
+
+					<button class="button authorization__button authorization__button_inactive" data-id="authorizationSignin">
+						Регистрация
+					</button> 
+
+					<button class="button authorization__button" data-id="authorizationRegistration">
+						Вход
+					</button>
+				</div>	
+			</article>
+		</aside> 
+-->
+	</div>
+</body>
+</html>
+

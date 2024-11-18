@@ -1,0 +1,68 @@
+$editing-note-add-tag-icon-size: 1.2rem
+$editing-note-button-size: 1rem
+
+.editing-note
+	position: sticky
+	bottom: 0
+	z-index: 3
+	overflow: auto
+	max-height: 100%
+
+	&__header
+		display: flex
+		gap: $spacing-small
+		padding: $spacing-small
+		background-color: $color-light-second
+		justify-content: space-between
+		align-items: center
+		width: 100%
+
+	&__button
+		flex: 1 1 50%
+		display: flex
+		justify-content: center
+		align-items: center
+		gap: $spacing-normal
+
+		&:hover
+			background-color: $color-light-main
+
+			& .editing-note__button-icon-chek
+				background-color: $color-colored-green-dark
+
+			& .editing-note__button-icon-cross
+				background-color: $color-colored-red-dark
+		&-title
+			font-size: 1rem
+
+		&-icon
+			width: $editing-note-button-size
+			height: $editing-note-button-size
+			background-color: $color-dark-second
+
+	&__text
+		background-color: $color-light-second
+		border-radius: $spacing-small
+		border: 1px solid $color-light-second
+
+		&:focus
+			background-color: $color-light-main
+			border-color: $color-dark-main
+
+	&__add-tag
+		background-color: $color-light-main
+		padding: $spacing-small $spacing-normal
+		border-radius: $spacing-small
+		display: flex
+		align-items: center
+		gap: $spacing-normal
+
+		&:hover
+			background-color: $color-colored-green-light
+
+		&-icon
+			background-image: url('../img/icons/153.png')
+			background-position: center
+			background-size: contain
+			width: $editing-note-add-tag-icon-size
+			height: $editing-note-add-tag-icon-size

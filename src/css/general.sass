@@ -1,0 +1,372 @@
+$input-button-icon-width: 2rem
+
+$tags-new-height: 2rem
+$tags-new-save-size: 1.6rem
+$tags-new-save-margin: calc($spacing-normal + ($tags-new-height - $tags-new-save-size) / 2)
+
+$tag-line-options-size: 1.6rem
+
+$modal-top-margin: 10vh
+$modal-min-width: 300px
+$modal-max-width: 900px
+$modal-width: 90%
+$modal-max-height: 80vh
+
+$context-menu-dot-size: round(up, 0.2rem, 1px)
+$context-menu-item-min-width: 10rem 
+
+$slider-button-height: 1.2rem
+$slider-button-width: 2.8rem
+$slider-button-border-radius: 0.6rem
+$slider-button-icon-size: 1rem
+
+body
+	height: var(--viewport-height)
+	width: 100%
+	background-image: url('../img/bg-2.jpg')
+	background-repeat: no-repeat
+	background-attachment: fixed
+	background-size: cover
+
+.container
+	min-width: 350px
+	max-width: 1400px
+	width: 100%
+	margin: auto
+
+.modal	
+	&__overlay
+		position: fixed
+		left: 0
+		top: 0
+		right: 0
+		bottom: 0
+		backdrop-filter: blur(0.3rem)
+		z-index: 3
+		
+		&:before
+			position: fixed
+			content: ''
+			left: 0
+			top: 0
+			right: 0
+			bottom: 0
+			background-color: $color-dark-second
+			opacity: 0.5
+
+	&__body
+		position: relative
+		z-index: 3
+		background-color: $color-light-main
+		min-width: $modal-min-width
+		max-width: $modal-max-width
+		width: $modal-width
+		margin: auto
+		margin-top: $modal-top-margin
+		border-radius: $spacing-normal
+		text-align: center
+		overflow: auto
+		max-height: $modal-max-height
+		display: flex
+		flex-direction: column
+		align-items: center
+		gap: $spacing-normal
+		padding: $spacing-normal
+
+	&__title
+		font-size: 1.1rem
+
+	&__input
+		border-radius: $spacing-small
+		padding: $spacing-normal
+		width: 100%
+		background-color: $color-light-second
+		border: 1px solid $color-light-second
+
+		&:focus
+			background-color: $color-light-main
+			border-color: $color-dark-main
+
+	&__buttons
+		width: 100%
+		display: flex
+		justify-content: center
+		gap: $spacing-normal
+
+.button
+	padding: $spacing-normal
+	border-radius: $spacing-small
+	background-color: $color-colored-green-light
+	cursor: pointer
+	font-size: 0.9rem
+	font-weight: 700
+	
+	&:hover
+		background-color: $color-colored-green-dark
+
+	&-icon
+		cursor: pointer
+		
+	&-inline
+		cursor: pointer
+
+.slider-button
+	display: flex
+	justify-content: flex-end
+	align-items: center
+	background-color: $color-light-second
+	box-shadow: inset $shadow-light
+	height:	$slider-button-height 
+	width: $slider-button-width
+	border-radius: $slider-button-border-radius
+	padding: calc($spacing-small / 2)
+	cursor: pointer
+		
+	&__switch
+		height: $slider-button-icon-size
+		width: $slider-button-icon-size
+		border-radius: 50%
+		background-color: $color-dark-second
+		box-shadow: $shadow-dark
+		transition: background-color 0.3s
+	
+	&_active
+		justify-content: flex-start
+		
+		&	.slider-button__switch
+					background-color: $color-colored-green-dark
+					transition: background-color 0.3s
+.menu
+	&-action
+		display: flex
+		flex-direction: column
+		justify-content: space-evenly
+		align-items: center
+		border-radius: 50%
+		padding: $spacing-small
+		background-color: $color-dark-main
+		cursor: pointer
+			
+		&__line
+			width: 75%
+			height: $context-menu-dot-size
+			background-color: $color-light-main
+			border-radius: $context-menu-dot-size
+
+		&__dot
+			width: $context-menu-dot-size
+			height: $context-menu-dot-size
+			background-color: $color-light-main
+			border-radius: 50%
+
+		&:hover
+			background-color: $color-light-main
+
+			& span 
+				background-color: $color-dark-main
+	
+		&-light
+			background-color: $color-light-main
+
+			& .menu-action__span  
+				background-color: $color-dark-main
+
+			&:hover
+				background-color: $color-dark-main
+
+				& .menu-action__span 
+					background-color: $color-light-main
+
+.figure-button
+	display: flex
+	justify-content: center
+	align-items: center
+	cursor: pointer
+
+	&__item
+		display: flex
+		justify-content: center
+		align-items: center
+		width: 100%
+		height: 100%
+		background-color: $color-dark-second
+	
+	&__cross
+		clip-path: polygon(15% 0, 50% 35%, 85% 0, 100% 15%, 65% 50%, 100% 85%, 85% 100%, 50% 65%, 15% 100%, 0 85%, 35% 50%, 0 15%)
+
+	&__chek
+		clip-path: polygon(14% 24%, 44% 64%, 85% 0, 100% 15%, 45% 100%, 0 45%)
+	
+	&:hover 
+		& .figure-button__cross
+			background-color: $color-colored-red-dark
+
+		& .figure-button__chek
+			background-color: $color-colored-green-dark
+
+		&	.figure-button__arrow
+			background-color: $color-colored-green-dark
+
+	&__arrow
+		background-color: $color-colored-green-light
+	
+		&-left
+			clip-path: polygon(0% 50%, 100% 0%, 65% 50%, 100% 100%)
+
+		&-right
+			clip-path: polygon(0% 0%, 100% 50%, 0% 100%, 35% 50%) 
+
+.icon_active-size
+	transition: transform 0.3s
+
+	&:hover
+		transform: scale(1.01)
+		transition: transform 0.3s
+
+.no-scroll
+	overflow: hidden
+
+.tags
+	&-row
+		display: flex
+		flex-wrap: wrap
+		gap: $spacing-normal
+		cursor: pointer
+
+	&-column
+		&-new
+			border-top: 1px solid $color-light-second
+	&-new
+		position: relative
+		padding: $spacing-small
+
+		&__input
+			width: 100%
+			border: 1px solid $color-light-second
+			border-radius: $spacing-small
+			padding: $spacing-normal 
+			padding-right: calc($input-button-icon-width + $spacing-small)
+			background-color: $color-light-second
+			font-size: 0.9rem
+			display: flex
+			align-items: center
+			height: $tags-new-height
+
+			&:focus
+				background-color: $color-light-main
+				border-color: $color-dark-main
+
+
+		&__save
+			position: absolute
+			top: $tags-new-save-margin
+			right: $tags-new-save-margin
+			width: $tags-new-save-size
+			height: $tags-new-save-size
+			background-color: $color-light-main
+			border-radius: 50%
+
+			&-chek
+				width: 60%
+				height: 60%
+		
+			&_inactive
+				cursor: auto
+				opacity: 0
+
+.tag
+	&-inline
+		border-radius: $spacing-normal
+		display: flex
+
+		&__section
+			background-color: $color-colored-green-light
+			padding: $spacing-small $spacing-normal 
+			display: flex
+			align-items: center
+			
+			&:hover
+				background-color: $color-colored-green-dark
+
+		&__options
+			border-left: 1px solid $color-light-main
+			border-radius: 0 $spacing-small $spacing-small 0
+			width: $tag-line-options-size
+			height: $tag-line-options-size
+			padding: $spacing-small
+
+		&__title
+			border-radius: $spacing-small
+			justify-content: center 
+
+.section-overlay
+	position: relative
+
+	&:after
+		position: absolute
+		top: 0
+		left: 0
+		bottom: 0
+		right: 0
+		content: ''
+		background-color: $color-dark-main
+		opacity: 0.5
+
+.context-menu
+	background-color: $color-light-main
+	position: absolute
+	border-radius: $spacing-small
+	z-index: 1
+	gap: $spacing-small
+	box-shadow: $shadow-light
+	font-size: 0.9rem
+	display: flex
+	flex-direction: column
+	max-height: 100%
+	overflow: hidden
+
+	&__list
+		display: flex
+		flex-direction: column
+		overflow: auto
+		padding: $spacing-small
+		gap: $spacing-small
+
+	&__item
+		padding: $spacing-normal
+		border-radius: $spacing-small
+		min-width: $context-menu-item-min-width 			
+		font-size: 1.1rem
+		cursor: pointer
+
+		&:hover
+			background-color: $color-light-second
+
+.popup
+	position: absolute
+	display: flex
+	flex-direction: column
+	justify-content: space-between
+	align-items: center
+	background-color: $color-light-main
+	border: 1px solid $color-light-second
+	border-radius: $spacing-small
+	padding: $spacing-normal
+
+.app
+	height: 100%
+	height: -webkit-fill-available
+	position: relative
+	display: flex
+	box-shadow: $shadow-light
+
+.hidden-item
+	position: absolute
+	content: ''
+	left: 0
+	top: 0
+	height: 0
+	width: 0
+	clip-path: circle(0)
+
+

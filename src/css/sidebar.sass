@@ -1,0 +1,136 @@
+
+$sidebar-mini-width: 2.5rem
+$sidebar-mini-icon-size: $sidebar-mini-width - 2 * $spacing-small
+
+$sidebar-main-width: 18rem
+$sidebar-main-icon-size: 1.25rem
+$sidebar-main-active-size: 20rem
+
+$sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
+
+
+.sidebar
+	&-mini		
+		display: flex
+		position: relative
+		z-index: 	1
+		background-color: $color-colored-green-light
+		padding: $spacing-small 
+		width: $sidebar-mini-width
+		display: flex
+		flex-direction: column
+		gap: $spacing-normal
+		box-shadow: $sidebar-shadow-right
+
+		&__item
+			background-position: center
+			background-size: contain
+			background-repeat: no-repeat
+			width: $sidebar-mini-icon-size
+			height: $sidebar-mini-icon-size
+
+		&__slider
+			background-color: $color-colored-green-light
+
+			&:hover .menu-action__span
+				background-color: $color-colored-green-light
+
+		&_hide
+			z-index: 0
+
+	&-main
+		overflow: hidden
+		position: absolute	
+		background-color: $color-light-second
+		top: 0
+		bottom: 0
+		left: 0
+		width: 0
+		transition: 0.5s
+		box-shadow: $sidebar-shadow-right
+		z-index: 2
+
+		&_show
+			width: $sidebar-main-active-size
+			overflow: auto
+			transition: 0.5s
+
+		&-container
+			display: flex
+			flex-direction: column
+			padding: $spacing-normal
+			gap: $spacing-normal
+
+	&-link-item
+		white-space: nowrap
+		padding: $spacing-normal
+		position: relative
+		padding-left: calc($sidebar-main-icon-size + 2 * $spacing-normal)
+		cursor: pointer
+		display: flex
+		border-radius: $spacing-normal
+		
+		&__count
+			padding-left: $spacing-normal
+
+		&:hover
+			background-color: $color-light-main
+			transform: scale(1.01)
+
+		&:before
+			position: absolute
+			content: ''
+			left: $spacing-normal
+			bottom: $spacing-normal
+			width: $sidebar-main-icon-size
+			height: $sidebar-main-icon-size
+			background-size: contain
+			background-repeat: no-repeat
+
+	&-all-notes
+		&:before
+			background-image: url('../img/icons/032.png')
+
+	&-favorites
+		&:before
+			background-image: url('../img/icons/042.png')
+
+	&-videos
+		&:before
+			background-image: url('../img/icons/052.png')
+	
+	&-audios
+		&:before
+			background-image: url('../img/icons/062.png')
+	
+	&-images
+		&:before
+			background-image: url('../img/icons/072.png')
+	
+	&-other-files
+		&:before
+			background-image: url('../img/icons/082.png')
+
+	&-tags
+		padding: $spacing-small $spacing-normal
+
+		&__title
+			font-size: 1.1rem
+			font-weight: 700
+		&__list
+			margin: $spacing-normal 0
+
+	&-modal
+		&__input
+			border: 1px solid $color-light-second
+			background-color: $color-light-second
+			margin: $spacing-big auto
+
+			&:focus
+				border: 1px solid $color-dark-second
+				background-color: $color-light-main
+
+		&__button
+			width: 49%
+
+

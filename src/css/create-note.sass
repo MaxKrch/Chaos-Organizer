@@ -1,0 +1,266 @@
+$create-note-main-section-block-height: 2.4rem
+$create-note-main-section-icon-size: 2rem
+
+$create-note-send-size: 1.8rem
+$create-note-send-margin: calc(($create-note-main-section-block-height - $create-note-send-size) / 2)
+
+$create-note-geolocation-icon-height: calc($create-note-main-section-block-height * 0.5)
+$create-note-geolocation-icon-width: calc($create-note-main-section-block-height * 1.1)
+$create-note-geolocation-icon-width-border-radius: calc($create-note-geolocation-icon-height / 2)
+
+$create-note-added-tags-min-height: $spacing-small
+$create-note-added-tags-max-height: 6.6rem
+
+$create-note-attachment-inline-height: 6rem
+$create-note-attachment-inline-item-size: calc($create-note-attachment-inline-height - 2 * $spacing-small)
+
+$create-note-attachment-block-item-height: 2rem
+$create-note-attachment-block-remove-size: calc($create-note-attachment-block-item-height - 2 * $spacing-small)
+
+$create-note-horizontal-arrow-height: 2rem
+$create-note-vertical-arrow-width: 2rem
+
+.create-note
+	&__main-section		
+		background-color: $color-light-main
+		box-shadow: $shadow-dark
+		display: flex
+		justify-content: space-between
+		padding: $spacing-normal
+		gap: $spacing-small
+		align-items: center
+
+	&__text
+		position: relative
+		flex-basis: 100%
+		margin-bottom: $spacing-normal
+
+		&-body
+			border-radius: $spacing-small
+			background-color: $color-light-second
+			padding: $spacing-small calc($create-note-send-size + 2 * $create-note-send-margin) $spacing-small $spacing-normal
+			border: 1px solid $color-light-second
+			min-height: $create-note-main-section-block-height
+			display: flex
+			overflow: auto
+			flex-direction: column
+			justify-content: center
+			word-break: break-all
+			max-height: calc(var(--viewport-height) * 0.5)
+
+			&:focus
+				background-color: $color-light-main
+				border-color: $color-dark-second
+				
+			&_empty
+				color: $color-dark-second
+		
+		&-send
+			height: $create-note-send-size
+			width: $create-note-send-size
+			border-radius: 50%
+			top: $create-note-send-margin
+			right: $create-note-send-margin
+			position: absolute
+			background-color: $color-colored-green-dark
+			box-shadow: $shadow-light
+
+			&:hover
+				background-color: $color-colored-green-rich
+
+			&-icon
+				background-color: $color-light-main
+				clip-path: polygon(20% 20%, 90% 50%, 20% 80%, 40% 50%)
+				height: 100%
+				width: 100%	
+
+	&__button
+		cursor: pointer
+		display: flex
+		height: $create-note-main-section-block-height
+		border-radius: $spacing-small
+		align-items: center
+		gap: $spacing-small
+		border-radius: $spacing-small
+		padding: $spacing-normal
+
+		&:hover
+			background-color: $color-colored-green-light		
+
+		&-text
+			border-radius: $spacing-small
+			flex-basis: 9rem
+			text-wrap: nowrap
+
+		&-icon
+			height: $create-note-main-section-icon-size
+			width: $create-note-main-section-icon-size
+			background-repeat: no-repeat
+			background-position: center
+
+	&__add-files-icon
+		background-image: url('../img/icons/123.png')
+		background-size: 75%
+
+	&__start-record
+		&-video-icon
+			background-image: url('../img/icons/133.png')
+			background-size: 80%
+
+		&-voice-icon
+			background-image: url('../img/icons/143.png')
+			background-size: 85%
+		
+	&__add-tag-icon
+		background-image: url('../img/icons/153.png')
+		background-size: 80%			
+
+	&__geolocation
+		&-icon
+			height: $create-note-geolocation-icon-height
+			width: $create-note-geolocation-icon-width
+			border-radius: $create-note-geolocation-icon-width-border-radius
+
+	&_active
+		flex-wrap: wrap
+
+	&__attachment
+		&-error
+			display: flex
+			flex-direction: column
+			gap: $spacing-small
+
+		&-title
+			font-size: 1.1rem
+
+		&-description
+			font-size: 0.9rem
+
+	&__added-tags
+		background-color: $color-light-second
+
+		&-list
+			padding: $spacing-normal
+			min-height: $create-note-added-tags-min-height
+			max-height: $create-note-added-tags-max-height
+			overflow: auto
+
+	&__added-tag
+		font-size: 0.9rem
+
+		&-remove
+			color: $color-colored-red-light
+			font-size: 0.7rem
+
+			&-cross
+				width: 60%
+				height: 60%
+
+	&__attachment
+		background-color: $color-light-main
+
+		&-error
+			padding: $spacing-normal
+
+		&-list
+			padding: $spacing-small
+
+		&-inline
+			display: flex
+
+			&-list
+				display: flex
+				gap: $spacing-small
+				overflow: hidden
+				flex-basis: 100%
+
+			&-item	
+				height: $create-note-attachment-inline-item-size
+				flex: 0 0 $create-note-attachment-inline-item-size
+				position: relative
+
+				&:hover
+					box-shadow: $shadow-dark
+
+			&-file
+				object-fit: cover
+				object-position: center
+				width: 100%
+				height: 100%
+
+			&-remove
+				position: absolute
+				top: $spacing-small
+				right: $spacing-small
+				width: 25%
+				height: 25%
+				border-radius: 50%
+				background-color: rgb(0 0 0 / 0.25) 
+				display: flex
+				justify-content: center
+				align-items: center
+				font-size: 0.8rem
+				cursor: pointer
+
+				&:hover
+					background-color: $color-light-main
+
+				&-cross
+					width: 50%
+					height: 50%
+					background-color: $color-light-main
+
+		&-block
+			background-color: $color-light-second
+
+			&-list
+				display: flex
+				flex-direction: column
+				gap: $spacing-small
+				padding: $spacing-small
+				overflow: auto
+		
+			&-item
+				height: $create-note-attachment-block-item-height
+				display: flex
+				justify-content: space-between
+				align-items: center
+				border-radius: $spacing-small
+				padding: $spacing-small
+				background-color: $color-light-main
+
+				&:hover
+					box-shadow: $shadow-dark
+
+			&-file
+				height: 100%
+				display: flex
+				align-items: center
+
+			&-remove
+				height: $create-note-attachment-block-remove-size
+				flex: 0 0 $create-note-attachment-block-remove-size
+				background-color: $color-light-main
+				border-radius: 50%
+				cursor: pointer
+
+				&-cross
+					height: 50%
+					width: 50%
+
+		&-button
+			width: $create-note-vertical-arrow-width
+			height: $create-note-attachment-inline-height
+
+			&:hover .create-note__attachment-arrow
+					background-color: $color-colored-green-rich
+
+		&-arrow			
+			background-color: $color-colored-green-dark
+			width: 80%
+			height: 60%
+
+
+
+
+

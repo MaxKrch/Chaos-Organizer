@@ -1,0 +1,88 @@
+@media (max-width: 800px) and (min-width: 481px)
+	html
+		font-size: 16px
+
+
+@media (max-width: 480px)
+	html
+		font-size: 14px
+
+@media (max-width: 900px)
+	.feed
+		&-content__item
+			max-width: 600px
+			min-width: 300px
+			width: 98%
+			margin: auto
+	
+		&-note
+			&__content
+				grid-template-columns: 100%
+				grid-template-rows: repeat(3, auto)
+
+			&__attachment-block
+				grid-column: span 1
+
+
+@media (max-width: 1000px) and (min-width: 701px)
+	.create-note__main-section
+		justify-content: flex-start
+
+	.create-note__button
+		flex-basis: 33%
+	
+	.create-note__geolocation
+		order: 4
+
+	.create-note__add-tag
+		order: 5
+
+
+@media (max-width: 700px) and (min-width: 401px)
+	.create-note__button
+		flex-basis: 49%
+
+	.create-note__start-record-voice
+		order: 1
+
+	.create-note__start-record-video
+		order: 2
+
+	.create-note__geolocation
+		order: 3
+
+	.create-note__add-files
+		order: 4
+
+	.create-note__add-tag
+		order: 5
+
+@media (max-width: 400px)
+	.create-note__button:hover
+		background-color: transparent
+
+	.create-note__button
+		flex-basis: auto
+	
+	.create-note__geolocation
+		order: 1
+	
+	.create-note__start-record-voice
+		order: 2
+
+	.create-note__start-record-video
+		order: 3
+ 	
+	.create-note__add-files
+		order: 4
+
+	.create-note__add-tag
+		order: 5
+
+	.create-note__button-text_hide 
+		position: absolute
+		left: 0
+		right: 0
+		top: 0
+		bottom: 0
+		clip-path: circle(0)

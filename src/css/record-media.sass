@@ -1,0 +1,82 @@
+$record-media-controll-height: 3.5rem
+$record-media-controll-item-size: calc($record-media-controll-height - 2 * $spacing-big)
+
+.record-media
+	height: 100%
+	display: flex
+	flex-direction: column
+	justify-content: flex-end
+	position: relative
+	box-shadow: $shadow-dark
+
+	&__show
+		position: relative
+		height: calc(var(--viewport-height) - $record-media-controll-height)	
+
+		&-video
+			object-position: center
+			width: 100%
+			height: 100%	
+
+		&-back
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			height: 100%
+			
+			&-video
+				object-fit: cover
+
+		&-main
+			width: 100%
+			height: 100%
+			backdrop-filter: blur(3rem)
+
+			&-video
+				object-fit: contain
+				background-color: rgb(0 0 0 / 0.1)
+
+	&__controll
+		display: flex
+		justify-content: space-between
+		background-color: $color-light-second
+		align-items: stretch
+		height: $record-media-controll-height
+		font-size: 1.5rem
+
+	&__button
+		flex-basis: 35%
+		display: flex
+		justify-content: center
+		align-items: center
+		padding: $spacing-normal 
+		font-weight: 700
+
+		&-icon
+			height: 1.8rem
+			width: 1.8rem
+
+	&__cancel
+		&-icon
+			background-color: $color-colored-red-rich
+			
+		&:hover
+			background: linear-gradient(90deg, $color-dark-second 0, $color-light-second 50%)
+
+	&__save
+		&-icon
+			background-color: $color-colored-green-rich
+			
+		&:hover			
+			background: linear-gradient(90deg, $color-light-second 50%, $color-dark-second 100%)
+
+	&__time
+		flex-basis: 60%
+		height: 100%
+		display: flex
+		justify-content: center
+		align-items: center
+		background-color: $color-light-main
+		background: linear-gradient(90deg, $color-light-second 0, $color-light-main 20%, $color-light-main 80%, $color-light-second 100%)
+		padding: $spacing-normal

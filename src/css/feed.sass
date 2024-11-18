@@ -1,0 +1,386 @@
+$shadow-botton-under-main: 0 1px 3px 0 $color-dark-second
+$shadow-top-under-main: 0 -1px 3px 0 $color-dark-second
+
+$header-block-min-height: 2.2rem
+
+$pinned-height-size: 2rem
+$pinned-unpin-size: calc($pinned-height-size - 2 * $spacing-small)
+$pinned-text-font-size: 0.8rem
+$pinned-text-line-height: calc($pinned-height-size / 2)
+
+$note-context-menu-open-size: 1.6rem
+
+$note-block-file-heght: 2rem
+$note-block-file-icom-size: 1.2rem
+$note-block-file-left-padding: calc($note-block-file-icom-size + 2 * $spacing-small)
+$note-block-file-options-size: calc($note-block-file-heght - 2 * $spacing-small)
+
+$feed-block-file-height: 2.4rem
+$feed-block-file-options-size: 1.8rem
+
+$note-updating-size: 1.5rem
+
+$feed-scroll-down-size: 1.8rem
+$feed-scroll-down-margin: 0.8rem
+
+.feed
+	width: calc(100% - $sidebar-mini-width)
+	display: flex
+	flex-direction: column
+	position: relative
+
+	&-header
+		box-shadow: $shadow-botton-under-main
+
+		&__block
+			display: flex
+			justify-content: space-between
+			width: 100%
+			min-height: $header-block-min-height
+			align-items: center
+		
+		&__item
+			padding: $spacing-small $spacing-normal
+			height: 100%
+			border-radius: $spacing-small
+			display: flex
+			align-items: center
+	
+	&-account
+		background-color: $color-light-second
+
+		&__user
+			font-size: 0.8rem
+			text-overflow: ellipsis
+			width: 70%
+	
+		&__sign
+			cursor: pointer
+			font-size: 0.9rem
+			padding: $spacing-normal
+			
+			&:hover
+				background-color: $color-light-main
+				box-shadow: inset $shadow-light
+
+	&-status	
+		background-color: $color-light-main
+		font-weight: 700
+
+		&__category
+			overflow: hidden
+			white-space: nowrap
+	
+		&__network
+			font-size: 0.8rem
+			color: $color-text-main
+
+			&_offline
+				color: $color-dark-second
+				font-weight: 500
+
+	&-main	
+		overflow-y: scroll
+		flex: 1 1 0
+		position: relative
+		background-color: rgb(255 255 255 / 0.55)
+		backdrop-filter: blur(10px)
+	
+	&-pinned
+		border-top: 1px solid $color-light-second
+		position: sticky
+		left: 0
+		right: 0
+		top: 0
+		background-color: $color-light-main
+		box-shadow: $shadow-botton-under-main
+		display: flex
+		justify-content: space-between
+		padding: $spacing-small $spacing-normal
+		gap: $spacing-normal
+		align-items: center
+		z-index: 1
+
+		&__item
+			height: $pinned-height-size
+
+		&__img
+			flex: 0 0 $pinned-height-size
+			font-size: 0.75rem
+			overflow: hidden
+
+			&-item
+				object-fit: cover
+				height: 100%
+				width: 100%
+
+		&__text
+			text-overflow: ellipsis
+			overflow: hidden
+			font-size: $pinned-text-font-size
+			line-clamp: 2
+			cursor: pointer
+			line-height: $pinned-text-line-height
+
+		&__unpin
+			cursor: pointer
+			color: $color-colored-red-rich
+			font-size: 0.8rem		
+			border-radius: 50%
+			flex: 0 0 $pinned-unpin-size
+			display: flex
+			justify-content: center
+			align-items: center
+			height: $pinned-unpin-size
+
+			&-cross
+				background-color: $color-dark-main
+				height: 50%
+				width: 50%
+
+	&-content
+		&__list
+			display: flex
+			flex-direction: column
+			gap: $spacing-big
+			margin: auto
+			padding: $spacing-big 0
+
+		&__item
+			box-shadow: $shadow-dark
+			max-width: 96%
+			min-width: 800px		
+			border-radius: $spacing-small
+			margin: auto
+	
+		&-file	
+			&__options
+				width: $note-context-menu-open-size
+				height: $note-context-menu-open-size
+				flex-shrink: 0
+			
+		&-inline-file
+			position: relative	
+		
+			&__file
+				object-fit: cover
+				object-position: center
+				width: 100%
+				height: 100%	
+				display: block
+			
+			&__options
+				position: absolute
+				top: calc($spacing-normal - $spacing-small)
+				right: calc($spacing-normal - $spacing-small)
+				background-color: rgb(0 0 0 / 0.1)
+
+		&-block-file
+			display: flex
+			justify-content: space-between
+			align-items: center
+			height: $note-block-file-heght
+			padding: $spacing-small
+			border-radius: $spacing-normal
+			cursor: pointer
+
+			&:hover
+				background-color: $color-light-second			
+		
+			&__options
+				background-color: transparent
+				height: $note-block-file-options-size
+				width: $note-block-file-options-size
+						
+				&:hover
+					background-color: $color-light-main
+
+					& .menu-action__dot
+						background-color: $color-dark-main
+
+		&-audio-file
+			height: 100%
+			margin-right: $spacing-normal
+	
+		&-other-file
+			position: relative
+			padding-left: $note-block-file-left-padding	
+
+			&:before
+				position: absolute
+				content: ''
+				background-size: cover
+				background-repeat: no-repeat
+				background-position: center
+				background-image: url('../img/icons/102.png')
+				left: $spacing-small
+				top: spacing-small
+				width: $note-block-file-icom-size
+				height: $note-block-file-icom-size
+
+			&__link
+				color: $color-text-main
+				display: flex
+				align-items: center
+				text-overflow: ellipsis
+				overflow: hidden
+				white-space: nowrap
+				margin-right: $spacing-normal
+
+	&-note
+		&__header
+			padding: $spacing-small $spacing-normal
+			background-color: $color-dark-main
+			display: flex
+			justify-content: space-between
+			border-radius: $spacing-small $spacing-small 0 0
+
+		&__geo
+			font-size: 0.85rem
+			display: flex
+			align-items: center
+			color: $color-light-main
+
+		&__context-menu-open
+			width: $note-context-menu-open-size
+			height: $note-context-menu-open-size
+			padding: $spacing-small
+			border-radius: 50%
+
+			& .menu-action__span
+				border-color: $color-light-main
+
+			&:hover
+				background-color: $color-light-main
+
+				&	.menu-action__span
+					border-color: $color-dark-main
+		
+		&__content
+			background-color: $color-light-main
+			padding: $spacing-small
+			display: grid
+			grid-template-columns: minmax(40%, 50%) minmax(50%, 60%)
+			grid-template-rows: repeat(2, auto)
+			gap: $spacing-normal
+
+		&__attachment-inline
+			gap: $spacing-small
+
+		&__empty-attachment-inline
+			grid-template-columns: 100%	
+
+		&__text
+			grid-row: span 2
+			padding: $spacing-small
+			&-p
+				padding-bottom: $spacing-small
+
+		&__attachment-block
+			padding: $spacing-small
+			display: flex
+			flex-direction: column
+			justify-content: flex-end
+			gap: $spacing-normal
+
+		&__footer
+			background-color: $color-light-second
+			border-radius: 0 0 $spacing-small $spacing-small
+			padding: $spacing-small
+
+			&-info
+				display: flex
+				justify-content: flex-end
+				padding: $spacing-normal
+				gap: $spacing-big
+				font-size: 0.9rem
+				align-items: end
+
+		&__tags
+			width: 100%
+			overflow: hidden
+			padding: $spacing-small
+			display: flex
+
+		&__edited
+			font-size: 0.8rem
+			font-style: italic
+
+		&__sending
+			width: $note-updating-size
+			height: $note-updating-size
+			position: relative
+			color: $color-dark-second
+			cursor: help
+
+			&-span
+				position: absolute
+				bottom: 0
+				display: inline-block
+
+				&-1
+					left: 0
+
+				&-2
+					left: 25%
+			
+			&_success
+				color: $color-text-main
+
+			&_error
+				color: $color-colored-red-dark
+
+	&-file
+		border-radius: $spacing-small
+		overflow: hidden
+
+	&-block-file
+		background-color: $color-light-main
+		height: $feed-block-file-height
+		padding: $spacing-small
+
+		&:hover
+			background-color: $color-light-second
+
+		&__options
+			width: $feed-block-file-options-size
+			height: $feed-block-file-options-size
+
+		&__body
+			height: 100%
+
+	&-scroll-down
+		position: absolute
+		bottom: $feed-scroll-down-margin
+		right: $feed-scroll-down-margin
+		width: $feed-scroll-down-size
+		height: $feed-scroll-down-size
+		border-radius: 50%
+		background-color: $color-light-second
+		cursor: pointer
+		box-shadow: $shadow-dark
+		opacity: 0.75
+
+		&:hover
+			background-color: $color-light-main
+			opacity: 1
+
+			& .feed-scroll-down__button
+				background-color: $color-colored-green-dark
+
+		&__button
+			clip-path: polygon(15% 35%, 50% 60%, 85% 35%, 85% 45%, 50% 75%, 15% 45%)
+			background-color: $color-dark-main
+			width: 100%
+			height: 100%
+
+	&-footer
+		box-shadow: $shadow-top-under-main
+		position: relative
+		overflow: auto
+
+	&-create-note_active
+		z-index: 1
+
+	&_no-scroll
+		overflow: hidden
