@@ -1,5 +1,5 @@
-$shadow-botton-under-main: 0 1px 3px 0 $color-dark-second
-$shadow-top-under-main: 0 -1px 3px 0 $color-dark-second
+$shadow-bottom-under-main: 0 1px 1px -1px $color-dark-main
+$shadow-top-under-main: 0 -1px 1px -1px $color-dark-main
 
 $header-block-min-height: 2.2rem
 
@@ -7,6 +7,8 @@ $pinned-height-size: 2rem
 $pinned-unpin-size: calc($pinned-height-size - 2 * $spacing-small)
 $pinned-text-font-size: 0.8rem
 $pinned-text-line-height: calc($pinned-height-size / 2)
+
+$feed-note-header-min-height: 2rem
 
 $note-context-menu-open-size: 1.6rem
 
@@ -28,9 +30,13 @@ $feed-scroll-down-margin: 0.8rem
 	display: flex
 	flex-direction: column
 	position: relative
+	left: 0
+	transition: 0.5s
 
 	&-header
-		box-shadow: $shadow-botton-under-main
+		position: relative
+		z-index: 1
+		box-shadow: $shadow-bottom-under-main
 
 		&__block
 			display: flex
@@ -38,16 +44,18 @@ $feed-scroll-down-margin: 0.8rem
 			width: 100%
 			min-height: $header-block-min-height
 			align-items: center
+			padding: $spacing-small
 		
 		&__item
-			padding: $spacing-small $spacing-normal
 			height: 100%
 			border-radius: $spacing-small
 			display: flex
 			align-items: center
+			height: 100%
+			padding: $spacing-small $spacing-normal
 	
 	&-account
-		background-color: $color-light-second
+		background-color: $color-colored-green-light
 
 		&__user
 			font-size: 0.8rem
@@ -56,12 +64,13 @@ $feed-scroll-down-margin: 0.8rem
 	
 		&__sign
 			cursor: pointer
-			font-size: 0.9rem
-			padding: $spacing-normal
-			
+			height: 100%
+			border: 1px solid $color-light-main
+			margin-right: calc($spacing-normal - 1px)		
+
 			&:hover
 				background-color: $color-light-main
-				box-shadow: inset $shadow-light
+				color: $color-colored-green-rich
 
 	&-status	
 		background-color: $color-light-main
@@ -75,6 +84,9 @@ $feed-scroll-down-margin: 0.8rem
 			font-size: 0.8rem
 			color: $color-text-main
 
+			&_connecting
+				color: $color-dark-main
+
 			&_offline
 				color: $color-dark-second
 				font-weight: 500
@@ -83,17 +95,16 @@ $feed-scroll-down-margin: 0.8rem
 		overflow-y: scroll
 		flex: 1 1 0
 		position: relative
-		background-color: rgb(255 255 255 / 0.55)
-		backdrop-filter: blur(10px)
+		background-color: rgb(255 255 255 / 0.75)
 	
 	&-pinned
-		border-top: 1px solid $color-light-second
+		border-top: 1px solid $color-light-main
 		position: sticky
 		left: 0
 		right: 0
 		top: 0
 		background-color: $color-light-main
-		box-shadow: $shadow-botton-under-main
+		box-shadow: $shadow-bottom-under-main
 		display: flex
 		justify-content: space-between
 		padding: $spacing-small $spacing-normal
@@ -121,6 +132,7 @@ $feed-scroll-down-margin: 0.8rem
 			line-clamp: 2
 			cursor: pointer
 			line-height: $pinned-text-line-height
+			flex-basis: 100%
 
 		&__unpin
 			cursor: pointer
@@ -144,7 +156,7 @@ $feed-scroll-down-margin: 0.8rem
 			flex-direction: column
 			gap: $spacing-big
 			margin: auto
-			padding: $spacing-big 0
+			padding: $spacing-normal 0
 
 		&__item
 			box-shadow: $shadow-dark
@@ -234,6 +246,7 @@ $feed-scroll-down-margin: 0.8rem
 			display: flex
 			justify-content: space-between
 			border-radius: $spacing-small $spacing-small 0 0
+			min-height: $feed-note-header-min-height
 
 		&__geo
 			font-size: 0.85rem
@@ -273,6 +286,7 @@ $feed-scroll-down-margin: 0.8rem
 		&__text
 			grid-row: span 2
 			padding: $spacing-small
+
 			&-p
 				padding-bottom: $spacing-small
 
@@ -295,6 +309,7 @@ $feed-scroll-down-margin: 0.8rem
 				gap: $spacing-big
 				font-size: 0.9rem
 				align-items: end
+				align-items: center
 
 		&__tags
 			width: 100%
@@ -309,26 +324,33 @@ $feed-scroll-down-margin: 0.8rem
 		&__sending
 			width: $note-updating-size
 			height: $note-updating-size
-			position: relative
 			color: $color-dark-second
+			position: relative
 			cursor: help
-
-			&-span
+			
+			&-icon
 				position: absolute
-				bottom: 0
+				top: 50%
+				transform: translate(0, -50%)
 				display: inline-block
+				height: 50%
+				width: 50%
+				background: linear-gradient(90deg, $color-light-main 0%, $color-colored-green-dark 50%, $color-light-main 100%)
+				background-size: 3rem 100%
+				animation: sending-gradient 3s infinite
 
 				&-1
 					left: 0
 
 				&-2
-					left: 25%
-			
-			&_success
-				color: $color-text-main
+					left: 30%
 
-			&_error
-				color: $color-colored-red-dark
+			&_await .feed-note__sending-icon
+				background: none
+				background-color: $color-dark-second
+
+			&_await:hover .feed-note__sending-icon
+				background-color: $color-dark-second
 
 	&-file
 		border-radius: $spacing-small
@@ -378,9 +400,18 @@ $feed-scroll-down-margin: 0.8rem
 		box-shadow: $shadow-top-under-main
 		position: relative
 		overflow: auto
-
-	&-create-note_active
-		z-index: 1
-
+	
 	&_no-scroll
 		overflow: hidden
+
+	&_shifted
+		width: calc(85% - $sidebar-mini-width)
+		left: 15%
+		transition: 0.5s 0.25s
+
+@keyframes sending-gradient
+	0%
+		background-position: 0 0
+
+	100%
+		background-position: 3rem 0

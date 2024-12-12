@@ -1,7 +1,13 @@
-function setViewportHeight() {
-  document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`);
-}
-setViewportHeight()
+import fixViewportHeightMobile from './utils/fixViewportHeightMobile';
+import updateServiceWorker from './utils/updateServiceWorker';
+import App from './App';
 
-window.addEventListener('orientationchange', setViewportHeight);
-window.addEventListener('resize', setViewportHeight);
+fixViewportHeightMobile()
+updateServiceWorker()
+
+const container = document.querySelector('#app-container')
+const app = new App(container);
+
+app.init()
+
+

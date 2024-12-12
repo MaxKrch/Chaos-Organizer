@@ -1,21 +1,22 @@
 
-$sidebar-mini-width: 2.5rem
-$sidebar-mini-icon-size: $sidebar-mini-width - 2 * $spacing-small
+$sidebar-mini-width: 2.75rem
+$sidebar-mini-padding: 0.4rem
+$sidebar-mini-icon-size: $sidebar-mini-width - 2 * $sidebar-mini-padding
 
 $sidebar-main-width: 18rem
 $sidebar-main-icon-size: 1.25rem
 $sidebar-main-active-size: 20rem
 
-$sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
+$sidebar-shadow-right: 1px 0 2px 0 rgb(105 105 105 / 0.55)
 
 
 .sidebar
 	&-mini		
 		display: flex
 		position: relative
-		z-index: 	1
+		z-index: 	2
 		background-color: $color-colored-green-light
-		padding: $spacing-small 
+		padding: $spacing-small $sidebar-mini-padding 
 		width: $sidebar-mini-width
 		display: flex
 		flex-direction: column
@@ -27,16 +28,13 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 			background-size: contain
 			background-repeat: no-repeat
 			width: $sidebar-mini-icon-size
-			height: $sidebar-mini-icon-size
+			height: $sidebar-mini-icon-size		
 
 		&__slider
 			background-color: $color-colored-green-light
 
 			&:hover .menu-action__span
 				background-color: $color-colored-green-light
-
-		&_hide
-			z-index: 0
 
 	&-main
 		overflow: hidden
@@ -46,20 +44,21 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 		bottom: 0
 		left: 0
 		width: 0
-		transition: 0.5s
+		transition: 0.75s
 		box-shadow: $sidebar-shadow-right
-		z-index: 2
+		z-index: 3
 
 		&_show
 			width: $sidebar-main-active-size
 			overflow: auto
-			transition: 0.5s
+			transition: 0.75s
 
 		&-container
+			min-height: 100%
 			display: flex
 			flex-direction: column
 			padding: $spacing-normal
-			gap: $spacing-normal
+			gap: $spacing-big
 
 	&-link-item
 		white-space: nowrap
@@ -72,6 +71,10 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 		
 		&__count
 			padding-left: $spacing-normal
+			font-size: 0.8rem
+			display: flex
+			align-items: flex-end
+			color: $color-dark-main
 
 		&:hover
 			background-color: $color-light-main
@@ -95,6 +98,12 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 		&:before
 			background-image: url('../img/icons/042.png')
 
+	&-files
+		&__container
+			display: flex
+			flex-direction: column
+			gap: $spacing-normal
+
 	&-videos
 		&:before
 			background-image: url('../img/icons/052.png')
@@ -115,16 +124,26 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 		padding: $spacing-small $spacing-normal
 
 		&__title
+			white-space: nowrap
 			font-size: 1.1rem
 			font-weight: 700
 		&__list
 			margin: $spacing-normal 0
 
 	&-modal
+		&__body
+			max-width: 600px
+
+		&__description
+			font-size: 1.1rem
+
 		&__input
 			border: 1px solid $color-light-second
 			background-color: $color-light-second
 			margin: $spacing-big auto
+			text-align: center
+			font-size: 1rem
+			max-width: calc(500px + $spacing-normal)
 
 			&:focus
 				border: 1px solid $color-dark-second
@@ -132,5 +151,14 @@ $sidebar-shadow-right: 1px 0 3px 0 rgb(105 105 105 / 0.55)
 
 		&__button
 			width: 49%
+			max-width: 250px
+
+			&_inactive
+				background-color: $color-light-second
+				cursor: auto
+
+				&:hover
+					background-color: $color-light-second				
+
 
 

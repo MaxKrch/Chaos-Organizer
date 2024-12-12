@@ -1,0 +1,21 @@
+.no-scroll
+	overflow: hidden
+
+.hidden-item
+	position: absolute
+	content: ''
+	left: 0
+	top: 0
+	height: 0
+	width: 0
+	clip-path: circle(0)
+
+
+.input-value
+	&_good
+		&:focus
+			border-color: $color-colored-green-dark
+				
+	&_bad
+		&:focus
+			border-color: $color-colored-red-dark

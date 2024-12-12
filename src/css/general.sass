@@ -4,7 +4,7 @@ $tags-new-height: 2rem
 $tags-new-save-size: 1.6rem
 $tags-new-save-margin: calc($spacing-normal + ($tags-new-height - $tags-new-save-size) / 2)
 
-$tag-line-options-size: 1.6rem
+$tag-line-height: 1.5rem
 
 $modal-top-margin: 10vh
 $modal-min-width: 300px
@@ -13,10 +13,10 @@ $modal-width: 90%
 $modal-max-height: 80vh
 
 $context-menu-dot-size: round(up, 0.2rem, 1px)
-$context-menu-item-min-width: 10rem 
+$context-menu-item-min-width: 8rem 
 
 $slider-button-height: 1.2rem
-$slider-button-width: 2.8rem
+$slider-button-width: 2.2rem
 $slider-button-border-radius: 0.6rem
 $slider-button-icon-size: 1rem
 
@@ -28,78 +28,27 @@ body
 	background-attachment: fixed
 	background-size: cover
 
-.container
+#app-container
+	height: 100%
+
+.app
+	height: 100%
+	height: -webkit-fill-available
+	position: relative
+	display: flex
+	box-shadow: $shadow-light
 	min-width: 350px
 	max-width: 1400px
 	width: 100%
 	margin: auto
-
-.modal	
-	&__overlay
-		position: fixed
-		left: 0
-		top: 0
-		right: 0
-		bottom: 0
-		backdrop-filter: blur(0.3rem)
-		z-index: 3
-		
-		&:before
-			position: fixed
-			content: ''
-			left: 0
-			top: 0
-			right: 0
-			bottom: 0
-			background-color: $color-dark-second
-			opacity: 0.5
-
-	&__body
-		position: relative
-		z-index: 3
-		background-color: $color-light-main
-		min-width: $modal-min-width
-		max-width: $modal-max-width
-		width: $modal-width
-		margin: auto
-		margin-top: $modal-top-margin
-		border-radius: $spacing-normal
-		text-align: center
-		overflow: auto
-		max-height: $modal-max-height
-		display: flex
-		flex-direction: column
-		align-items: center
-		gap: $spacing-normal
-		padding: $spacing-normal
-
-	&__title
-		font-size: 1.1rem
-
-	&__input
-		border-radius: $spacing-small
-		padding: $spacing-normal
-		width: 100%
-		background-color: $color-light-second
-		border: 1px solid $color-light-second
-
-		&:focus
-			background-color: $color-light-main
-			border-color: $color-dark-main
-
-	&__buttons
-		width: 100%
-		display: flex
-		justify-content: center
-		gap: $spacing-normal
 
 .button
 	padding: $spacing-normal
 	border-radius: $spacing-small
 	background-color: $color-colored-green-light
 	cursor: pointer
-	font-size: 0.9rem
-	font-weight: 700
+	font-size: 1rem
+	font-weight: 500
 	
 	&:hover
 		background-color: $color-colored-green-dark
@@ -127,7 +76,7 @@ body
 		width: $slider-button-icon-size
 		border-radius: 50%
 		background-color: $color-dark-second
-		box-shadow: $shadow-dark
+		box-shadow: $shadow-light
 		transition: background-color 0.3s
 	
 	&_active
@@ -136,46 +85,6 @@ body
 		&	.slider-button__switch
 					background-color: $color-colored-green-dark
 					transition: background-color 0.3s
-.menu
-	&-action
-		display: flex
-		flex-direction: column
-		justify-content: space-evenly
-		align-items: center
-		border-radius: 50%
-		padding: $spacing-small
-		background-color: $color-dark-main
-		cursor: pointer
-			
-		&__line
-			width: 75%
-			height: $context-menu-dot-size
-			background-color: $color-light-main
-			border-radius: $context-menu-dot-size
-
-		&__dot
-			width: $context-menu-dot-size
-			height: $context-menu-dot-size
-			background-color: $color-light-main
-			border-radius: 50%
-
-		&:hover
-			background-color: $color-light-main
-
-			& span 
-				background-color: $color-dark-main
-	
-		&-light
-			background-color: $color-light-main
-
-			& .menu-action__span  
-				background-color: $color-dark-main
-
-			&:hover
-				background-color: $color-dark-main
-
-				& .menu-action__span 
-					background-color: $color-light-main
 
 .figure-button
 	display: flex
@@ -223,19 +132,216 @@ body
 		transform: scale(1.01)
 		transition: transform 0.3s
 
-.no-scroll
+.menu
+	&-action
+		display: flex
+		flex-direction: column
+		justify-content: space-evenly
+		align-items: center
+		border-radius: 50%
+		padding: $spacing-small
+		background-color: $color-dark-main
+		cursor: pointer
+			
+		&__line
+			width: 75%
+			height: $context-menu-dot-size
+			background-color: $color-light-main
+			border-radius: $context-menu-dot-size
+
+		&__dot
+			width: $context-menu-dot-size
+			height: $context-menu-dot-size
+			background-color: $color-light-main
+			border-radius: 50%
+
+		&:hover
+			background-color: $color-light-main
+
+			& span 
+				background-color: $color-dark-main
+	
+		&-light
+			background-color: $color-light-main
+
+			& .menu-action__span  
+				background-color: $color-dark-main
+
+			&:hover
+				background-color: $color-dark-main
+
+				& .menu-action__span 
+					background-color: $color-light-main
+.modal
+	&__overlay
+		position: fixed
+		left: 0
+		top: 0
+		right: 0
+		bottom: 0
+		backdrop-filter: blur(0.3rem)
+		z-index: 5
+		
+		&:before
+			position: fixed
+			content: ''
+			left: 0
+			top: 0
+			right: 0
+			bottom: 0
+			background-color: $color-dark-second
+			opacity: 0.5
+
+	&__body
+		position: relative
+		z-index: 3
+		background-color: $color-light-main
+		min-width: $modal-min-width
+		max-width: $modal-max-width
+		width: $modal-width
+		margin: auto
+		margin-top: $modal-top-margin
+		border-radius: $spacing-normal
+		text-align: center
+		overflow: auto
+		max-height: $modal-max-height
+		display: flex
+		flex-direction: column
+		align-items: center
+		gap: $spacing-normal
+		padding: $spacing-big
+
+	&__title
+		font-size: 1.1rem
+
+	&__input
+		border-radius: $spacing-small
+		padding: $spacing-normal
+		width: 100%
+		background-color: $color-light-second
+		border: 1px solid $color-light-second
+
+		&:focus
+			background-color: $color-light-main
+			border-color: $color-dark-main
+
+	&__buttons
+		width: 100%
+		display: flex
+		justify-content: center
+		gap: $spacing-normal
+
+.section-overlay
+	position: relative
+
+	&:after
+		position: absolute
+		z-index: 1
+		top: 0
+		left: 0
+		bottom: 0
+		right: 0
+		content: ''
+		background-color: $color-dark-main
+		opacity: 0.3
+
+.context-menu
+	background-color: $color-light-main
+	position: absolute
+	border-radius: $spacing-small
+	z-index: 1
+	gap: $spacing-small
+	box-shadow: $shadow-light
+	font-size: 0.9rem
+	display: flex
+	flex-direction: column
+	max-height: 100%
 	overflow: hidden
+
+	&__list
+		display: flex
+		flex-direction: column
+		overflow: auto
+		padding: $spacing-small
+		gap: $spacing-small
+
+	&__item
+		padding: $spacing-normal
+		border-radius: $spacing-small
+		min-width: $context-menu-item-min-width 			
+		font-size: 0.9rem
+		cursor: pointer
+
+		&:hover
+			background-color: $color-light-second
+
+.notice
+	position: fixed
+	display: flex
+	flex-direction: column
+	justify-content: space-between
+	align-items: center
+	background-color: $color-light-main
+	box-shadow: $shadow-dark
+	border-radius: $spacing-small
+	padding: $spacing-normal
+	gap: $spacing-normal
+	z-index: 2
+	top: 0
+	right: 0
+	max-width: 90%
+	width: 18rem
+	min-height: 6rem
+
+	&__title
+		font-size: 1.1rem
+		text-align: center
+
+	&__description
+		font-size: 0.9rem
+		text-align: center
+
+	&__buttons
+		display: flex
+		justify-content: space-between
+		gap: $spacing-normal
+		width: 100%
+
+	&__button
+		padding: $spacing-small
+		flex-basis: 50%
+		border-radius: $spacing-small
+		font-size: 0.9rem
+		border: solid 1px transparent
+
+	&__confirm
+		color: $color-light-main
+
+		background-color: $color-colored-green-dark
+	
+		&:hover
+			background-color: $color-colored-green-rich
+
+	&__cancel
+		color: $color-colored-green-dark
+		border-color: $color-colored-green-dark
+		background-color: $color-light-main
+
+		&:hover
+			color: $color-colored-green-rich
+			border-color: $color-colored-green-rich
+			background-color: transparent
 
 .tags
 	&-row
 		display: flex
 		flex-wrap: wrap
 		gap: $spacing-normal
-		cursor: pointer
 
 	&-column
 		&-new
 			border-top: 1px solid $color-light-second
+			
 	&-new
 		position: relative
 		padding: $spacing-small
@@ -278,8 +384,12 @@ body
 	&-inline
 		border-radius: $spacing-normal
 		display: flex
+		cursor: pointer
+		font-size: 1rem
+		align-items: center
 
 		&__section
+			height: $tag-line-height
 			background-color: $color-colored-green-light
 			padding: $spacing-small $spacing-normal 
 			display: flex
@@ -291,82 +401,9 @@ body
 		&__options
 			border-left: 1px solid $color-light-main
 			border-radius: 0 $spacing-small $spacing-small 0
-			width: $tag-line-options-size
-			height: $tag-line-options-size
-			padding: $spacing-small
+			width: $tag-line-height
 
 		&__title
 			border-radius: $spacing-small
 			justify-content: center 
-
-.section-overlay
-	position: relative
-
-	&:after
-		position: absolute
-		top: 0
-		left: 0
-		bottom: 0
-		right: 0
-		content: ''
-		background-color: $color-dark-main
-		opacity: 0.5
-
-.context-menu
-	background-color: $color-light-main
-	position: absolute
-	border-radius: $spacing-small
-	z-index: 1
-	gap: $spacing-small
-	box-shadow: $shadow-light
-	font-size: 0.9rem
-	display: flex
-	flex-direction: column
-	max-height: 100%
-	overflow: hidden
-
-	&__list
-		display: flex
-		flex-direction: column
-		overflow: auto
-		padding: $spacing-small
-		gap: $spacing-small
-
-	&__item
-		padding: $spacing-normal
-		border-radius: $spacing-small
-		min-width: $context-menu-item-min-width 			
-		font-size: 1.1rem
-		cursor: pointer
-
-		&:hover
-			background-color: $color-light-second
-
-.popup
-	position: absolute
-	display: flex
-	flex-direction: column
-	justify-content: space-between
-	align-items: center
-	background-color: $color-light-main
-	border: 1px solid $color-light-second
-	border-radius: $spacing-small
-	padding: $spacing-normal
-
-.app
-	height: 100%
-	height: -webkit-fill-available
-	position: relative
-	display: flex
-	box-shadow: $shadow-light
-
-.hidden-item
-	position: absolute
-	content: ''
-	left: 0
-	top: 0
-	height: 0
-	width: 0
-	clip-path: circle(0)
-
 

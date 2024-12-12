@@ -25,64 +25,73 @@
 
 
 @media (max-width: 1000px) and (min-width: 701px)
-	.create-note__main-section
+	.create-note_active
 		justify-content: flex-start
 
-	.create-note__button
-		flex-basis: 33%
+		& .create-note__button
+			flex-basis: calc((100% - 2 * $spacing-normal) / 3)
+
+			&-text
+				flex-basis: 8rem
+		
+		& .create-note__geolocation
+			order: 4
+
+		& .create-note__add-tag
+			order: 5
+			justify-content: center
+
+		& .create-note__start-record-video
+			justify-content: center
+
+		& .create-note__add-files
+			justify-content: flex-end
+
+@media (max-width: 700px)	
+	.create-note_active
+		& .create-note__button
+			flex-basis: auto
+
+			&:hover
+				background-color: transparent
 	
-	.create-note__geolocation
-		order: 4
-
-	.create-note__add-tag
-		order: 5
-
-
-@media (max-width: 700px) and (min-width: 401px)
-	.create-note__button
-		flex-basis: 49%
-
-	.create-note__start-record-voice
-		order: 1
-
-	.create-note__start-record-video
-		order: 2
-
-	.create-note__geolocation
-		order: 3
-
-	.create-note__add-files
-		order: 4
-
-	.create-note__add-tag
-		order: 5
-
-@media (max-width: 400px)
-	.create-note__button:hover
-		background-color: transparent
-
-	.create-note__button
-		flex-basis: auto
-	
-	.create-note__geolocation
-		order: 1
-	
-	.create-note__start-record-voice
-		order: 2
-
-	.create-note__start-record-video
-		order: 3
- 	
-	.create-note__add-files
-		order: 4
-
-	.create-note__add-tag
-		order: 5
-
-	.create-note__button-text_hide 
-		position: absolute
+	.create-note__button-adaptive-text
+		position: fixed
 		left: 0
-		right: 0
 		top: 0
-		bottom: 0
-		clip-path: circle(0)
+		width: 0
+		height: 0
+		clip-path: polygon(0 0 0 0)
+		overflow: hidden
+
+
+// @media (max-width: 700px) and (min-width: 501px)
+		// & .create-note__geolocation
+		// 	order: 2		
+
+		// & .create-note__add-tag
+		// 	order: 3
+
+		// & .create-note__add-files
+		// 	order: 6
+
+
+
+@media (max-width: 550px)
+	.create-note_active
+		& .create-note__geolocation
+			order: 1	
+			flex-basis: 50%	
+
+		& .create-note__start-record-voice
+			order: 2
+
+		& .create-note__start-record-video
+			order: 3
+	 	
+		& .create-note__add-files
+			order: 4
+
+		& .create-note__add-tag
+			order: 5
+			flex-basis: 50%

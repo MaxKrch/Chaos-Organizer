@@ -1,12 +1,13 @@
 $create-note-main-section-block-height: 2.4rem
-$create-note-main-section-icon-size: 2rem
+$create-note-main-section-icon-size: 1.5rem
 
 $create-note-send-size: 1.8rem
 $create-note-send-margin: calc(($create-note-main-section-block-height - $create-note-send-size) / 2)
 
-$create-note-geolocation-icon-height: calc($create-note-main-section-block-height * 0.5)
-$create-note-geolocation-icon-width: calc($create-note-main-section-block-height * 1.1)
+$create-note-geolocation-icon-height: 1.2rem
+$create-note-geolocation-icon-width: 2rem
 $create-note-geolocation-icon-width-border-radius: calc($create-note-geolocation-icon-height / 2)
+$create-note-geolocation-switch-height: 0.9rem
 
 $create-note-added-tags-min-height: $spacing-small
 $create-note-added-tags-max-height: 6.6rem
@@ -27,13 +28,12 @@ $create-note-vertical-arrow-width: 2rem
 		display: flex
 		justify-content: space-between
 		padding: $spacing-normal
-		gap: $spacing-small
+		gap: $spacing-normal
 		align-items: center
 
 	&__text
 		position: relative
 		flex-basis: 100%
-		margin-bottom: $spacing-normal
 
 		&-body
 			border-radius: $spacing-small
@@ -80,7 +80,7 @@ $create-note-vertical-arrow-width: 2rem
 		height: $create-note-main-section-block-height
 		border-radius: $spacing-small
 		align-items: center
-		gap: $spacing-small
+		gap: $spacing-big
 		border-radius: $spacing-small
 		padding: $spacing-normal
 
@@ -95,53 +95,47 @@ $create-note-vertical-arrow-width: 2rem
 		&-icon
 			height: $create-note-main-section-icon-size
 			width: $create-note-main-section-icon-size
+			flex-shrink: 0
 			background-repeat: no-repeat
 			background-position: center
+			background-size: 90%
 
 	&__add-files-icon
 		background-image: url('../img/icons/123.png')
-		background-size: 75%
+		background-size: 85%
 
 	&__start-record
 		&-video-icon
 			background-image: url('../img/icons/133.png')
-			background-size: 80%
 
 		&-voice-icon
 			background-image: url('../img/icons/143.png')
-			background-size: 85%
+			background-size: 95%
 		
 	&__add-tag-icon
 		background-image: url('../img/icons/153.png')
-		background-size: 80%			
 
-	&__geolocation
+	&__geolocation	
 		&-icon
 			height: $create-note-geolocation-icon-height
 			width: $create-note-geolocation-icon-width
 			border-radius: $create-note-geolocation-icon-width-border-radius
 
+			&-switch
+				height: $create-note-geolocation-switch-height
+				width: $create-note-geolocation-switch-height
+
 	&_active
 		flex-wrap: wrap
 
-	&__attachment
-		&-error
-			display: flex
-			flex-direction: column
-			gap: $spacing-small
 
-		&-title
-			font-size: 1.1rem
-
-		&-description
-			font-size: 0.9rem
 
 	&__added-tags
 		background-color: $color-light-second
 
 		&-list
 			padding: $spacing-normal
-			min-height: $create-note-added-tags-min-height
+			// min-height: $create-note-added-tags-min-height
 			max-height: $create-note-added-tags-max-height
 			overflow: auto
 
@@ -158,9 +152,18 @@ $create-note-vertical-arrow-width: 2rem
 
 	&__attachment
 		background-color: $color-light-main
-
+		
 		&-error
+			display: flex
+			flex-direction: column
+			gap: $spacing-small			
 			padding: $spacing-normal
+
+			&-title
+				font-size: 1.1rem
+
+			&-description
+				font-size: 0.9rem
 
 		&-list
 			padding: $spacing-small
@@ -250,8 +253,7 @@ $create-note-vertical-arrow-width: 2rem
 
 		&-button
 			width: $create-note-vertical-arrow-width
-			height: $create-note-attachment-inline-height
-
+			
 			&:hover .create-note__attachment-arrow
 					background-color: $color-colored-green-rich
 
