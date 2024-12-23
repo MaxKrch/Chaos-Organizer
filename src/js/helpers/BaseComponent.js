@@ -33,6 +33,11 @@ export default class PageComponent extends Streams {
 		}
 
 		this.removeElementFromPage();
+		
+		for(let key in this.streams) {
+			this.clearSubscriptionsStream(key);
+		}
+
 		this.element = null;
 	}
 

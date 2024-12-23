@@ -1,56 +1,63 @@
 const routes = {
-	server: `http://192.168.1.103:7070`,
+	server: `http://192.168.1.110:7070`,
 	sse: `/sse`,
+	tag: {
+		validate: `/tag/validate`
+	},
+	auth: {
+		chekEmail: '/account/validate',
+		register: `/account/register`,
+		login: `/account/login`,
+		logout: `/account/logout`,
+		refreshTokens: `/account/refresh`,
+	},
 	categories: {
 		allNotes: {
 			path: `/`, 
-			section: `notes`,
 			title: `Все записи`,
 		},
 		favorites: {
 			path: `/favorites`,
-			section: `notes`,
 			title: `Избранное`,
 		},
 		videos: {
 			path: `/videos`,
-			section: `files`,
 			title: `Видео`,
 		},
 		audios: {
 			path: `/audios`,
-			section: `files`,
 			itle: `Аудио`,
 		},
 		images: {
 			path: `/images`,
-			section: `files`,
 			title: `Изображения`,
 		},
 		otherFiles: {
 			path: `/files`,
-			section: `files`,
 			title: `Файлы`,
 		},
 		tag: {
 			path: `/tag-[tag.id]`,
-			section: `tag`,
 			title: `#[tag.title]`,
 		}
 	},
-	serverPath: {
-		feed: `/feed`,
-		notes: `/feed/notes`,
-		files: `/feed/files`,
-		tagNotes: `/feed/tag`,
-		note: `/note`,  
-		file: `/file`,
-		tag: `/tag`,
-		get: ``,
-		create: `/create`,
-		remove: '/remove',
-		edit: `/edit`,
-		synch: `/synch`
+	serverPaths: {
+		target: {
+			notes: `/feed/notes`,
+			files: `/feed/files`,
+			tagNotes: `/feed/tag`,
+			note: `/note`,  
+			file: `/file`,
+			tag: `/tag`,
+		},
+		action: {
+			loading: ``,
+			liveLoading: ``,
+			synch: ``,
+			create: `/create`,
+			remove: '/remove',
+			edit: `/edit`,
+		}
 	}
 }
 

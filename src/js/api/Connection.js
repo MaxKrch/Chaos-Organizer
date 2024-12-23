@@ -7,7 +7,7 @@ export default class Connection extends Streams {
 	constructor() {
 		super();
 		this.server = routes.server;
-		this.path = routes.serverPath;
+		this.paths = routes.serverPaths;
 		this.headers = {
    		'Content-Type': 'application/json;charset=utf-8'
   	}
@@ -16,21 +16,6 @@ export default class Connection extends Streams {
 	async init() {
 		this.#createStreams();
 		this.#subscribeToStreams();
-
-		this.requestToServer({
-			target: `notes`,
-			action: `get`,
-			body: {
-				category: `favorites`,
-				tagId: null,
-				lastNoteId: null,
-				includLastId: false,
-				direction: `preview`,
-			},
-			token: `65544545444fdfdsf4s5df`
-		})
-
-		this.retryAwaitingRequest(5)
 	}
 
 	#createStreams() {
@@ -48,27 +33,24 @@ export default class Connection extends Streams {
 		this.subscribeToStream(`requestToServer`, this.#onResponseFromServer.bind(this))
 	}
 
-	#onResponseFromServer(data) {
+	#onResponseFromServer(response) {
 		try {
-			const response = data.response || data;
-
 			if(response.success) {
 				this.addDataToStream(`successRequestData`, response.data);
 				this.removeAwaitingRequest();
 				return;
 			}
 
-			if(!response.success) {
-				if(response.error.type === `request`) {
-					this.addDataToStream(`errorRequestData`, response.error.description);
-					return;
-				}
+			if(response.error.type === `request`) {
+				this.addDataToStream(`errorRequestData`, response.error.description);
+				return;
+			}
 
-				if(response.error.type === `token`); {
-					this.addDataToStream(`errorAccessToken`, response.error.description);
-					return;
-				}
-			} 
+			if(response.error.type === `token`); {
+				this.addDataToStream(`errorAccessToken`, response.error.description);
+				return;
+			}
+		
 		} catch(err) {
 			console.log(`unknown error: ${err}`);
 		}
@@ -90,7 +72,8 @@ export default class Connection extends Streams {
 	}
 
 	async #sendRequestToServer(request) {
-		const requestToServer = await ajax(request).pipe(
+		const requestToServer = ajax(request).pipe(
+			map(value => value.response),			
 			catchError((err) => {
 				return of({
 					success: false,
@@ -117,13 +100,16 @@ export default class Connection extends Streams {
 		this.addDataToStream(`awaitingRequest`, null)
 	}
 
-
 	#createRequest(data) {
 		try {			
-			const { target, action,	body, token } = data;
-			const path = `${this.path[target]}/${this.path[action]}`;
+			const { target, action, token, body = null } = data;
+			const path = `${this.paths.target[target]}/${this.paths.action[action]}`;
 			const url = `${this.server}${path}`;
 			const method = connectionOptions.method[action];
+			const optionsForResponse = {
+				target,
+				action
+			}
 
 			const headers = {
 				...this.headers,
@@ -135,6 +121,7 @@ export default class Connection extends Streams {
 	  		method,
 	  		headers,
 	  		body,
+	  		optionsForResponse
 	  	}
 
 			return request

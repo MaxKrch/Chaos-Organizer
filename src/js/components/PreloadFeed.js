@@ -1,12 +1,13 @@
 import BaseComponent from '../helpers/BaseComponent';
 
 export default class PreloadFeed extends BaseComponent {
-	constructor(container) {
+	constructor(container, type) {
 		super(container);
 		this.pinnedNote = false;
+		this.#renderElement(type)
 	}
 
-	createElement(type) {
+	#renderElement(type) {
 		if(type === `notes`) {
 			this.pinnedNote = document.createElement(`section`);						
 			this.pinnedNote.classList.add(`feed-pinned`);

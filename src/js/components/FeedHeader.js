@@ -2,14 +2,16 @@ import BaseComponent from '../helpers/BaseComponent'
 import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
 
-import { fromEvent, throttleTime } from 'rxjs';
+import { fromEvent, throttleTime, filter, Subject } from 'rxjs';
 
-import { feedHeaderStaticElements } from '../consts/index.js'
+import { feedHeaderStaticElements, routes } from '../consts/index.js'
 
 export default class FeedHeader extends BaseComponent {
 	constructor(container) {
 		super(container);
+		this.categories = routes.categories;
 		this.staticElements = {
+			account: null,
 			user: null,
 			sign: null,
 			category: null,
@@ -30,11 +32,11 @@ export default class FeedHeader extends BaseComponent {
 		this.element = document.createElement(`header`);
 		this.element.classList.add(`feed-header`);
 		this.element.innerHTML = `
-			<div class="feed-header__block feed-account">
+			<div class="feed-header__block feed-account" data-id="feedAccount">
 				<div class="feed-header__item feed-account__user" data-id="feedAccountUser">
 				</div>
 				
-				<div class="feed-header__item feed-account__sign" data-id="feedAccountSign" data-auth="false">
+				<div class="feed-header__item feed-account__sign not-selected" data-id="feedAccountSign" data-auth="false" data-active-button="true">
 					${feedHeaderStaticElements.auth.false}
 				</div>	
 			</div>
@@ -56,54 +58,58 @@ export default class FeedHeader extends BaseComponent {
 			return;
 		}
 
+		this.staticElements.account = this.element.querySelector(`[data-id="feedAccount"]`)
 		this.staticElements.user = this.element.querySelector(`[data-id="feedAccountUser"]`)
 		this.staticElements.sign = this.element.querySelector(`[data-id="feedAccountSign"]`)
 		this.staticElements.category = this.element.querySelector(`[data-id="feedStatusCategory"]`)
 		this.staticElements.network = this.element.querySelector(`[data-id="feedStatusNetwork"]`)
 	}
 
-	upgradeUser(user) {
-		console.log(this)
+	setUser(user) {
 		if(!user) {
 			console.log(`empty request`);
 			return;		
-			}	
+		}	
 
-		this.staticElements.user.textContent = user.email;
-	}
-
-	upgradeSign(data) {
-		if(!data) {
-			console.log(`empty request`);
+		if(!user.email || !user.auth) {
+			this.staticElements.user.textContent = ``;
+			
+			this.staticElements.sign.dataset.auth = false;
+			this.staticElements.sign.textContent = feedHeaderStaticElements.auth[false];
 			return;
 		}
 
-		this.staticElements.sign.dataset.auth = data.auth;
-		this.staticElements.sign.textContent = feedHeaderStaticElements.auth[data.auth];
+		this.staticElements.user.textContent = user.email;
+
+		this.staticElements.sign.dataset.auth = user.auth;
+		this.staticElements.sign.textContent = feedHeaderStaticElements.auth[user.auth];
 	}
 
-	upgradeCategory(category) {
-		if(!category) {
+	setCategory(location) {
+		if(!location) {
 			console.log(`empty request`);
 			return;
 		}	
 
-		const text = category.type == `tag` ?
-			`#${category.title}` :
-			category.title
+		switch(location.section) {
+			case `tag`:
+				this.staticElements.category.textContent = `#${location.tag?.title}`
+				break;
 
-		this.staticElements.category.textContent = text;
+			default:
+				this.staticElements.category.textContent = this.categories[location.category]?.title
+		}
 	}
 
-	upgradeNetwork(data) {
-		if(!data) {
+	setNetworkStatus(status) {
+		if(!status) {
 			console.log(`empty request`);
 			return;
 		}	
 
-		this.staticElements.network.textContent = feedHeaderStaticElements.network[data.status];
+		this.staticElements.network.textContent = feedHeaderStaticElements.network[status];
 
-		switch (data.status) {
+		switch (status) {
 			case `connecting`:
 				this.staticElements.network.classList.add(`feed-status__network_connecting`);
 				this.staticElements.network.classList.remove(`feed-status__network_offline`);
@@ -122,12 +128,38 @@ export default class FeedHeader extends BaseComponent {
 	}
 
 	#createStreams() {
+		this.saveStream(`requestLogout`, new Subject());
+		this.saveStream(`requestLogin`, new Subject());
+		
 		const clicksOnSign = fromEvent(this.staticElements.sign, `click`).pipe(
-			throttleTime(350)
+			throttleTime(350),
+			filter(value => value.target.dataset.activeButton === `true`)
 		)
 		this.saveStream(`clicksOnSign`, clicksOnSign)
 	}
 
 	#subscribeToStreams() {
+		this.subscribeToStream(`clicksOnSign`, this.#onClickBySignButton.bind(this));
+	}
+
+	addAwaitingStateAccount() {
+		this.staticElements.account.classList.add(`gradient-background_awaiting-response`)
+		this.staticElements.sign.dataset.activeButton = `false`;
+	}
+
+	removeAwaitingStateAccount() {
+		this.staticElements.account.classList.remove(`gradient-background_awaiting-response`)
+		this.staticElements.sign.dataset.activeButton = `true`;
+	}
+
+	#onClickBySignButton(event) {
+		if(!event) {
+			console.log(`empty event`);
+			return
+		}
+
+		const action = event.target.dataset.auth === 'true' ?
+			this.addDataToStream(`requestLogout`, `logout`) :
+			this.addDataToStream(`requestLogin`, `login`);
 	}
 }

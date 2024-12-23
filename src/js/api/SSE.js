@@ -26,8 +26,10 @@ export default class SSE extends Streams {
 	}
 
 	#createStreams() {
+		this.saveStream(`commingMessage`, new Subject())
+
 		for(let key in actionSSEMessages) {
-			this.saveStream(key, new Subject);
+			this.saveStream(key, new Subject());
 		}
 	}
 
@@ -36,13 +38,11 @@ export default class SSE extends Streams {
 	#onComingMessage(message) {
 		try {
 			const data = JSON.parse(message.data);
-			const stream = data.action;
 
-			if(!this.streams[stream]) {
-				console.log(`Empty messaage`);
-				return;
-			}
-			this.addDataToStream(stream, data.body)
+			this.addDataToStream(`commingMessage`, {
+				action: data.action,
+				message: data.body,
+			})
 		
 		} catch (err) {
 			console.log(`Fail response data from server`)

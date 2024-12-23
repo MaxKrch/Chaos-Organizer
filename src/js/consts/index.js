@@ -4,6 +4,8 @@ import { createNoteStaticElements } from './feedFooterVariables.js';
 import { initialState, idbParams } from './storeVariables.js';
 import { routes, actionSSEMessages, connectionOptions } from './connectionVariables.js';
 import { popupVariable } from './popupVariables.js';
+import { authVariables } from './authVariables.js';
+import { loginStreams } from './loginVariable.js'
 
 export { 
 	sidebarStaticElements, 
@@ -14,7 +16,9 @@ export {
 	popupVariable,
 	routes,
 	actionSSEMessages,
-	connectionOptions
+	connectionOptions,
+	authVariables,
+	loginStreams
 }
 
 				

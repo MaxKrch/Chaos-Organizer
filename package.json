@@ -57,6 +57,7 @@
     "worker-loader": "^3.0.8"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^4.5.1",
     "buffer": "^6.0.3",
     "core-js": "^3.38.1",
     "csv-parse": "^5.5.6",

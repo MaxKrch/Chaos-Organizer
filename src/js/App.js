@@ -8,13 +8,18 @@ import MiniSidebar from './components/MiniSidebar'
 import Sidebar from './components/Sidebar'
 import Feed from './components/containers/Feed';
 
+import { routes } from './consts/index.js';
+
 export default class App {
 	constructor(container) {
 		if(!container) {
 			return;
 		}
 		
+		this.startLocation = null;
+
 		this.container = this.#renderAppContainer(container);
+		this.routes = routes;
 		
 		this.store = new Store();
 		this.connection = new Connection();
@@ -28,31 +33,26 @@ export default class App {
 	}
 
 	async init() {
+// const startLocation = window.location.href;
+// Сравнивать стартовую локацию с сохраненным стейтом
+// При отличие после загрузки стета отправлять запрос на получение новых записей
+// Добавлять в историю
+
 		this.#initionRenderApp();		
 		this.feed.main.renderPreloadFeed(`notes`);
 
 		await this.store.init();
 		await this.sse.init();
-		await this.connection.init()
-		await this.auth.init()
-console.log(this)
-	// this.#createAppStreams();
-	// создание стримов 
-	
-	this.#subscribeAppToStreams();
-	// подписка между компонентами, в том числе - рендер странпицы из стейта
+		await this.connection.init();
+		await this.auth.init();
 
-	// this.sse.connectingWithServer()
-	
-	//this.synchState()
-	//Обновляем категори и теги, ве
+		this.#createAppStreams();
+		this.#subscribeAppToStreams();
+		this.#initionStateLoad();
 
-	// this.requestNotes(start, end);
-	// Запрос сообщений
-
-	// this.connection.sendAwaitingNotes();
-	// Отправа измененнызх сообщение, установка таймера если оффлайн.. Плюс при каждом коннекте запускается этот метод... А при каждом лог ауте - клер стэйт и ДБ
-
+		await this.#authentification();
+		
+		this.#updateStateApp();
 	}
 
 	#renderAppContainer(container) {
@@ -64,68 +64,175 @@ console.log(this)
 	}
 
 	#initionRenderApp() {
+		this.login.initionRender()
 		this.miniSidebar.initionRender();
 		this.sidebar.initionRender();
 		this.feed.initionRender();		
-
-
-
-
-
 	}
 
-	#createStreams() {
-
+	#createAppStreams() {
 	}
 
 	#subscribeAppToStreams() {
-		// sidebar.isubscri
-		//streamMiniSidebarClick
-		//streamSidebarChangeTags
-		//streamSidebarSelectCategory
+		this.connection.subscribeToStream(`successRequestData`, this.#onSuccessResponse.bind(this));
+		this.connection.subscribeToStream(`errorRequestData`, this.#onErrorResponse.bind(this));
+		this.connection.subscribeToStream(`errorAccessToken`, this.#onErrorAccessToken.bind(this));		
+	
+		this.login.subscribeToStream(`successLoginUser`, this.#onSuccessLoginUser.bind(this));
+		this.login.subscribeToStream(`successLogoutUser`, this.#onSuccessLogoutUser.bind(this));
+		this.login.subscribeToStream(`successRegisterUser`, this.#onSuccessRegisterUser.bind(this));
 
+		this.auth.subscribeToStream(`successRefreshTokens`, this.#onSuccessRefreshTokens.bind(this));
+		this.auth.subscribeToStream(`errorRefreshTokens`, this.#onErrorRefreshtokens.bind(this));
 
+		this.sse.subscribeToStream(`commingMessage`, this.#onMessageFromSSE.bind(this));
 
-
-		//streamChangeNote
-		//streamRequestNotes
-		//streamSaveNewNote
-
-		//streamDownloadFile
-		//
-
-		//stream
+		this.store.subscribeToStream(`status`, this.#synchState.bind(this));
 
 		this.miniSidebar.subscribeToStream(`showSidebar`, this.#showSidebar.bind(this));
 
-		this.sidebar.subscribeToStream(`modalInputTagChange`, this.#chekModalChangeTag.bind(this));
+		this.sidebar.subscribeToStream(`errorAccessToken`, this.#onErrorAccessToken.bind(this));		
+		this.sidebar.subscribeToStream(`modalInputTagChange`, this.#onModalChangeTag.bind(this));
 		this.sidebar.subscribeToStream(`changeTag`, this.#changeTag.bind(this));
 		this.sidebar.subscribeToStream(`deleteTag`, this.#deleteTag.bind(this));
 		this.sidebar.subscribeToStream(`selectCategory`, this.#selectCategory.bind(this));
 
+		this.feed.subscribeToStream(`requestLogin`, this.#loginUser.bind(this));
+		this.feed.subscribeToStream(`requestLogout`, this.#logoutUser.bind(this));
+		
+		this.feed.subscribeToStream(`editNote`, this.#editNote.bind(this))
+		this.feed.subscribeToStream(`saveNewNote`, this.#saveNewNote.bind(this))
+		this.feed.subscribeToStream(`removeNote`, this.#removeNote.bind(this))
+		this.feed.subscribeToStream(`requestNotes`, this.#requestNotes.bind(this))
+	}
+	
+	#initionStateLoad() {
+		const user = this.store.getStateValue(`user`);
+		this.feed.header.setUser(user)
+			
+		const location = this.store.getStateValue(`location`);
+		this.#updateLocation(location); 
+		
+		const sidebarData = this.store.getStateValue(`sidebarData`);
+		this.sidebar.updateSidebar(sidebarData);
+		
+		const feed = this.store.getStateValue(`feed`);
+		this.feed.createPinnedNote(feed.pinnedNote);
+		this.feed.createNewNoteList(feed.listNotes, location.section);
 
-		this.feed.subscribeToStream(`login`, this.#loginUser.bind(this));
-		this.feed.subscribeToStream(`logout`, this.#logoutUser.bind(this));
-
-
-
-
-
-		this.connection.subscribeToStream(`successRequestData`, this.#parsingResponse.bind(this));
-		this.connection.subscribeToStream(`errorRequestData`, this.#parsingResponseError.bind(this));
-		this.connection.subscribeToStream(`errorAccessToken`, this.#refreshTokens.bind(this));
+		this.feed.initionCreatingNote();		
 	}
 
-	#getLocation() {
+	async #authentification() {
+		console.log(`authentification`)
+	}
+
+	#updateStateApp() {		
+		const tokens = this.store.getStateValue(`tokens`);
+		if(tokens) {
+			this.sse.connection(this.store.getStateValue(`tokens`))
+		}
+//делать запос, при ошибке токена - проверять, тот ли токен был отправлен, если да - разлогин, если нет - попытка с новым токеном
+
+		// делать отменку, что сделан зарпрос лоад лайв, отклонять
+
+
+
+
+
+	
+
+	
+	//this.synchState()
+	//Обновляем категори и теги, ве
+
+	// this.requestNotes(start, end);
+	// Запрос сообщений
+
+	// this.connection.sendAwaitingNotes();
+	// Отправа измененнызх сообщение, установка таймера если оффлайн.. Плюс при каждом коннекте запускается этот метод... А при каждом лог ауте - клер стэйт и ДБ
+	}
+	#onMessageFromSSE(message) {
+	// newNote: {},
+	// removeNote: {},
+	// removeFile: {},
+	// editNote: {},
+	// createdTag: {},
+	// removeTag: {},
+	// pinNote: {},
+	// unpinNote: {},
+	}
+
+
+	#updateLocation(location) {
+		this.feed.header.setCategory(location);
+		
+		const path = location.section === `tag` ?
+			`tag-${location.tag.id}` :
+			this.routes.categories[location.category].path
+
+		window.history.pushState({}, '', path)
+	}
+
+
+
+	#updateWaitingUploadNotes(data) {
+console.log(data)
+	}
+
+
+
+	#synchState() {
 
 	}
 
-	#setLocation(path) {
 
+
+	#updateTokens(data) {
+console.log(data)
 	}
+
+	#onChangeStateStatus(data) {
+console.log(data)
+	}
+
+	#onSuccessLoginUser(data) {
+console.log(data)
+	}
+
+	#onSuccessLogoutUser(data) {
+console.log(data)
+	}
+
+	#onSuccessRegisterUser(data) {
+console.log(data)
+	}
+
+	#onSuccessResponse(data) {
+console.log(data)
+	}
+
+	#onErrorAccessToken() {
+console.log(`upgrade tokens`)
+	}
+
+	#onErrorResponse(error) {
+	console.log(`error response`)	
+	}
+
+	#onSuccessRefreshTokens(data) {
+		console.log(`tokens refresh`)
+	}
+
+	#onErrorRefreshtokens(data) {
+		console.log(`token refresh fail`)
+	}
+
+
 
 	#requestFeed() {
-
+//меняет локацию, отправлчем запрос - стет не меняем... Стейт локацию меняем только при успешной загрузке
+		// в будущем можно добавить вметод - сперва читаем локацию
 	}
 
 	#saveNote(note) {
@@ -144,7 +251,6 @@ console.log(this)
 
 	}
 
-	
 
 	#showSidebar() {
 		this.sidebar.showElement();
@@ -163,12 +269,16 @@ console.log(this)
 		this.feed.clearSubscriptionsStream(`clickOnSectionOverlay`)
 	}
 
-	#chekModalChangeTag(event) {
+	#onModalChangeTag() {
+		const tokens = this.store.getStateValue(`tokens`);
+		const accessToken = tokens?.access;
 
-		console.log(`Проверяю допустимость тега ${event}`);
-		if(true) {
-			this.sidebar.enableModalTagChangeButton()
-		}
+		if(!accessToken) {
+			console.log(`empty token`);
+			return
+		};
+
+		this.sidebar.validateChangingTagTitle(accessToken);
 	}
 
 	#changeTag(tag) {
@@ -186,23 +296,44 @@ console.log(category)
 	}
 
 	#loginUser() {
-console.log(`login`)
+		this.login.addElementToPage();
 	}
 
-	#logoutUser() {
+	async #logoutUser() {
+		this.feed.header.addAwaitingStateAccount()
+		const tokens = this.store.getStateValue(`tokens`);
+		const isLogouted = await this.login.logoutUser(tokens);
+
 		console.log(`logout`)
+				this.feed.header.removeAwaitingStateAccount()
 	}
 
-	#parsingResponse(data) {
-console.log(`incoming data`)
+	
+
+	#connected() {
+		this.feed.header.setNetwork(`online`)
+		this.#sendAwaitingNotes();
 	}
 
-	#refreshTokens() {
-console.log(`upgrade tokens`)
+	#disconnected() {
+		this.feed.header.setNetwork(`offline`)
 	}
 
-	#parsingResponseError(error) {
-	console.log(`error response`)	
+	#changeNote() {
+
+	}
+	
+	#saveNewNote() {
+
+	}
+
+
+
+	#requestNotes() {
+	}
+
+	#sendAwaitingNotes() {
+
 	}
 
 	createRequestToServer(options) {

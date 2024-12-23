@@ -25,17 +25,6 @@ export default class Store extends Streams {
 		} finally {		
 			await this.#creatingStreams();
 			this.#subscribeToStreams();
-
-		
-			setTimeout(() => this.#renderPopupErrorDB(`Приложение обновилось`), 1500);
-
-			this.upgradeStores({
-				location: {	
-					path: `/favorites`, 
-					category: `favorites`,
-					section: `notes`,
-				}
-			})
 		}
 	}
 
@@ -43,7 +32,7 @@ export default class Store extends Streams {
 		let loadedStoreFromIdb = null;
 
 		try	{
-			loadedStoreFromIdb	= await this.#loadStoreFromIdb();
+			loadedStoreFromIdb = await this.#loadStoreFromIdb();
 			
 			} catch(err) {
 			console.log(`Fail load store from idb: ${err}`)
@@ -58,12 +47,24 @@ export default class Store extends Streams {
 			}	else {
 				state = initialState[key]
 			}	
-			console.log(state)
+
 			this.saveStream(key, new BehaviorSubject(state));
 		}
 	}
 
 	#subscribeToStreams() {}
+
+	getStateValue(store) {
+		try {
+			const currentStore = this.streams[store].stream$;
+			const value = currentStore.getValue();
+
+			return value;
+		} catch (err) {
+			console.log(`Ошибка запроса: ${err}`);
+			return false;
+		}		
+	}
 
 	async #connectingWithIDB() {
 		return new Promise((res, rej) => {
@@ -158,7 +159,11 @@ export default class Store extends Streams {
 		return new Promise(async (res, rej) => {
 			try {
 				if(!this.idb) {
-					await this.#connectingWithIDB()
+					await this.#connectingWithIDB();
+
+					if(this.createdObjectStores) {
+						await this.#saveInitialStateToIDB();
+					}
 				}
 
 				const objectStoreNames = Array.from(this.idb.objectStoreNames);
@@ -166,33 +171,33 @@ export default class Store extends Streams {
 				const storeFromIdb = {}
 
 				for(let store of objectStoreNames) {
-					// await new Promise((resStore, rejStore) => {
-						const currentStore = trans.objectStore(store);
-						const getKeys = currentStore.getAllKeys();
+					const currentStore = trans.objectStore(store);
+					const getKeys = currentStore.getAllKeys();
 
-						getKeys.onsuccess = async () => {
-							const keysStore = getKeys.result;
-							storeFromIdb[store] = {}
+					getKeys.onsuccess = async () => {
+						const keysStore = getKeys.result;
+						storeFromIdb[store] = {}
 
-							for(let key of keysStore) {
-								const getValue = currentStore.get(key)
+						for(let key of keysStore) {
+							const getValueByKey = currentStore.get(key)
 	
-								getValue.onsuccess = () => {
-									const value = getValue.result;
-									storeFromIdb[store][key] = value;
-								}
+							getValueByKey.onsuccess = () => {
+								const value = getValueByKey.result;
+								storeFromIdb[store][key] = value;
 							}
-							// resStore(storeFromIdb[store])
-						}
 
-						getKeys.onerror = () => {
-							storeFromIdb[store] = null;
-							// rejStore(null)
+							getValueByKey.onerror = () => {
+								storeFromIdb[store][key] = null;
+							}
 						}
-					// })
+					}
+
+					getKeys.onerror = () => {
+						storeFromIdb[store] = null;
+					}
 				} 
 				trans.oncomplete = () => res(storeFromIdb);
-				
+
 			} catch (err) {
 				rej(err)
 			}
@@ -220,8 +225,7 @@ export default class Store extends Streams {
 	upgradeStores(stores) {
 		for(let store in stores) {
 			try {
-				const currentStore = this.streams[store].stream$;
-				const oldState = currentStore.getValue();
+				const oldState = this.getStateValue(store);
 				
 				if(!oldState) {
 					return;
@@ -256,7 +260,7 @@ export default class Store extends Streams {
 	#renderPopupErrorDB(title) {
 		new Promise((res, rej) => {
 			new Notice({
-				title: `Доделать создание idb`,
+				title: title,
 				description: `Обновите страницу, чтобы продолжить работу`,
 				confirm: {
 					title: `Обновить`,

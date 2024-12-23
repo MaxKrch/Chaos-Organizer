@@ -273,6 +273,23 @@ export default class CreatingNote extends BaseComponent {
 		this.staticElements.noteAddFilesDescription.classList.add(`hidden-item`);
 	}
 
+	getElementData() {
+		const creatingNoteData = {
+			text: this.staticElements.noteText.textContent.trim()
+		}
+
+		return creatingNoteData;
+	}
+
+	upgradeElementData(data) {
+		if(!data) {
+			console.log(`empty element`);
+			return;
+		}
+
+		this.staticElements.noteText.textContent = data.text
+	}
+
 	#addAttachmentError(error, section) {
 
 	}

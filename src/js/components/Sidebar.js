@@ -2,12 +2,17 @@ import BaseComponent from '../helpers/BaseComponent'
 import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
 
-import { sidebarStaticElements } from '../consts/index.js'
+import { sidebarStaticElements, routes } from '../consts/index.js'
 import { Subject, merge, fromEvent, throttleTime, filter, map, debounceTime } from 'rxjs';
 
 export default class Sidebar extends BaseComponent {
 	constructor(container) {
 		super(container);
+		this.server = routes.server;
+		this.pathTagValidate = routes.tag.validate;
+		this.headers = {
+   		'Content-Type': 'application/json;charset=utf-8'
+  	}
 		this.staticElements = {
 			container: null,
 			allNotes: {
@@ -38,9 +43,11 @@ export default class Sidebar extends BaseComponent {
 				list: null,
 			},
 		};
-
 		this.modal = null;
-		this.contextMenu = null;
+		this.contextMenu = null;		
+		this.abortControllers = {
+			validateTagTitle: null,
+		}
 	}
 	
 	initionRender() {
@@ -187,6 +194,7 @@ export default class Sidebar extends BaseComponent {
 		this.saveStream(`selectCategory`, new Subject());
 		this.saveStream(`deleteTag`, new Subject());
 		this.saveStream(`changeTag`, new Subject());
+		this.saveStream(`errorAccessToken`, new Subject());
 	}
 
 	#subscribeToStreams() {
@@ -195,7 +203,12 @@ export default class Sidebar extends BaseComponent {
 		this.subscribeToStream(`clicksOnTagTitle`, this.#onClickByCategory.bind(this));
 	}
 
-	updateCountNotesInCategory(categoriesList) {
+	updateSidebar(data) {
+		this.#updateCountNotesInCategory(data.countNotes);
+		this.#updateTagListInPage(data.tags);
+	}
+
+	#updateCountNotesInCategory(categoriesList) {
 		if(!categoriesList) {
 			console.log(`empty element`)
 		}
@@ -206,7 +219,7 @@ export default class Sidebar extends BaseComponent {
 		}
 	}
 	
-	updateTagListInPage(listTags) {
+	#updateTagListInPage(listTags) {
 		if(!listTags) {
 			console.log(`empty list`)
 		}
@@ -308,6 +321,10 @@ export default class Sidebar extends BaseComponent {
 			this.modal.input.setSelectionRange(this.modal.input.value.length, this.modal.input.value.length);
 		}
 		this.modal.addElementToPage();
+
+		if(tag.action === `change`) {
+			this.modal.input.focus()
+		}
 	}
 
 	#deleteModal() {
@@ -329,13 +346,13 @@ export default class Sidebar extends BaseComponent {
 		modalElement.classList.add(`modal__overlay`, `sidebar-modal`)
 
 		if(tag.action === `change`) {
-			modalTagTitle = `Изменитьь тег?`;
+			modalTagTitle = `Изменить тег?`;
 			modalTagBody = `
-				<input type="text" class="modal__input sidebar-modal__input" value="${tag.title}" data-id="sidebarModalInput">
+				<input type="text" class="modal__input sidebar-modal__input" value="${tag.title}" data-id="sidebarModalInput" data-tag-id=${tag.id} data-tag-title="${tag.title}">
 			`;
 			modalButtonConfirm =  `
 				<button class="button sidebar-modal__button sidebar-modal__remove sidebar-modal__button_inactive" data-name="sidebarModalTagButton" data-id="sidebarModalTagChange" data-active="false">
-					Изменить
+					Сохранить
 				</button>
 			`;
 		}
@@ -563,7 +580,7 @@ export default class Sidebar extends BaseComponent {
 		this.addDataToStream(`modalInputTagChange`, tag)
 	}
 
-	enableModalTagChangeButton() {
+	#enableModalTagChangeButton() {
 		if(!this.modal?.change) {
 			console.log(`empty element`);
 			return;
@@ -575,7 +592,7 @@ export default class Sidebar extends BaseComponent {
 		this.modal.input.classList.remove(`input-value_bad`);
 	}
 
-	disableModalTagChangeButton() {
+	#disableModalTagChangeButton() {
 		if(!this.modal?.change) {
 			console.log(`empty element`);
 			return;
@@ -583,8 +600,9 @@ export default class Sidebar extends BaseComponent {
 
 		this.modal.change.dataset.active = false;
 		this.modal.change.classList.add(`sidebar-modal__button_inactive`);
-		this.modal.input.classList.remove(`input-value_bad`);
-		this.modal.input.classList.add(`input-value_good`);
+
+		this.modal.input.classList.add(`input-value_bad`);
+		this.modal.input.classList.remove(`input-value_good`);
 	}
 
 	#onClickByTagOptions(event) {
@@ -611,5 +629,77 @@ export default class Sidebar extends BaseComponent {
 
 		this.addDataToStream(`selectCategory`, selectedData);
 	}
+
+	async validateChangingTagTitle(token) {
+		const tagId = this.modal.input.dataset.tagId;
+		const tagTitle = this.modal.input.value.trim();
+		const tagOldTitle = this.modal.input.dataset.tagTitle;
+
+		if(!tagId) {
+			console.log(`empty tag`);
+			return;
+		}
+		
+		this.#disableModalTagChangeButton();
+		console.log(tagTitle, this.modal.input.dataset, tagOldTitle)
+		if(!tagTitle || (tagTitle === tagOldTitle)) {
+			return;
+		}
+
+		try {
+			this.#addAwaitingModalTagChangeButton()
+
+			if(this.abortControllers.validateTagTitle) {
+				this.abortControllers.validateTagTitle.abort();
+				this.abortControllers.validateTagTitle = null;
+			}
+
+			this.abortControllers.validateTagTitle = new AbortController();
+
+			const requestUrl = `${this.server}${this.pathTagValidate}`;
+			const requestBody = JSON.stringify({
+				token,
+				tag: {
+					id: tagId,
+					title: tagTitle,
+				}
+			});
+			const requestOptions = {
+				headers: this.headers,
+				method: `POST`,
+				body: requestBody,
+				signal: this.abortControllers.validateTagTitle.signal,
+			}
+
+			const responseFromServerJSON = await fetch(requestUrl, requestOptions);
+
+			if(!responseFromServerJSON.ok) {
+				throw(`Сервер ответил с ошибкой`);
+			}
+
+			this.abortControllers.validateEmail = null;
+			
+			const responseFromServer = await responseFromServerJSON.json();
+
+			if(responseFromServer.success) {
+				this.#enableModalTagChangeButton();
+			}
+
+		} catch (err) {
+			console.log(`Сервер недоступен: ${err}`);
+
+		} finally {
+			this.#removeAwaitingModalTagChangeButton()
+		}
+	}
+
+	#addAwaitingModalTagChangeButton() {
+		this.modal.change.classList.add(`gradient-background_awaiting-response`);
+	}
+
+	#removeAwaitingModalTagChangeButton() {
+		this.modal.change.classList.remove(`gradient-background_awaiting-response`);
+	}
+
 }
 

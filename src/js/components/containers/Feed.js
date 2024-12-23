@@ -58,24 +58,84 @@ export default class Feed extends BaseComponent {
 	}
 
 	#createStreams() {
-		this.saveStream(`login`, new Subject());
-		this.saveStream(`logout`, new Subject());
+		this.saveStream(`requestLogin`, new Subject());
+		this.saveStream(`requestLogout`, new Subject());
+		this.saveStream(`editNote`, new Subject());
+		this.saveStream(`saveNewNote`, new Subject());
+		this.saveStream(`removeNote`, new Subject());
+		this.saveStream(`requestNotes`, new Subject());
 
 	}
 
 	#subscribeToStreams() {
-		this.header.subscribeToStream(`clicksOnSign`, this.onClickByHeaderSign.bind(this))
+		this.header.subscribeToStream(`requestLogin`, this.#requestLogin.bind(this))
+		this.header.subscribeToStream(`requestLogout`, this.#requestLogout.bind(this))
+		this.main.scrollButton.subscribeToStream(`scrollToDown`, this.#scrollToDown.bind(this));
+
+
+
+
+
+			// 	this.main.subscribeToStream(`requestGoToDown`, this.#onequestUnpinPinnedNote.bind(this))
+
+
+		this.main.subscribeToStream(`clicksOnPinnedNote`, this.#onClickByMainPinnedNote.bind(this));
+		this.main.subscribeToStream(`clicksOnNoteList`, this.#onClickByMainNoteList.bind(this));
+			// this.main.subscribeToStream(`requestUnpinNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 	this.main.subscribeToStream(`requestGoToPinnedNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 					this.main.subscribeToStream(`requestPinNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 													this.main.subscribeToStream(`requestAddToFavoriteNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 		this.main.subscribeToStream(`requestLiveLoading`, this.#onequestUnpinPinnedNote.bind(this))
+			// 			this.main.subscribeToStream(`requestDeleteNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 			this.main.subscribeToStream(`requestEditNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 									this.main.subscribeToStream(`requestSaveEditingNote`, this.#onequestUnpinPinnedNote.bind(this))
+
+			// 																		this.main.subscribeToStream(`requestSaveNewNote`, this.#onequestUnpinPinnedNote.bind(this))
+			// 					this.main.subscribeToStream(`requestSelecCategoryByTag`, this.#onequestUnpinPinnedNote.bind(this))								this.main.subscribeToStream(`requestFullShowMedia`, this.#onequestUnpinPinnedNote.bind(this))
+
+//endMainStreams
+
+
+
+
+
+
 	}
 
-	onClickByHeaderSign(event) {
+
+	initionCreatingNote() {
+		this.footer.loadCreatingNoteFromStorage();
+	}
+
+	createPinnedNote(pinnedNote) {		
+		this.main.renderPinnedNote(pinnedNote);
+	}
+
+	createNewNoteList(listNotes, section) {
+ 		this.main.setActiveSection(section)
+		this.main.renderNewNoteList(listNotes, section)
+	}
+
+	#requestLogin(event) {
+		this.addDataToStream(`requestLogin`, event)
+	}
+
+	#requestLogout(event) {
+		this.addDataToStream(`requestLogout`, event)
+	}
+
+	#scrollToDown(event) {
 		console.log(event)
-		if(!event) {
-			console.log(`empty event`);
-			return
-		}
-
-		const action = event.target.auth === 'true' ?
-			this.addDataToStream(`logout`, `out`) :
-			this.addDataToStream(`login`, `in`);
 	}
+
+
+
+	#onClickByMainPinnedNote(event) {
+		console.log(event)
+	}
+
+	#onClickByMainNoteList(event) {
+		console.log(event)
+	}
+
 }

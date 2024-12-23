@@ -19,3 +19,21 @@
 	&_bad
 		&:focus
 			border-color: $color-colored-red-dark
+
+.not-selected
+	user-select: none
+
+.gradient-background_awaiting-response
+	background: linear-gradient(90deg, $color-light-main 0%, $color-colored-green-dark 50%, $color-light-main 100%)
+	background-size: 900px 100%
+	animation: active-gradient 3s infinite
+	cursor: auto
+
+
+@keyframes active-gradient
+	0%
+		background-position: 0 0
+
+	100%
+		background-position: 900px 0
+

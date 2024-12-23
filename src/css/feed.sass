@@ -12,9 +12,9 @@ $feed-note-header-min-height: 2rem
 
 $note-context-menu-open-size: 1.6rem
 
-$note-block-file-heght: 2rem
-$note-block-file-icom-size: 1.2rem
-$note-block-file-left-padding: calc($note-block-file-icom-size + 2 * $spacing-small)
+$note-block-file-heght: 2.2rem
+$note-block-file-icon-size: 1.2rem
+$note-block-file-left-padding: calc($note-block-file-icon-size + 2 * $spacing-normal)
 $note-block-file-options-size: calc($note-block-file-heght - 2 * $spacing-small)
 
 $feed-block-file-height: 2.4rem
@@ -98,7 +98,7 @@ $feed-scroll-down-margin: 0.8rem
 		background-color: rgb(255 255 255 / 0.75)
 	
 	&-pinned
-		border-top: 1px solid $color-light-main
+		border-top: 1px solid $color-light-second
 		position: sticky
 		left: 0
 		right: 0
@@ -191,10 +191,10 @@ $feed-scroll-down-margin: 0.8rem
 			display: flex
 			justify-content: space-between
 			align-items: center
-			height: $note-block-file-heght
 			padding: $spacing-small
 			border-radius: $spacing-normal
 			cursor: pointer
+			height: $note-block-file-heght
 
 			&:hover
 				background-color: $color-light-second			
@@ -225,10 +225,10 @@ $feed-scroll-down-margin: 0.8rem
 				background-repeat: no-repeat
 				background-position: center
 				background-image: url('../img/icons/102.png')
-				left: $spacing-small
+				left: $spacing-normal
 				top: spacing-small
-				width: $note-block-file-icom-size
-				height: $note-block-file-icom-size
+				width: $note-block-file-icon-size
+				height: $note-block-file-icon-size
 
 			&__link
 				color: $color-text-main
@@ -287,7 +287,7 @@ $feed-scroll-down-margin: 0.8rem
 			grid-row: span 2
 			padding: $spacing-small
 
-			&-p
+			& p
 				padding-bottom: $spacing-small
 
 		&__attachment-block
@@ -305,7 +305,7 @@ $feed-scroll-down-margin: 0.8rem
 			&-info
 				display: flex
 				justify-content: flex-end
-				padding: $spacing-normal
+				padding: 0 $spacing-normal
 				gap: $spacing-big
 				font-size: 0.9rem
 				align-items: end
@@ -326,8 +326,8 @@ $feed-scroll-down-margin: 0.8rem
 			height: $note-updating-size
 			color: $color-dark-second
 			position: relative
-			cursor: help
-			
+			cursor: auto
+
 			&-icon
 				position: absolute
 				top: 50%
@@ -335,9 +335,7 @@ $feed-scroll-down-margin: 0.8rem
 				display: inline-block
 				height: 50%
 				width: 50%
-				background: linear-gradient(90deg, $color-light-main 0%, $color-colored-green-dark 50%, $color-light-main 100%)
-				background-size: 3rem 100%
-				animation: sending-gradient 3s infinite
+				background-color: $color-colored-green-light
 
 				&-1
 					left: 0
@@ -345,12 +343,25 @@ $feed-scroll-down-margin: 0.8rem
 				&-2
 					left: 30%
 
-			&_await .feed-note__sending-icon
-				background: none
-				background-color: $color-dark-second
+			&:hover .feed-note__sending-icon
+				background-color: $color-colored-green-light
 
-			&_await:hover .feed-note__sending-icon
-				background-color: $color-dark-second
+			&_processing 
+				cursor: help
+
+				& .feed-note__sending-icon
+					background: linear-gradient(90deg, $color-light-main 0%, $color-colored-green-dark 50%, $color-light-main 100%)
+					background-size: 3rem 100%
+					animation: sending-gradient 3s infinite
+
+			&_await 
+				cursor: help
+
+				& .feed-note__sending-icon
+					background-color: $color-light-main
+
+				&:hover .feed-note__sending-icon
+					background-color: $color-light-main
 
 	&-file
 		border-radius: $spacing-small

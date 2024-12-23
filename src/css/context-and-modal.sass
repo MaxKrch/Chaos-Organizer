@@ -10,7 +10,8 @@ $fullscreen-media-arrow-width: 3rem
 $fullscreen-media-arrow-icon-height: 6rem
 $fullscreen-media-arrow-icon-max-height: var(--viewport-height)
 
-$authorization-data-error-height: 1.5rem
+$login-data-error-height: 1.5rem
+$login-error-height: 1.75rem
 
 .note
 	&-add-tags__back
@@ -225,12 +226,13 @@ $authorization-data-error-height: 1.5rem
 		width: 50%
 		max-width: 250px
 
-.authorization
+.login
 	&__overlay
 		background-color: rgb(0 0 0 / 0.5)
 
 	&__container
 		padding: 0
+		gap: $spacing-small
 
 	&__section
 		padding: $spacing-small $spacing-big
@@ -238,19 +240,24 @@ $authorization-data-error-height: 1.5rem
 
 	&__target
 		display: flex
+		position: sticky
+		top: 0
 		justify-content: center
+		align-items: center
 		padding: 0
+		border-bottom: 1px solid $color-colored-green-light
 
 		&-title
-			border-radius: $spacing-normal $spacing-normal 0 0
 			width: 50%
+			min-height: 2.5rem
 			padding: $spacing-normal
+			background-color: $color-colored-green-light
+			display: flex
+			justify-content: center
+			align-items: center
 
-			&_active
-				background-color: $color-colored-green-light
-
-			&_passive
-				color: $color-dark-second
+			&_inactive
+				color: $color-light-main
 				background-color: $color-light-second
 				cursor: pointer
 
@@ -275,24 +282,29 @@ $authorization-data-error-height: 1.5rem
 		&-title
 			padding: $spacing-small $spacing-normal
 
-		&-input
-			&_invalid
-				border-color: $color-colored-red-light
-
-				&:focus
-					border-color: $color-colored-red-light
-	
-		&-error
+		&-message
 			padding: $spacing-small $spacing-normal
 			font-size: 0.8rem
 			color: $color-dark-main
-			border-bottom: 1px solid $color-colored-red-light
-			height: $authorization-data-error-height
+			min-height: $login-data-error-height
 			display: flex
-			align-items: center
+			align-items: center	
+			border-bottom: 1px solid transparent
+	
+			&_error
+				border-bottom-color: $color-colored-red-light
 
-			&_empty
-				border-color: transparent
+	&__message
+		border-bottom: 1px solid transparent
+		display: flex
+		width: auto
+		min-height: $login-error-height
+		flex-shrink: 0
+		color: $color-dark-main
+		font-size: 1rem
+
+		&_error
+			color: $color-colored-red-dark
 
 	&__remember
 		display: flex
