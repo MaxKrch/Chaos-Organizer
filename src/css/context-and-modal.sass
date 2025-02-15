@@ -3,41 +3,41 @@ $note-add-tags-back-icon-size: 1rem
 $stream-media-upload-error-file-max-height: 50vh
 $stream-media-upload-error-audio-height: 1.8rem
 
-$fullscreen-media-header-height: 3rem
-$fullscreen-media-header-options-size: 2rem
 
-$fullscreen-media-arrow-width: 3rem
-$fullscreen-media-arrow-icon-height: 6rem
-$fullscreen-media-arrow-icon-max-height: var(--viewport-height)
 
 $login-data-error-height: 1.5rem
 $login-error-height: 1.75rem
 
 .note
-	&-add-tags__back
-		padding: $spacing-small
-		border-bottom: 1px solid $color-light-second
+	&-add-tags
+		&__back
+			padding: $spacing-small
 
-		&-container 
-			display: flex
-			align-items: center
-			gap: $spacing-normal
-			padding: $spacing-normal
-			border-radius: $spacing-small
-			cursor: pointer
+			&-container 
+				display: flex
+				align-items: center
+				gap: $spacing-normal
+				padding: $spacing-normal
+				border-radius: $spacing-small
+				cursor: pointer
 
-			&:hover
-				& .note__add-tags-back-icon
-					background-color: $color-colored-green-dark
+				&:hover
+					background-color: $color-light-second
+					
+					& .note-add-tags__back-icon
+						background-color: $color-colored-green-dark
 
-		&-item
-			padding: $spacing-normal
+			&-item
+				padding: $spacing-normal
 
-		&-icon
-			width: $note-add-tags-back-icon-size
-			height: $note-add-tags-back-icon-size
-			background-color: $color-light-second
-			clip-path: polygon(100% 0, 60% 50%, 100% 100%, 0 50%)
+			&-icon
+				width: $note-add-tags-back-icon-size
+				height: $note-add-tags-back-icon-size
+				background-color: $color-light-second
+				clip-path: polygon(100% 0, 60% 50%, 100% 100%, 0 50%)
+
+		&__list
+			border-top: 1px solid $color-light-second
 
 .server-response-error
 	&__section		
@@ -72,13 +72,12 @@ $login-error-height: 1.75rem
 	&__section
 		width: 100%
 		padding: $spacing-small
-
-	&__title
-		font-size: 1.1rem
-		font-weight: 700
+		margin: $spacing-normal auto
 
 	&__video
+		max-width: 100vh
 		height: $stream-media-upload-error-file-max-height
+		margin: auto
 
 		&-file
 			object-fit: contain
@@ -97,105 +96,14 @@ $login-error-height: 1.75rem
 			height: $stream-media-upload-error-audio-height
 			max-width: 300px
 
-	&__description
-		font-size: 1.1rem
 
 	&__button
 		max-width: 250px
 		width: 49%
 
-.fullscreen-media
-	&__container
-		position: fixed
-		width: 100%
-		height: 100%
-		left: 0
-		top: 0
-		z-index: 3
-
-	&__media
-		&-container
-			height: 100%
-			width: 100%
-			background-color: rgb(0 0 0 / 0.95)
-		
-		&-file
-			height: 100%
-			width: 100%
-			object-fit: contain
-			object-position: center
-
-	&__header
-		position: absolute
-		top: -$fullscreen-media-header-height
-		left: 0
-		width: 100%
-		height: $fullscreen-media-header-height
-		background-color: rgb(0 0 0 / 0.75)
-		color: $color-light-main
-		display: flex
-		padding: $spacing-big
-		justify-content: space-between
-		align-items: center
-		font-size: 1.2rem
-		transition: top 0.5s
-		will-change: top
-
-		&-title	
-			overflow: hidden
-			white-space: nowrap
-			text-overflow: ellipsis
-			line-clamp: 1
-
-		&-options
-			width: $fullscreen-media-header-options-size
-			background-color: transparent
-			height: $fullscreen-media-header-options-size
-
-
-		&_show
-			top: 0
-			transition: top 0.5s
-			will-change: top
-
-	&__arrow
-		position: absolute
-		top: calc(50% - 5rem)
-		height: 10rem
-		width: $fullscreen-media-arrow-width
-
-		&-left
-			left: -$fullscreen-media-arrow-width
-			will-change: left
-			transition: left 0.5s
-
-			&_show
-				left: 0
-				will-change: left
-				transition: left 0.5s
-
-		&-right
-			right: -$fullscreen-media-arrow-width
-			will-change: right
-			transition: right 0.5s
-
-			&_show
-				right: 0
-				will-change: right
-				transition: right 0.5s
-
-		&-icon		
-			height: $fullscreen-media-arrow-icon-height
-			max-height: $fullscreen-media-arrow-icon-max-height
-			width: 60%
-
-	&__context-menu
-		top: $fullscreen-media-header-height
-		right: $spacing-big
 
 .remove-note-confirm
 	&__section
-		padding: $spacing-normal
 		width: 100%
 
 	&__attachment-remove
@@ -215,7 +123,7 @@ $login-error-height: 1.75rem
 	&__coords
 		display: flex
 		flex-direction: column
-		gap: $spacing-small
+		gap: $spacing-normal
 		align-items: center
 		font-size: 1rem
 
@@ -245,6 +153,7 @@ $login-error-height: 1.75rem
 		justify-content: center
 		align-items: center
 		padding: 0
+		z-index: 1
 		border-bottom: 1px solid $color-colored-green-light
 
 		&-title
@@ -298,11 +207,12 @@ $login-error-height: 1.75rem
 		border-bottom: 1px solid transparent
 		display: flex
 		width: auto
-		min-height: $login-error-height
+		// min-height: $login-error-height
 		flex-shrink: 0
 		color: $color-dark-main
 		font-size: 1rem
-
+		padding-left: calc($spacing-big + $spacing-normal)
+	
 		&_error
 			color: $color-colored-red-dark
 
@@ -327,3 +237,26 @@ $login-error-height: 1.75rem
 
 			&:hover
 				background-color: $color-light-second
+
+.remove-note
+	&__file-title
+		font-size: 1.2rem
+		
+	&__button
+		min-width: 125px
+		max-width: 250px
+		width: 35%
+
+.note-sending__text-hint
+	min-width: 75px
+	max-width: 150px
+	font-size: 0.9rem
+	border-radius: $spacing-small
+	padding: $spacing-small $spacing-normal
+	display: flex
+	text-align: center
+	justify-content: center
+	align-items: center
+	background-color: $color-light-main
+	box-shadow: $shadow-dark
+	position: absolute

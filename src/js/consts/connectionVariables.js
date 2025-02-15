@@ -1,15 +1,15 @@
 const routes = {
-	server: `http://192.168.1.110:7070`,
-	sse: `/sse`,
+	server: `http://192.168.1.103:7070`,
+	sse: `/user/sse`,
 	tag: {
 		validate: `/tag/validate`
 	},
 	auth: {
-		chekEmail: '/account/validate',
+		chekEmail: '/account/validateemail',
 		register: `/account/register`,
 		login: `/account/login`,
-		logout: `/account/logout`,
-		refreshTokens: `/account/refresh`,
+		logout: `/user/logout`,
+		refreshTokens: `/account/refreshtokens`,
 	},
 	categories: {
 		allNotes: {
@@ -43,12 +43,12 @@ const routes = {
 	},
 	serverPaths: {
 		target: {
-			notes: `/feed/notes`,
-			files: `/feed/files`,
-			tagNotes: `/feed/tag`,
-			note: `/note`,  
-			file: `/file`,
-			tag: `/tag`,
+			notes: `/user/feed/notes`,
+			files: `/user/feed/files`,
+			tagNotes: `/user/feed/tag`,
+			note: `/user/note`,  
+			file: `/user/file`,
+			tag: `/user/tag`,
 		},
 		action: {
 			loading: ``,
@@ -61,15 +61,16 @@ const routes = {
 	}
 }
 
-const actionSSEMessages = {
-	newNote: {},
-	removeNote: {},
-	removeFile: {},
-	editNote: {},
+const SSEMessageEvents = {
+	createdNote: {},
+	editedNote: {},
+	removedNote: {},
+	removedFile: {},
 	createdTag: {},
-	removeTag: {},
-	pinNote: {},
-	unpinNote: {},
+	editedTag: {},
+	removedTag: {},
+	pinedNote: {},
+	unpinedNote: {},
 }
 
 const connectionOptions = {
@@ -202,6 +203,6 @@ const sampleSSEMessages = {
 
 export {
 	routes,
-	actionSSEMessages,
+	SSEMessageEvents,
 	connectionOptions
 }

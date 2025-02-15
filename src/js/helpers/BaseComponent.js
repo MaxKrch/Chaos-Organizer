@@ -46,7 +46,7 @@ export default class PageComponent extends Streams {
 			console.log(`empty element`);
 			return;
 		}
-
+		// this.addRightPadding()
 		this.element.classList.add(`no-scroll`);
 	}
 
@@ -55,7 +55,7 @@ export default class PageComponent extends Streams {
 			console.log(`empty element`);
 			return;
 		}
-
+		// this.removeRightPadding()
 		this.element.classList.remove(`no-scroll`);
 	}
 
@@ -66,6 +66,44 @@ export default class PageComponent extends Streams {
 		}
 
 		this.element.classList.add('hidden-item')
+	}
+
+	addRightPadding() {
+		const div = document.createElement('div');
+		div.style.overflowY = 'scroll';
+		div.style.width = '50px';
+		div.style.height = '50px';
+
+		document.body.append(div);
+		const scrollWidth = div.offsetWidth - div.clientWidth;
+
+		div.remove();
+
+		const elemenrStyle = getComputedStyle(this.element);
+		const oldRightPadding = elemenrStyle["padding-right"] || 0;
+		const oldRightPaddingInt = parseInt(oldRightPadding, 10);
+		const newRightPadding = scrollWidth + oldRightPaddingInt;
+		
+		this.element.style.paddingRight = `${newRightPadding}px`
+	}
+
+	removeRightPadding() {
+		const div = document.createElement('div');
+		div.style.overflowY = 'scroll';
+		div.style.width = '50px';
+		div.style.height = '50px';
+
+		document.body.append(div);
+		const scrollWidth = div.offsetWidth - div.clientWidth;
+
+		div.remove();
+
+		const elemenrStyle = getComputedStyle(this.element);
+		const oldRightPadding = elemenrStyle["padding-right"] || 0;
+		const oldRightPaddingInt = parseInt(oldRightPadding, 10);
+		const newRightPadding = scrollWidth - oldRightPaddingInt;
+		
+		this.element.style.paddingRight = `${newRightPadding}px`
 	}
 
 	showElement() {

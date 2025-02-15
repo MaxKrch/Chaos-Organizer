@@ -83,6 +83,7 @@ $feed-scroll-down-margin: 0.8rem
 		&__network
 			font-size: 0.8rem
 			color: $color-text-main
+			margin-right: $spacing-normal
 
 			&_connecting
 				color: $color-dark-main
@@ -226,7 +227,7 @@ $feed-scroll-down-margin: 0.8rem
 				background-position: center
 				background-image: url('../img/icons/102.png')
 				left: $spacing-normal
-				top: spacing-small
+				top: $spacing-small
 				width: $note-block-file-icon-size
 				height: $note-block-file-icon-size
 
@@ -286,6 +287,9 @@ $feed-scroll-down-margin: 0.8rem
 		&__text
 			grid-row: span 2
 			padding: $spacing-small
+
+			&-active-link
+				color: rgb(25 25 255)
 
 			& p
 				padding-bottom: $spacing-small
@@ -383,9 +387,9 @@ $feed-scroll-down-margin: 0.8rem
 			height: 100%
 
 	&-scroll-down
-		position: absolute
-		bottom: $feed-scroll-down-margin
-		right: $feed-scroll-down-margin
+		position: fixed
+		// bottom: $feed-scroll-down-margin
+		// right: $feed-scroll-down-margin
 		width: $feed-scroll-down-size
 		height: $feed-scroll-down-size
 		border-radius: 50%
@@ -393,6 +397,7 @@ $feed-scroll-down-margin: 0.8rem
 		cursor: pointer
 		box-shadow: $shadow-dark
 		opacity: 0.75
+		z-index: 1
 
 		&:hover
 			background-color: $color-light-main

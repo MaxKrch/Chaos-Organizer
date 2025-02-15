@@ -4,8 +4,8 @@ const feedHeaderStaticElements = {
 		true:	`Выйти`,
 	},
 	network: {
-		offline: `Без интернета`,
-		connecting: `Подключение`,
+		offline: `Без подключения`,
+		connecting: `Соединение`,
 		online: `В сети`,
 	}
 }

@@ -101,15 +101,15 @@ export default class FeedHeader extends BaseComponent {
 		}
 	}
 
-	setNetworkStatus(status) {
-		if(!status) {
+	setNetworkStatus(network) {
+		if(!network) {
 			console.log(`empty request`);
 			return;
 		}	
+		
+		this.staticElements.network.textContent = feedHeaderStaticElements.network[network];
 
-		this.staticElements.network.textContent = feedHeaderStaticElements.network[status];
-
-		switch (status) {
+		switch (network) {
 			case `connecting`:
 				this.staticElements.network.classList.add(`feed-status__network_connecting`);
 				this.staticElements.network.classList.remove(`feed-status__network_offline`);

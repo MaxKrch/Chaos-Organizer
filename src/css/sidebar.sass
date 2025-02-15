@@ -52,13 +52,14 @@ $sidebar-shadow-right: 1px 0 2px 0 rgb(105 105 105 / 0.55)
 			width: $sidebar-main-active-size
 			overflow: auto
 			transition: 0.75s
+			z-index: 5
 
 		&-container
 			min-height: 100%
 			display: flex
 			flex-direction: column
-			padding: $spacing-normal
-			gap: $spacing-big
+			padding: $spacing-small
+			gap: $spacing-normal
 
 	&-link-item
 		white-space: nowrap
@@ -67,7 +68,7 @@ $sidebar-shadow-right: 1px 0 2px 0 rgb(105 105 105 / 0.55)
 		padding-left: calc($sidebar-main-icon-size + 2 * $spacing-normal)
 		cursor: pointer
 		display: flex
-		border-radius: $spacing-normal
+		border-radius: $spacing-small
 		
 		&__count
 			padding-left: $spacing-normal
@@ -78,7 +79,7 @@ $sidebar-shadow-right: 1px 0 2px 0 rgb(105 105 105 / 0.55)
 
 		&:hover
 			background-color: $color-light-main
-			transform: scale(1.01)
+			// transform: scale(1.01)
 
 		&:before
 			position: absolute
@@ -140,7 +141,6 @@ $sidebar-shadow-right: 1px 0 2px 0 rgb(105 105 105 / 0.55)
 		&__input
 			border: 1px solid $color-light-second
 			background-color: $color-light-second
-			margin: $spacing-big auto
 			text-align: center
 			font-size: 1rem
 			max-width: calc(500px + $spacing-normal)

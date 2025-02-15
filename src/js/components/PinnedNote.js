@@ -1,44 +1,35 @@
 import BaseComponent from '../helpers/BaseComponent';
 import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
+import { routes } from '../consts/index.js';
 
 import { fromEvent, throttleTime } from 'rxjs';
 
 export default class PinnedNote extends BaseComponent {
 	constructor(container, note) {
 		super(container);
-		this.img = null;
-
 		this.#renderElement(note);
 	}
 
-	async #renderElement(note) {
-		if(!note) {
-			console.log(`empty element`);
-			return
-		}
-
+	#renderElement(note) {
 		this.element = document.createElement(`section`);
 		this.element.classList.add(`feed-pinned`);
 		this.element.dataset.id = "feedPinnedNote";
+
 		this.element.dataset.note = note.id;
-		this.element.innerHTML = await this.#createBodyElement(note);
+		this.element.innerHTML = this.#createBodyElement(note);
 
 		this.staticElements.closeBtn = this.element.querySelector(`[data-id="feedPinnedUnpin"]`);
-
-		this.img = note.img ?
-			this.element.querySelector(`[data-id="feedPinnedNoteImg"]`) :
-			null;
 	}
 
-	async #createBodyElement(note) {
+	#createBodyElement(note) {
 		const imgElement = note.img ?
-			await this.#createImgElement(note.img) :
+			this.#createImgElement(note.img) :
 			``
 		const body =`
 			${imgElement}
 				
-			<div class="feed-pinned__item feed-pinned__text" data-id="feedPinnedNoteText">
+			<div class="feed-pinned__item feed-pinned__text not-selected" data-id="feedPinnedNoteText">
 				${note.text}	
 			</div>
 											
@@ -50,44 +41,16 @@ export default class PinnedNote extends BaseComponent {
 		return body;
 	}
 
-	async #createImgElement(img) {
-		const imgBlobLink = await this.#createLinkFromBlob(img.src);
-
+	#createImgElement(img) {
 		const imgElement = `
 			<div class="feed-pinned__item feed-pinned__img">
-				<img src="${imgBlobLink}" alt="${img.name}" class="feed-pinned__img-item" data-id="feedPinnedNoteImg">
+				<img src="${routes.server}${img.src}" alt="${img.name}" class="feed-pinned__img-item" data-id="feedPinnedNoteImg">
 			</div>
 		`
 		return imgElement;
 	}
 
-	async #createLinkFromBlob(blob) {
-
-console.log(`delete async and code`)
-
-
-	const response = await fetch(blob)
-	const blobFile = await response.blob()
-	const blobLink = URL.createObjectURL(blobFile)
-
-console.log(`delete`)
-
-
-		// const blobLink = URL.createObjectURL(blob);
-
-		return blobLink;
-	}
-
 	addElementToPage() {
 		this.container.prepend(this.element)
 	}
-
-	deleteElement() {
-		if(this.img) {
-			URL.revokeObjectURL(this.img.src)
-		}
-
-		super.deleteElement()
-	}
-
 }

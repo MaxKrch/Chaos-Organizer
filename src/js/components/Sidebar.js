@@ -2,7 +2,7 @@ import BaseComponent from '../helpers/BaseComponent'
 import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
 
-import { sidebarStaticElements, routes } from '../consts/index.js'
+import { sidebarStaticElements, routes, general } from '../consts/index.js'
 import { Subject, merge, fromEvent, throttleTime, filter, map, debounceTime } from 'rxjs';
 
 export default class Sidebar extends BaseComponent {
@@ -162,6 +162,15 @@ export default class Sidebar extends BaseComponent {
 	}
 
 	#createStreams() {
+		this.saveStream(`requestNotes`, new Subject());
+		this.saveStream(`deleteTag`, new Subject());
+		this.saveStream(`changeTag`, new Subject());
+		
+		const modalInputTagChange = new Subject().pipe(
+			debounceTime(350)
+		);
+		this.saveStream(`modalInputTagChange`, modalInputTagChange);
+		
 		const clicksOnCategory = merge(
 			fromEvent(this.staticElements.allNotes.container, `click`),
 			fromEvent(this.staticElements.favorites.container, `click`),
@@ -185,16 +194,6 @@ export default class Sidebar extends BaseComponent {
 			throttleTime(350)
 		);
 		this.saveStream(`clicksOnTagOptions`, clicksOnTagOptions);
-		
-		const modalInputTagChange = new Subject().pipe(
-			debounceTime(350)
-		);
-		this.saveStream(`modalInputTagChange`, modalInputTagChange);
-		
-		this.saveStream(`selectCategory`, new Subject());
-		this.saveStream(`deleteTag`, new Subject());
-		this.saveStream(`changeTag`, new Subject());
-		this.saveStream(`errorAccessToken`, new Subject());
 	}
 
 	#subscribeToStreams() {
@@ -203,12 +202,8 @@ export default class Sidebar extends BaseComponent {
 		this.subscribeToStream(`clicksOnTagTitle`, this.#onClickByCategory.bind(this));
 	}
 
-	updateSidebar(data) {
-		this.#updateCountNotesInCategory(data.countNotes);
-		this.#updateTagListInPage(data.tags);
-	}
 
-	#updateCountNotesInCategory(categoriesList) {
+	updateCountNotesInCategory(categoriesList) {
 		if(!categoriesList) {
 			console.log(`empty element`)
 		}
@@ -219,14 +214,14 @@ export default class Sidebar extends BaseComponent {
 		}
 	}
 	
-	#updateTagListInPage(listTags) {
+	updateTagListInPage(listTags) {
 		if(!listTags) {
 			console.log(`empty list`)
 		}
-
+		const tags = Array.from(listTags)
 		const tagElementsList = []
 
-		listTags.forEach(tag => {
+		tags.forEach(tag => {
 			const tagElement = this.#createTagElement(tag);
 			tagElementsList.push(tagElement);
 		})
@@ -276,7 +271,13 @@ export default class Sidebar extends BaseComponent {
 		}
 
 		const tagContextMenuBody = this.#createTagContextMenuTag(tag);
-		this.contextMenu = new ContextMenu(this.element, tagElement, tagContextMenuBody);
+
+		this.contextMenu = new ContextMenu(
+			this.element, 
+			tagElement, 
+			tagContextMenuBody, 
+			this.#onClickContextMenu.bind(this)
+		);
 
 		this.contextMenu.tag = tag;
 		this.addOverlay();
@@ -292,7 +293,6 @@ export default class Sidebar extends BaseComponent {
 			return;
 		}
 
-		this.#clearStreamsContextMenu();
 		this.contextMenu.deleteElement();
 		this.removeOverlay();
 		this.contextMenu = null;
@@ -305,7 +305,7 @@ export default class Sidebar extends BaseComponent {
 		}
 
 		const bodyModal = this.#createModalTagBody(tag);	
-		this.modal = new Modal(this.element, bodyModal)		;
+		this.modal = new Modal(bodyModal, this.#onClickByModal.bind(this))		;
 
 		this.modal.tag = tag;
 		this.modal.cancel = this.modal.element.querySelector(`[data-id="sidebarModalTagCancel"]`);
@@ -332,7 +332,7 @@ export default class Sidebar extends BaseComponent {
 			console.log(`empty element`);
 			return;
 		}
-		this.#clearStreamsModal();
+
 		this.modal.element.remove();
 		this.modal = null;
 	}
@@ -413,49 +413,18 @@ export default class Sidebar extends BaseComponent {
 
 
 	#createStreamsModal() {
-		const clicksOnModal = fromEvent(this.modal.element, `click`).pipe(
-			throttleTime(150)
-		);
-		this.modal.saveStream(`clicksOnModal`, clicksOnModal);
-
 		if(this.modal.tag.action === `change`) {
 			const inputOnModal = fromEvent(this.modal.input, `input`);
 			this.modal.saveStream(`inputOnModal`, inputOnModal);
 		}
 	}
 
-	#createStreamsContextMenu() {
-		const clicksOnSidebar = fromEvent(this.element, `click`).pipe(
-			throttleTime(350)
-		)
-		this.contextMenu.saveStream(`clicksOnSidebar`, clicksOnSidebar);
-	}
-
 	#subscribeToStreamsModal() {
-		this.modal.subscribeToStream(`clicksOnModal`, this.#onClickByModal.bind(this));
-
 		if(this.modal.tag.action === `change`) {
 			this.modal.subscribeToStream(`inputOnModal`, this.#onInputModalTagValue.bind(this));	
 		}
 	}
 
-	#subscribeToStreamsContextMenu() {
-		this.contextMenu.subscribeToStream(`clicksOnSidebar`, this.#onClickOnSidebarWithContextMenu.bind(this));	
-	}
-
-	#clearStreamsModal() {
-		for(let key in this.modal.streams) {
-			this.modal.clearSubscriptionsStream(key)
-		}
-		this.modal.streams = null;
-	}
-
-	#clearStreamsContextMenu() {
-		for(let key in this.contextMenu.streams) {
-			this.contextMenu.clearSubscriptionsStream(key)
-		}
-		this.contextMenu.streams = null;
-	}
 
 	hideElement() {
 		if(!this.element) {
@@ -497,12 +466,7 @@ export default class Sidebar extends BaseComponent {
 		this.staticElements.container.classList.remove(`section-overlay`)
 	}
 
-	#onClickOnSidebarWithContextMenu(event) {
-		if(!event || !event.target) {
-			console.log(`empty element`);
-			return;
-		}
-
+	#onClickContextMenu(event) {
 		if(!event.target.closest(`.context-menu`)) {
 			this.#deleteContextMenu();
 			return;
@@ -576,8 +540,7 @@ export default class Sidebar extends BaseComponent {
 	}
 
 	#onInputModalTagValue(event) {
-		const tag = event.target.value.trim();
-		this.addDataToStream(`modalInputTagChange`, tag)
+		this.addDataToStream(`modalInputTagChange`, event.target)
 	}
 
 	#enableModalTagChangeButton() {
@@ -608,8 +571,6 @@ export default class Sidebar extends BaseComponent {
 	#onClickByTagOptions(event) {
 		event.stopPropagation()
 		this.#createContextMenu(event);
-		this.#createStreamsContextMenu();
-		this.#subscribeToStreamsContextMenu();	
 	}
 
 	#onClickByCategory(event) {
@@ -617,6 +578,8 @@ export default class Sidebar extends BaseComponent {
 
 		const selectedData = {
 			section: selectedElement.dataset.section,
+			start: null,
+			end: null,
 		}
 
 		if(selectedElement.dataset.section === `tag`) {
@@ -627,7 +590,7 @@ export default class Sidebar extends BaseComponent {
 			selectedData.category = selectedElement.dataset.category
 		}
 
-		this.addDataToStream(`selectCategory`, selectedData);
+		this.addDataToStream(`requestNotes`, selectedData);
 	}
 
 	async validateChangingTagTitle(token) {
@@ -641,7 +604,7 @@ export default class Sidebar extends BaseComponent {
 		}
 		
 		this.#disableModalTagChangeButton();
-		console.log(tagTitle, this.modal.input.dataset, tagOldTitle)
+
 		if(!tagTitle || (tagTitle === tagOldTitle)) {
 			return;
 		}

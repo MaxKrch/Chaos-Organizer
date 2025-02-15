@@ -2,7 +2,7 @@ import Notice from '../components/popups/Notice';
 import Streams from '../helpers/Streams';
 
 import { Subject, scan, BehaviorSubject, shareReplay } from 'rxjs';
-import { initialState, idbParams } from '../consts/index.js';
+import { initialState, orderedKeysInitialState, idbParams } from '../consts/index.js';
 
 export default class Store extends Streams {
 	constructor() {
@@ -34,25 +34,26 @@ export default class Store extends Streams {
 		try	{
 			loadedStoreFromIdb = await this.#loadStoreFromIdb();
 			
-			} catch(err) {
+		} catch(err) {
 			console.log(`Fail load store from idb: ${err}`)
 		}
 
-		for(let key in initialState) {
+		orderedKeysInitialState.forEach(store => {
 			let state;
 
-			if(loadedStoreFromIdb && loadedStoreFromIdb[key]) {
-				state = loadedStoreFromIdb[key]
+			if(loadedStoreFromIdb && loadedStoreFromIdb[store]) {
+				state = loadedStoreFromIdb[store]
 	
 			}	else {
-				state = initialState[key]
+				state = initialState[store]
 			}	
 
-			this.saveStream(key, new BehaviorSubject(state));
-		}
+			this.saveStream(store, new BehaviorSubject(state));
+		})
 	}
 
-	#subscribeToStreams() {}
+	#subscribeToStreams() {
+	}
 
 	getStateValue(store) {
 		try {
@@ -68,7 +69,7 @@ export default class Store extends Streams {
 
 	async #connectingWithIDB() {
 		return new Promise((res, rej) => {
-			const requestOpen = window.indexedDB.open(idbParams.dbName, idbParams.dbVersion);
+			const requestOpen = window.indexedDB.open(idbParams.dbTitle, idbParams.dbVersion);
 
 			requestOpen.onupgradeneeded = (event) => {
 				this.idb = requestOpen.result;
@@ -176,18 +177,31 @@ export default class Store extends Streams {
 
 					getKeys.onsuccess = async () => {
 						const keysStore = getKeys.result;
-						storeFromIdb[store] = {}
+					
+						if(keysStore.length === 0) {
+							storeFromIdb[store] = null;
+							return;
+						}
+
+						const isArray = Array.isArray(initialState[store])
+						storeFromIdb[store] = isArray ?
+							[] :
+							{}
 
 						for(let key of keysStore) {
 							const getValueByKey = currentStore.get(key)
 	
 							getValueByKey.onsuccess = () => {
 								const value = getValueByKey.result;
-								storeFromIdb[store][key] = value;
+								isArray ?
+									storeFromIdb[store].push(value) :
+									storeFromIdb[store][key] = value;
 							}
 
 							getValueByKey.onerror = () => {
-								storeFromIdb[store][key] = null;
+								isArray ?
+									storeFromIdb[store].push(null) :
+									storeFromIdb[store][key] = null;
 							}
 						}
 					}
@@ -237,12 +251,17 @@ export default class Store extends Streams {
 					return oldState;
 				}
 			
-				const newState = JSON.parse(JSON.stringify(oldState))
-			
-				for(let key in changeStore) {
-					newState[key] = changeStore[key];
+				let newState = JSON.parse(JSON.stringify(oldState))
+				
+				if(typeof currentStore === `object`) {
+					for(let key in changeStore) {
+						newState[key] = changeStore[key];
+					}
+				} else {
+	
+					newState = changeStore;
 				}
-		
+			
 				const isSavingToIDB = idbParams.objectStores.includes(store);
 			
 				if(isSavingToIDB) {

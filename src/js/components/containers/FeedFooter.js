@@ -1,6 +1,7 @@
 import BaseComponent from '../../helpers/BaseComponent'
 import ContextMenu from '../popups/ContextMenu';
 import Modal from '../popups/Modal';
+import { Subject } from 'rxjs';
 
 import CreatingNote from '../CreatingNote';
 
@@ -13,11 +14,11 @@ export default class FeedFooter extends BaseComponent {
 
 	initionRender() {
 		this.#createElement();
+		this.#createStreams();
+		this.#subscribeToStreams()
 		this.addElementToPage();
 
-		this.creatingNote = new CreatingNote(this.element);
-
-		this.creatingNote.initionRender()
+		this.creatingNote = new CreatingNote(this.element, this.#onRequestActionFromCreatingPanel.bind(this));
 	}
 
 	#createElement() {
@@ -25,27 +26,35 @@ export default class FeedFooter extends BaseComponent {
 		this.element.classList.add(`feed-footer`)
 	}
 
-	saveCreatingNotesToStorage() {
-		const creatingNoteData = this.creatingNote.getElementData();
-		
-		if(!creatingNoteData) {
-			console.log(`empty data`);
-			return
-		}
-
-		const creatingNoteDataJSON = JSON.stringify(creatingNoteData);
-		localStorage.setItem(`creatingNote`, creatingNoteDataJSON)
+	#createStreams() {
+		this.saveStream(`requestEnableFullPanelCreatingNote`, new Subject());
+		this.saveStream(`requestDisableFullPanelCreatingNote`, new Subject());
+		this.saveStream(`requestSaveCreatedNote`, new Subject())
 	}
 
-	loadCreatingNoteFromStorage() {
-		const loadedCreatingNoteDataJSON = localStorage.getItem(`creatingNote`);
+	#subscribeToStreams() {}
 
-		if(!loadedCreatingNoteDataJSON) {
-			console.log(`empty data`);
-			return
-		}		
+	saveCreatingNotesToStorage() {
+		this.creatingNote.saveNoteToLocalStorage();
+	}
 
-		const loadedCreatingNoteData = JSON.parse(loadedCreatingNoteDataJSON);
-		this.creatingNote.upgradeElementData(loadedCreatingNoteData)
+	clearCreatingNote() {
+		this.creatingNote.clearDataCreatingNote()
+	}
+
+	#onRequestActionFromCreatingPanel(data) {
+		switch(data.action) {
+			case `enableFullPanelCreatingNote`:
+				this.addDataToStream(`requestEnableFullPanelCreatingNote`, data.action);
+				break;
+
+			case `disableFullPanelCreatingNote`:
+				this.addDataToStream(`requestDisableFullPanelCreatingNote`, data.action);
+				break;
+
+			case `saveCreatedNote`:	
+				this.addDataToStream(`requestSaveCreatedNote`, data.note);
+				break
+		}
 	}
 }

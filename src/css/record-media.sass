@@ -1,4 +1,4 @@
-$record-media-controll-height: 3.5rem
+$record-media-controll-height: 3rem
 $record-media-controll-item-size: calc($record-media-controll-height - 2 * $spacing-big)
 
 .record-media
@@ -43,7 +43,7 @@ $record-media-controll-item-size: calc($record-media-controll-height - 2 * $spac
 		background-color: $color-light-second
 		align-items: stretch
 		height: $record-media-controll-height
-		font-size: 1.5rem
+		font-size: 1.2rem
 
 	&__button
 		flex-basis: 35%
@@ -54,22 +54,26 @@ $record-media-controll-item-size: calc($record-media-controll-height - 2 * $spac
 		font-weight: 700
 
 		&-icon
-			height: 1.8rem
-			width: 1.8rem
+			height: 1.3rem
+			width: 1.3rem
 
 	&__cancel
 		&-icon
-			background-color: $color-colored-red-rich
+			background-color: $color-colored-red-dark
 			
 		&:hover
 			background: linear-gradient(90deg, $color-dark-second 0, $color-light-second 50%)
+			& .record-media__button-icon
+				background-color: $color-colored-red-rich
 
 	&__save
 		&-icon
-			background-color: $color-colored-green-rich
+			background-color: $color-colored-green-dark
 			
 		&:hover			
 			background: linear-gradient(90deg, $color-light-second 50%, $color-dark-second 100%)
+			& .record-media__button-icon
+				background-color: $color-colored-green-rich
 
 	&__time
 		flex-basis: 60%

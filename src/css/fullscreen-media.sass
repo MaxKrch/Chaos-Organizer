@@ -1,0 +1,195 @@
+$fullscreen-media-header-height: 4.5rem
+$fullscreen-media-header-options-size: 2rem
+
+$fullscreen-media-video-play-size: 4.5rem
+
+$fullscreen-media-arrow-width: 3rem
+$fullscreen-media-arrow-icon-height: 6rem
+$fullscreen-media-arrow-icon-max-height: var(--viewport-height)
+
+.fullscreen-media
+	background-color: rgb(0 0 0 / 0.95)
+
+	&__media-block
+		position: fixed
+		width: 100%
+		height: 100%
+		left: 0
+		top: 0
+
+	&__media
+		&-container
+			height: 100%
+			width: 100%
+			position: fixed
+			top: 0
+			left: 0
+			opacity: 0
+			transition: opacity 1s
+
+		&-block			
+			position: fixed
+			top: 0
+			left: 0
+			height: 100%
+			width: 100%
+
+		&-main
+			z-index: 1
+
+			&-file
+				object-fit: contain
+
+		&-back			
+			&-file
+				object-fit: cover			
+				filter: blur(25px)
+		
+		&-file
+			height: 100%
+			width: 100%
+			object-position: center		
+
+		&_active
+			opacity: 1
+			transition: opacity 1s
+			z-index: 3
+
+	&__controller
+		position: absolute
+		max-width: 15vh
+		max-height: 15vh
+		height: $fullscreen-media-video-play-size
+		width: $fullscreen-media-video-play-size
+		top: calc(50% + $fullscreen-media-header-height / 2)
+		left: 50%
+		transform: translate(-50%, -50%)
+		background-color: $color-light-main
+		border-radius: 50%
+		opacity: 0
+		transition: opacity 0.3
+		cursor: pointer
+
+		&-item			
+			position: absolute
+			opacity: 0
+			transition: opacity 0.5
+
+			&_active
+				opacity: 1
+				transition: opacity 0.5	
+
+		&-play			
+			top: 0
+			left: 0
+			height: 100%
+			width: 100%
+			clip-path: polygon(35% 25%, 75% 50%, 35% 75%)
+			background-color: $color-dark-main
+
+		&-pause
+			top: 30%
+			left: 35%
+			height: 40%
+			width: 30%
+			display: flex
+			justify-content: space-between
+			align-items: center
+
+			&-line
+				height: 100%
+				width: 35%
+				background-color: $color-dark-main
+		
+		&_show	
+			opacity: 0.8
+			transition: opacity 0.3
+			z-index: 30
+			cursor: pointer
+
+	&__header
+		position: absolute
+		left: 0
+		width: 100%
+		height: $fullscreen-media-header-height
+		background-color: rgb(0 0 0 / 0.55)
+		color: $color-light-main
+		padding: $spacing-small
+		transition: top 0.5s
+		will-change: top
+		z-index: 3
+		top: -$fullscreen-media-header-height
+	
+		&_show
+			top: 0
+			transition: top 0.5s
+			will-change: top
+
+	&__title	
+		overflow: hidden
+		white-space: nowrap
+		text-overflow: ellipsis
+		line-clamp: 1
+		height: 35%
+		display: flex
+		align-items: center
+		justify-content: center
+		border-bottom: 1px solid rgb(205 205 205 / 0.55)
+		padding: $spacing-small
+		font-weight: 700
+
+	&__menu
+		font-size: 1.2rem
+		height: 65%
+		display: flex
+		justify-content: space-between
+		align-items: center
+		width: 100%
+
+		&-item
+			flex-basis: 30%
+			height: calc(100% - 2 * $spacing-small)
+			border-radius: $spacing-small
+			display: flex
+			align-items: center
+			justify-content: center
+			cursor: pointer
+
+			&:hover
+				background-color: $color-light-main
+				color: $color-text-main
+
+	&__arrow
+		position: absolute
+		z-index: 2
+		top: $fullscreen-media-header-height
+		height: calc(100% - $fullscreen-media-header-height)
+		width: $fullscreen-media-arrow-width
+
+		&-left
+			left: -$fullscreen-media-arrow-width
+			will-change: left
+			transition: left 0.5s
+			background: linear-gradient(to left, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.5) 100%)
+
+			&_show
+				left: 0
+				will-change: left
+				transition: left 0.5s
+
+		&-right
+			right: -$fullscreen-media-arrow-width
+			will-change: right
+			transition: right 0.5s
+			background: linear-gradient(to right, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0.5) 100%)
+
+			&_show
+				right: 0
+				will-change: right
+				transition: right 0.5s
+
+		&-icon		
+			height: $fullscreen-media-arrow-icon-height
+			max-height: $fullscreen-media-arrow-icon-max-height
+			width: 60%
+

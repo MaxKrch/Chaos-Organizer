@@ -18,15 +18,16 @@ export default class Streams {
 	subscribeToStream(stream, subscriber) {
     try {
       const targetStream = this.streams[stream];
-
       const subscription = targetStream.stream$.subscribe({
         next: subscriber,
       });
 
       targetStream.subscriptions.add(subscription);
+
+      return subscription;
  
     } catch (err) {
-      console.log(`Failed subscribe to stream: ${err}`);
+      console.log(`Failed subscribe to stream ${stream}: ${err}`);
     }
   }
 
@@ -49,6 +50,16 @@ export default class Streams {
         this.unSubscribeFromStream(stream, subscription);
       });
 
+      targetStream.subscriptions = [];
+
+    } catch (err) {
+      console.log(`Failed clearning subscriptions of stream: ${err}`);
+    }
+  }
+
+  deleteStreamWithSubscriptions(stream) {
+    try {
+      this.clearSubscriptionsStream(stream);
       this.streams[stream] = null;
 
     } catch (err) {

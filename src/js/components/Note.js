@@ -1,106 +1,120 @@
 import BaseComponent from '../helpers/BaseComponent';
 import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
-import moment from 'moment'
+import moment from 'moment';
 
-export default class Note extends BaseComponent {
-	constructor(container, data, sectionNotes) {
-		super(container);
+import addActiveLinks from '../helpers/addActiveLinks';
 
-		this.activeURLBlobs = [];
-		this.#renderElement(data, sectionNotes);
+
+export default class Note {
+	constructor(note, sectionNotes, serverPath) {
+		this.serverPath = serverPath;
+		this.savedNote = note.saved;
+
+		return this.#renderElement(note, sectionNotes);
 	}
 
-	#renderElement(data, sectionNotes) {
+	#renderElement(note, sectionNotes) {
 		const section = sectionNotes === `files` ?
 			`file` :
 			`note`
 
-		this.element = document.createElement(`li`);
-		this.element.classList.add(`feed-content__item`, `feed-${section}`);
+		const noteElement = document.createElement(`li`);
+		noteElement.classList.add(`feed-content__item`, `feed-${section}`);
 		
-		if(section === `file` && data.style === `block`) {
-			this.element.classList.add(`feed-block-file`)
+		if(section === `file` && note.style === `block`) {
+			noteElement.classList.add(`feed-block-file`)
 		}
 		
-		this.element.dataset[section] = data.id;
+		noteElement.dataset.name = `feedContentItem`
+		noteElement.dataset.id = note.id;
 
-		const noteElementBody = section === `note` ?
-			this.#renderNoteElementBody(data) :
-			this.#renderFileNoteElementBody(data);
+		const noteElementBody = section === `file` ?
+			this.#renderFileNoteElementBody(note) :
+			this.#renderNoteElementBody(note);
 
-			this.element.append(noteElementBody);
+		noteElement.append(noteElementBody);
+
+		return noteElement
 	}
 
-	#renderNoteElementBody(data) {
+	#renderNoteElementBody(note) {
 		const noteElementBody = document.createElement(`article`);
 		noteElementBody.classList.add(`feed-note__container`);
-		noteElementBody.dataset.note = data.id;
+		noteElementBody.dataset.id = note.id;
 
-		const noteElementBodyHeader = this.#renderNoteElementBodyHeader(data);
-		const noteElementBodyMain = this.#renderNoteElementBodyMain(data)
-		const noteElementBodyFooter = this.#renderNoteElementBodyFooter(data);
+		const noteElementBodyHeader = this.#renderNoteElementBodyHeader(note);
+		const noteElementBodyMain = this.#renderNoteElementBodyMain(note)
+		const noteElementBodyFooter = this.#renderNoteElementBodyFooter(note);
 
 		noteElementBody.append(noteElementBodyHeader, noteElementBodyMain, noteElementBodyFooter);
 
 		return noteElementBody;
 	}
 
-	#renderFileNoteElementBody(data) {
+	#renderFileNoteElementBody(file) {
+		console.log(this.savedNote, `если фальш, сперва сделать блоб ссылку из файла`)
 		const noteElementBody = document.createElement(`article`)
-		noteElementBody.classList.add(`feed-content-${data.style}-file`)
+		noteElementBody.classList.add(`feed-content-${file.style}-file`)
 
-		if(data.style === `block`) {
+		if(file.style === `block`) {
 			noteElementBody.classList.add(`feed-block-file__body`);
 
-			if(data.type === `other`) {
+			if(file.type === `other`) {
 				noteElementBody.classList.add(`feed-content-other-file`)
 			}
 		}
 
-		noteElementBody.dataset.file = data.id;
+		noteElementBody.dataset.file = file.id;
 
-		const fileElementTag = data.type === `other` ? 
+		const fileElementTag = file.type === `other` ? 
 			`a` :
-			data.type
+			file.type
 
 		const fileElement = document.createElement(fileElementTag);
-		const blobLink = this.#createLinkFromBlob(data.src);
+		const fullLink = `${this.serverPath}${file.src}`
 
-		switch (data.type) {
+		switch (file.type) {
 			case `video`:
 				fileElement.classList.add(`feed-content-inline-file__file`);
-				fileElement.setAttribute(`src`, blobLink);
-				fileElement.setAttribute(`controls`, `controls`)
+				fileElement.setAttribute(`src`, fullLink);
+				fileElement.setAttribute(`controls`, `controls`);
+				fileElement.setAttribute(`preload`, `metadata`)
+				if(file.poster) {
+					fileElement.setAttribute(`poster`, `${this.serverPath}${file.poster}`) 
+				}
 				break;
 
 			case `image`:
 				fileElement.classList.add(`feed-content-inline-file__file`);
-				fileElement.setAttribute(`src`, blobLink);
-				fileElement.setAttribute(`alt`, data.name);
+				fileElement.setAttribute(`src`, fullLink);
+				fileElement.setAttribute(`loading`, `lazy`);
+				fileElement.setAttribute(`alt`, file.name);
 				break;
 
 			case `audio`:
 				fileElement.classList.add(`feed-content-audio-file`);
-				fileElement.setAttribute(`src`, blobLink);
+				fileElement.setAttribute(`src`, fullLink);
 				fileElement.setAttribute(`controls`, `controls`);
 				break;
 
 			default:
 				fileElement.classList.add(`feed-content-other-file__link`);
-				fileElement.setAttribute(`href`, blobLink);
-				fileElement.textContent = data.name;
+				fileElement.setAttribute(`href`, fullLink);
+				fileElement.onclick = event => event.preventDefault();
+				fileElement.textContent = file.name;
 			}
 
 		const optionsElement = document.createElement(`div`);
-		optionsElement.classList.add(`button-icon`, `menu-action`, `feed-content-file__options`, `feed-content-${data.style}-file__options`);
+		optionsElement.classList.add(`button-icon`, `menu-action`, `feed-content-file__options`, `feed-content-${file.style}-file__options`);
 
-		if(data.style === `block`) {
+		if(file.style === `block`) {
 			optionsElement.classList.add(`menu-action-light`, `feed-block-file__options`);
 		}
 
-		optionsElement.dataset.file = data.id;
-
+		optionsElement.dataset.file = file.id;
+		optionsElement.dataset.type = file.type;
+		optionsElement.dataset.clickAction = `fileNoteContextMenuOpen`
 		optionsElement.innerHTML = `
 			<span class="menu-action__span menu-action__dot"></span>
 			<span class="menu-action__span menu-action__dot"></span>
@@ -127,6 +141,7 @@ export default class Note extends BaseComponent {
 		
 		const headerElementOptions = document.createElement(`div`);
 		headerElementOptions.classList.add(`button-icon`, `menu-action`, `feed-note__context-menu-open`);
+		headerElementOptions.dataset.clickAction = `noteContextMenuOpen`
 		headerElementOptions.dataset.note = note.id;
 		headerElementOptions.innerHTML = `
 			<span class="menu-action__span menu-action__dot"></span>
@@ -207,8 +222,7 @@ export default class Note extends BaseComponent {
 		footerElement.dataset.note = note.id;
 
 		const footerElementTagList = this.#renderFooterElementTagList(note.tags);
-
-		const footerElementInfo = this.#renderFooterElementInfo(note.dates);
+		const footerElementInfo = this.#renderFooterElementInfo(note);
 
 		footerElement.append(
 			footerElementTagList, 
@@ -219,78 +233,66 @@ export default class Note extends BaseComponent {
 
 	#renderNoteElementBodyMainInlineAttachment(attachment) {
 		const attachmentContainer = document.createElement(`div`);
-		attachment.forEach(async item => {
-			const response = await fetch(item.type.src);
-			const blob = await response.blob();
-			const link = URL.createObjectURL(blob);
-console.log(link, item.type)
-			if(item.type === `video`) {
-				link.videoWidth
+		attachmentContainer.classList.add(`feed-note__attachment-inline`);
+
+		if(attachment[0]) {
+			this.#setStyleMosaicInlineAttachment(attachment[0], attachment.length, attachmentContainer) 
+		}
+
+		const attachmentElements = []
+
+		attachment.forEach(item => {
+			const attachmentElement = document.createElement(`div`)
+			attachmentElement.classList.add(`image-mosaic__item`, `feed-content-inline-file`);
+			attachmentContainer.dataset.name = `attachmentContainer`;
+			attachmentContainer.dataset.file = item.file.id;
+			
+			const fullLink = `${this.serverPath}${item.file.src}`
+			
+			switch(item.type) {
+				case `video`:
+					const poster = item.file.poster ?
+						`poster="${this.serverPath}${item.file.poster}"` :
+						`` 
+					attachmentElement.innerHTML = `
+ 						<video src="${fullLink}" controls="controls" data-file="${item.file.id}" preload="metadata" ${poster} class="feed-content-inline-file__file">
+						</video>
+					`
+					break;
+	
+				case `image`:
+					attachmentElement.innerHTML = `
+						<img src="${fullLink}" data-file="${item.file.id}" alt="${item.file.name}" loading="lazy" class="feed-content-inline-file__file">
+					`
+					break;
+
+				default:
+					return; 
 			}
+
+			attachmentElement.innerHTML += `
+				<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-click-action="noteAttachmentContextMenuOpen" data-file="${item.file.id}" data-file-type="${item.type}">
+ 					<span class="menu-action__span menu-action__dot"></span>
+ 					<span class="menu-action__span menu-action__dot"></span>
+					<span class="menu-action__span menu-action__dot"></span>
+				</div>
+			`
+
+			attachmentElements.push(attachmentElement);
 		})
 
+		attachmentElements.length === 0 ?
+			attachmentContainer.classList.add(`hidden-item`) :
+			attachmentContainer.append(...attachmentElements);
 
-		// 										<div class="feed-note__attachment-inline image-mosaic image-mosaic-horizontal-media-muptiple-three-and-two">
-// 											<div class="image-mosaic__item feed-content-inline-file">
-// 												<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
-
-// 												<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 												</div>
-// 											</div>
-
-// 											<div class="image-mosaic__item feed-content-inline-file">
-// 												<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
-
-// 												<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 												</div>
-// 											</div>
-											
-										
-// 											<div class="image-mosaic__item feed-content-inline-file">
-// 												<img src="../../sample/img-2.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
-
-// 												<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 												</div>
-// 											</div>
-
-// 											<div class="image-mosaic__item feed-content-inline-file">
-// 												<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
-
-// 												<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 												</div>
-// 											</div>
-
-// 											<div class="image-mosaic__item feed-content-inline-file">
-// 												<img src="../../sample/img-3.jpg" data-file="165447" alt="name img" class="feed-content-inline-file__file">
-
-// 												<div class="button-icon menu-action feed-content-file__options feed-content-inline-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 													<span class="menu-action__span menu-action__dot"></span>
-// 												</div>
-// 											</div>										
-// 										</div>
-		
-// this.staticElements.img.onload = () => console.log(this.staticElements.img.naturalHeight, this.staticElements.img.naturalWidth)
-
+		return attachmentContainer;
 	}
 
 	#renderNoteElementBodyMainText(text) {
+		const textWithActiveLinks = addActiveLinks(text);
 		const textContainer = document.createElement(`div`)
 		textContainer.classList.add(`feed-note__text`);
-		textContainer.innerHTML = text;
+		textContainer.innerHTML = textWithActiveLinks;
 
 		return textContainer;
 	}
@@ -304,11 +306,10 @@ console.log(link, item.type)
 		attachment.forEach(async item => {
 			const attachmentElement = document.createElement(`div`);
 			attachmentElement.classList.add(`feed-content-block-file`);
+			attachmentContainer.dataset.name = `attachmentContainer`;
 			attachmentElement.dataset.file = item.file.id;
 
-			// const elementFileLink = await this.#createLinkFromBlob(item.file.src)
-			console.log(`после - вернуть генерацию урал из блоба`)
-const elementFileLink = item.file.src
+			const elementFileLink = `${this.serverPath}${item.file.src}`
 			switch(item.type) {
 				case `audio`:
 					attachmentElement.innerHTML = `
@@ -320,14 +321,14 @@ const elementFileLink = item.file.src
 				default:
 					attachmentElement.classList.add(`feed-content-other-file`);
 					attachmentElement.innerHTML = `
-						<a href="${elementFileLink}" class="feed-content-block-file feed-content-other-file__link" download="download">
-							${item.file.name}
+						<a href="${elementFileLink}" class="feed-content-block-file feed-content-other-file__link" download="download" onclick="event.preventDefault()">
+							${item.file.title}
 						</a>
 					`
 			}
 
 			attachmentElement.innerHTML += `
-				<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-name="feedNoteFileContextMenuOpen" data-file="1548">
+				<div class="button-icon menu-action menu-action-light feed-content-file__options feed-content-block-file__options" data-file-type="${item.type}" data-click-action="noteAttachmentContextMenuOpen" data-file="${item.file.id}">
 	 				<span class="menu-action__span menu-action__dot"></span>
 	 				<span class="menu-action__span menu-action__dot"></span>
 	 				<span class="menu-action__span menu-action__dot"></span>
@@ -353,14 +354,16 @@ const elementFileLink = item.file.src
 		if(tags && Array.isArray(tags)) {
 			tags.forEach(tag => {
 				const tagElement = document.createElement(`li`);
-				tagElement.classList.add(`tag-inline`, `feed-note__tag`)
-				tagElement.dataset.tag = tag.id;
+				tagElement.classList.add(`tag-inline`, `feed-note__tag`);
+				if(tag.new) tagElement.dataset.newTag = true;
+				tagElement.dataset.tag = tag.id; 
+				tagElement.dataset.clickAction = `noteSelectTagCategory`;
 				tagElement.innerHTML = `
-					<div class="tag-inline__title tag-inline__section" data-name="feedNoteTag">
+					<div class="tag-inline__title tag-inline__section not-selected">
 						${tag.title}
 					</div>
 				`
-				tagElements.push(tagElement)
+				tagElements.push(tagElement);
 			})
 		} 
 
@@ -371,13 +374,19 @@ const elementFileLink = item.file.src
 		return footerElementTagList;
 	}
 
-	#renderFooterElementInfo(dates) {
+	#renderFooterElementInfo(note) {
 		const footerElementInfo = document.createElement(`div`);
 		footerElementInfo.classList.add(`feed-note__footer-info`)
 
 		const footerElementInfoStatus = document.createElement(`div`);
 		footerElementInfoStatus.classList.add(`figure-button`, `feed-note__sending`);
-		footerElementInfoStatus.dataset.name = "feedNotesending";
+		footerElementInfoStatus.dataset.name = "feedNoteSending";	
+
+		if(note.savedOnServer === false) {
+			footerElementInfoStatus.classList.add(`feed-note__sending_await`);
+			footerElementInfoStatus.dataset.sendingStatus = `await`;
+		}
+
 		footerElementInfoStatus.innerHTML = `
 			<span class="figure-button__item figure-button__chek feed-note__sending-icon feed-note__sending-icon-1">
 			</span>
@@ -388,14 +397,17 @@ const elementFileLink = item.file.src
 								
 		const footerElementInfoCreated = document.createElement(`span`);
 		footerElementInfoCreated.classList.add(`feed-note__date`);
-		const formatedDateCreated = moment(dates.created).locale("ru").format("DD MMMM hh:mm")
+		const formatedDateCreated = (note.dates && note.dates.created) ?
+			moment(note.dates.created).locale("ru").format("DD MMMM hh:mm") :
+			``
+
 		footerElementInfoCreated.textContent = formatedDateCreated;
 				
 		const footerElementInfoEdited = document.createElement(`span`);
 		footerElementInfoEdited.classList.add(`feed-note__edited`);
 		footerElementInfoEdited.dataset.name = "noteEdited";
 
-		if(dates.edited) {
+		if(note.dates && note.dates.edited) {
 			footerElementInfoEdited.textContent = `Редактировалось`
 		}
 
@@ -404,35 +416,102 @@ const elementFileLink = item.file.src
 			footerElementInfoStatus, 
 			footerElementInfoCreated
 		);
+
 		return footerElementInfo
 	}
 
+	#setStyleMosaicInlineAttachment(attachment, count, container) {
+		container.classList.add(`image-mosaic`);
 
+		const remainder = count % 3;
+		const tempClassMosaic = `image-mosaic-temp`
+		
+		container.classList.add(tempClassMosaic);
 
+		let tempClassMosaicOrientatation;
+		
+		if(count === 2) {
+			tempClassMosaicOrientatation = `image-mosaic-horizontal-media-double`
+		} 
 
-	#calcOrientationUnlineAttachment(attachment) {
+		if(count > 2) {
+			switch(remainder) {
+				case 0:
+					tempClassMosaicOrientatation = `image-mosaic-horizontal-media-muptiple-three`
+					break;
 
+				case 1:
+					tempClassMosaicOrientatation = `image-mosaic-horizontal-media-muptiple-three-and-one`
+					break;
+
+				case 2:
+					tempClassMosaicOrientatation = `image-mosaic-horizontal-media-muptiple-three-and-two`
+					break;
+			}
+		}
+		
+		if(count > 1) {
+			container.classList.add(tempClassMosaicOrientatation);
+		}
+		
+		if(attachment.type === `video`) {
+			const tempVideo = document.createElement(`video`);
+			tempVideo.setAttribute(`preload`, `metadata`);
+			tempVideo.setAttribute(`src`, `${this.serverPath}${attachment.file.src}`);
+			tempVideo.onloadeddata = () => {
+				const orientation =  (tempVideo.videoHeight / tempVideo.videoWidth > 1) ?
+					`vertical` :
+					`horizontal`
+				this.#updateStyleMosaicInlineAttachment(orientation, count, remainder, container, tempClassMosaic, tempClassMosaicOrientatation)
+				tempVideo.remove()
+			}
+		}
+
+		if(attachment.type === `image`) {
+			const tempImg = document.createElement(`img`);
+			tempImg.setAttribute(`src`, `${this.serverPath}${attachment.file.src}`);
+			tempImg.onload = () => {
+				const orientation = (tempImg.naturalHeight / tempImg.naturalWidth > 1) ?
+					`vertical` :
+					`horizontal`
+				this.#updateStyleMosaicInlineAttachment(orientation, count, remainder, container, tempClassMosaic, tempClassMosaicOrientatation)
+				tempImg.remove()
+			}
+		}
 	}
 
-	async #createLinkFromBlob(blob) {
+	#updateStyleMosaicInlineAttachment(orientation, count, remainder, container, tempClassMosaic, tempClassMosaicOrientatation) {
+		container.classList.remove(tempClassMosaic);
 
-console.log(`delete async and code`)
+		if(count === 1) {
+			return;
+		}
 
+		const classMosaicOrientation = `image-mosaic-${orientation}`;
+		
+		if(count === 2) {
+			container.classList.add(`${classMosaicOrientation}-media-double`);
+			return;
+		}
 
-	const response = await fetch(blob)
-	const blobFile = await response.blob()
-	const blobLink = URL.createObjectURL(blobFile)
-console.log(`delete`)
+		if(orientation === `vertical`) {
+			container.classList.remove(tempClassMosaicOrientatation);
 
+			switch(remainder) {
+				case 0:
+					container.classList.add(`${classMosaicOrientation}-media-muptiple-three`)
+					break;
 
-		// const blobLink = URL.createObjectURL(blob);
-		this.activeURLBlobs.push(blobLink);
+				case 1:
+					container.classList.add(`${classMosaicOrientation}-media-muptiple-three-and-one`)
+					break;
 
-		return blobLink;
+				case 2:
+					container.classList.add(`${classMosaicOrientation}-media-muptiple-three-and-two`)
+					break;
+			}
+
+		}
 	}
 
-	removeURLBlobs() {
-		this.activeURLBlobs.forEach(item => URL.revokeObjectURL(item));
-		this.activeURLBlobs = []
-	}
 }

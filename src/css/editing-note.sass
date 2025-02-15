@@ -3,19 +3,23 @@ $editing-note-button-size: 1rem
 
 .editing-note
 	position: sticky
-	bottom: 0
-	z-index: 3
+	bottom: $spacing-normal
+	z-index: 1
 	overflow: auto
-	max-height: 100%
+	max-height: calc(100% - $spacing-normal)
 
 	&__header
 		display: flex
 		gap: $spacing-small
-		padding: $spacing-small
+		padding: $spacing-small $spacing-normal
 		background-color: $color-light-second
 		justify-content: space-between
 		align-items: center
 		width: 100%
+		position: sticky
+		top: 0
+		z-index: 1
+		border-bottom: 1px solid $color-light-main
 
 	&__button
 		flex: 1 1 50%
@@ -40,22 +44,40 @@ $editing-note-button-size: 1rem
 			height: $editing-note-button-size
 			background-color: $color-dark-second
 
+	&__main
+		background-color: $color-light-main
+		padding: $spacing-normal
+		display: flex
+		flex-direction: column
+		gap: $spacing-normal
+
 	&__text
 		background-color: $color-light-second
 		border-radius: $spacing-small
 		border: 1px solid $color-light-second
+		min-height: 5rem
 
 		&:focus
 			background-color: $color-light-main
 			border-color: $color-dark-main
 
+	&__footer
+		position: relative
+		min-height: 2.6rem
+		padding: $spacing-normal
+
 	&__add-tag
 		background-color: $color-light-main
-		padding: $spacing-small $spacing-normal
+		padding: $spacing-small 0 $spacing-small $spacing-normal
 		border-radius: $spacing-small
 		display: flex
 		align-items: center
 		gap: $spacing-normal
+		height: 1.6rem
+		width: 9rem
+		position: absolute
+		font-size: 1rem
+		letter-spacing: normal
 
 		&:hover
 			background-color: $color-colored-green-light
@@ -66,3 +88,21 @@ $editing-note-button-size: 1rem
 			background-size: contain
 			width: $editing-note-add-tag-icon-size
 			height: $editing-note-add-tag-icon-size
+
+	&__tags
+		clip-path: polygon(9rem 0, 100% 0, 100% 100%, 0 100%, 0 1.6rem, 9rem 1.6rem)
+
+	&__tag
+		height: 1.6rem
+
+	&__empty-tag
+		width: 9rem
+		opacity: 0
+
+	&__attachment-inline
+		display: flex
+		gap: $spacing-normal
+		flex-wrap: wrap
+		padding: $spacing-small
+
+
