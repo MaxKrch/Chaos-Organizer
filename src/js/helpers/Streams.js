@@ -1,10 +1,10 @@
 export default class Streams {
-	constructor() {
-		this.streams = {};
-	}
+  constructor() {
+    this.streams = {};
+  }
 
   saveStream(name, stream) {
-    if(!name || !stream) {
+    if (!name || !stream) {
       console.log(`Failed creating stream`);
       return;
     }
@@ -12,10 +12,10 @@ export default class Streams {
     this.streams[name] = {
       stream$: stream,
       subscriptions: new Set(),
-    }
+    };
   }
 
-	subscribeToStream(stream, subscriber) {
+  subscribeToStream(stream, subscriber) {
     try {
       const targetStream = this.streams[stream];
       const subscription = targetStream.stream$.subscribe({
@@ -25,7 +25,6 @@ export default class Streams {
       targetStream.subscriptions.add(subscription);
 
       return subscription;
- 
     } catch (err) {
       console.log(`Failed subscribe to stream ${stream}: ${err}`);
     }
@@ -51,7 +50,6 @@ export default class Streams {
       });
 
       targetStream.subscriptions = [];
-
     } catch (err) {
       console.log(`Failed clearning subscriptions of stream: ${err}`);
     }
@@ -61,7 +59,6 @@ export default class Streams {
     try {
       this.clearSubscriptionsStream(stream);
       this.streams[stream] = null;
-
     } catch (err) {
       console.log(`Failed clearning of stream: ${err}`);
     }
@@ -74,6 +71,5 @@ export default class Streams {
     } catch (err) {
       console.log(`Failed add data to stream: ${err}`);
     }
-
   }
 }

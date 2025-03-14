@@ -1,4 +1,4 @@
-import BaseComponent from '../../helpers/BaseComponent'
+import BaseComponent from '../../helpers/BaseComponent';
 import ContextMenu from '../popups/ContextMenu';
 import Modal from '../popups/Modal';
 import PinnedNote from '../PinnedNote';
@@ -7,622 +7,631 @@ import FeedScrollButton from '../FeedScrollButton';
 import PreloadFeed from '../PreloadFeed';
 import EditingNote from '../EditingNote';
 import { general, routes } from '../../consts/index.js';
-import downloadFile from '../../helpers/downloadFile'
+import downloadFile from '../../helpers/downloadFile';
 import { Subject, fromEvent, throttleTime, debounceTime } from 'rxjs';
 
 export default class FeedMain extends BaseComponent {
-	constructor(container) {
-		super(container);
+  constructor(container) {
+    super(container);
 
-		this.server = routes.server;
+    this.server = routes.server;
 
-		this.pinnedNote = null;
-		this.noteList = null;
-		this.preloadFeed = null;
-		this.editingNote = null;
-		this.scrollButton = null;
-		
-		this.location = {
-			section: null,
-			category: null,
-		},
-		this.awaitingDownload = null;
+    this.pinnedNote = null;
+    this.noteList = null;
+    this.preloadFeed = null;
+    this.editingNote = null;
+    this.scrollButton = null;
 
-		this.modal = null;
-		this.contextMenu = null;
-	}
+    (this.location = {
+      section: null,
+      category: null,
+    }),
+      (this.awaitingDownload = null);
 
-	initionRender() {
-		this.#createElement();		
-		this.addElementToPage();
+    this.modal = null;
+    this.contextMenu = null;
+  }
 
-		this.scrollButton = new FeedScrollButton(this.element);
-		this.scrollButton.addElementToPage()
+  initionRender() {
+    this.#createElement();
+    this.addElementToPage();
 
-		this.#createStreams();
-		this.#subscribeToStreams();
-	}
+    this.scrollButton = new FeedScrollButton(this.element);
+    this.scrollButton.addElementToPage();
 
-	#createElement() {
-		this.element = document.createElement(`main`);
-		this.element.classList.add(`feed-main`)
-	}
+    this.#createStreams();
+    this.#subscribeToStreams();
+  }
 
-	#createStreams() {
-		this.saveStream(`unpinNote`, new Subject());
-		this.saveStream(`getPinnedNote`, new Subject());
+  #createElement() {
+    this.element = document.createElement(`main`);
+    this.element.classList.add(`feed-main`);
+  }
 
-		this.saveStream(`pinNote`, new Subject());
-		this.saveStream(`addNoteToFavorite`, new Subject());
-		this.saveStream(`removeNoteFromFavorite`, new Subject());
+  #createStreams() {
+    this.saveStream(`unpinNote`, new Subject());
+    this.saveStream(`getPinnedNote`, new Subject());
 
-		this.saveStream(`requestNotesByTag`, new Subject());
-		this.saveStream(`requestSynchFeed`, new Subject());
-		this.saveStream(`requestLiveLoading`, new Subject());
+    this.saveStream(`pinNote`, new Subject());
+    this.saveStream(`addNoteToFavorites`, new Subject());
+    this.saveStream(`removeNoteFromFavorites`, new Subject());
 
-		this.saveStream(`showFullScreenMedia`, new Subject());
-			
-		this.saveStream(`requestEditingNote`, new Subject());
-		this.saveStream(`saveEditedNote`, new Subject());
-		this.saveStream(`removeNote`, new Subject());
-		this.saveStream(`removeFile`, new Subject());
+    this.saveStream(`requestNotesByTag`, new Subject());
+    this.saveStream(`requestSynchFeed`, new Subject());
+    this.saveStream(`requestLiveLoading`, new Subject());
 
-		const scrollFeed = fromEvent(this.element, `scroll`).pipe(
-			debounceTime(50)
-		)
-		this.saveStream(`scrollFeed`, scrollFeed);
-	}
+    this.saveStream(`showFullScreenMedia`, new Subject());
 
-	#subscribeToStreams() {
-		this.subscribeToStream(`scrollFeed`, this.#onScrollingFeed.bind(this));
-		this.scrollButton.subscribeToStream(`scrollToDown`, this.scrollToDown.bind(this));
-	}
+    this.saveStream(`requestEditingNote`, new Subject());
+    this.saveStream(`saveEditedNote`, new Subject());
+    this.saveStream(`removeNote`, new Subject());
+    this.saveStream(`removeFile`, new Subject());
 
-	renderPreloadFeed(type) {
-		if(this.pinnedNote) {
-			this.pinnedNote.removeFromPage()
-		}
+    const scrollFeed = fromEvent(this.element, `scroll`).pipe(debounceTime(50));
+    this.saveStream(`scrollFeed`, scrollFeed);
+  }
 
-		if(this.noteList) {
-			this.noteList.removeFromPage()
-		}
+  #subscribeToStreams() {
+    this.subscribeToStream(`scrollFeed`, this.#onScrollingFeed.bind(this));
+    this.scrollButton.subscribeToStream(
+      `scrollToDown`,
+      this.scrollToDown.bind(this),
+    );
+  }
 
-		if(this.editingNote) {
-			this.editingNote.removeFromPage()
-		}
+  renderPreloadFeed(type) {
+    this.deletePreloadFeed();
+    this.preloadFeed = new PreloadFeed(this.element, type);
 
-		this.disableScrolling()
+    if (this.pinnedNote) {
+      this.pinnedNote.removeElementFromPage();
+    }
 
-		this.preloadFeed = new PreloadFeed(this.element, type);
-		this.preloadFeed.addElementToPage();
-	}
+    if (this.noteList) {
+      this.noteList.deleteElement();
+    }
 
-	deletePreloadFeed() {
-		this.enableScrolling();
+    if (this.editingNote) {
+      this.editingNote.removeElementFromPage();
+    }
 
-		if(this.preloadFeed) {
-			this.preloadFeed.deleteElement();
-			this.preloadFeed = null;
-		}
-	}
+    this.disableScrolling();
+    this.preloadFeed.addElementToPage();
+  }
 
-	setActiveLocation(location) {
-		if(!location) {
-			return;
-		}	
-	
-		this.location = location;
-	}
+  deletePreloadFeed() {
+    this.enableScrolling();
 
-	removeNoteById(idNote) {
-		const indexTargetNote = this.noteList.notes.findIndex(note => note.id === idNote);
+    if (this.preloadFeed) {
+      this.preloadFeed.deleteElement();
+      this.preloadFeed = null;
+    }
+  }
 
-		if(indexTargetNote) {
-			this.noteList.notes.splice(indexTargetNote, 1)
-		} 
+  setActiveLocation(location) {
+    if (!location) {
+      return;
+    }
 
-		const targetNoteElement = this.noteList.element.querySelector(`[data-name="feedContentItem"][data-id="${idNote}"]`);
+    this.location = location;
+  }
 
-		if(targetNoteElement) {
-			targetNoteElement.remove();
-		}
-	}
+  removeNoteById(idNote) {
+    const indexTargetNote = this.noteList.notes.findIndex(
+      (note) => note.id === idNote,
+    );
 
-	#addOverlayToFeed() {
-		this.container.classList.add(`section-overlay`)
-	}
+    if (indexTargetNote) {
+      this.noteList.notes.splice(indexTargetNote, 1);
+    }
 
-	#removeOverlayFromFeed() {
-		this.container.classList.remove(`section-overlay`)
-	}
+    const targetNoteElement = this.noteList.element.querySelector(
+      `[data-name="feedContentItem"][data-id="${idNote}"]`,
+    );
 
-	renderPinnedNote(note) {
-		if(!note) {
-			return;
-		}
+    if (targetNoteElement) {
+      targetNoteElement.remove();
+    }
+  }
 
-		if(this.pinnedNote) {
-			this.pinnedNote.deleteElement()
-		}
+  #addOverlayToFeed() {
+    this.container.classList.add(`section-overlay`);
+  }
 
-		this.pinnedNote = new PinnedNote(this.element, note);
+  #removeOverlayFromFeed() {
+    this.container.classList.remove(`section-overlay`);
+  }
 
-		if(!this.preloadFeed) {
-			if(this.location.section === `notes` || this.location.section === `tag`) {
-				this.pinnedNote.addElementToPage();
-			}
-		}
+  renderPinnedNote(note) {
+    if (this.pinnedNote) {
+      this.pinnedNote.deleteElement();
+    }
 
-		this.#createPinnedStreams();
-		this.#subscribeToPinnedStreams()
-	}
+    if (!note) {
+      return;
+    }
 
-	#createPinnedStreams() {
-		const clicksOnPinnedNote = fromEvent(this.pinnedNote.element, `click`).pipe(
-			throttleTime(350)
-		)
-		this.pinnedNote.saveStream(`clicksOnPinnedNote`, clicksOnPinnedNote)
-	}
+    const serverPath = note.savedOnServer ? this.server : '';
 
-	#subscribeToPinnedStreams() {
-		this.pinnedNote.subscribeToStream(`clicksOnPinnedNote`, this.#onClickOnPinnedNote.bind(this))
-	}
+    const noteData = {
+      id: note.id,
+      text: note.text,
+    };
 
-	renderNoteList(notes) {
-		if(this.preloadFeed) {
-			this.deletePreloadFeed()
-		}
+    if (note.attachment?.image[0]) {
+      noteData.img = note.attachment.image[0];
+    }
 
-		if(this.pinnedNote) {
-			if(this.location.section === `files`) {
-				this.pinnedNote.removeElementFromPage()
-			} else {
-				this.pinnedNote.addElementToPage()
-			}
-		} 
-		
-		if(this.noteList) {
-			this.noteList.deleteElement();			
-		}
+    this.pinnedNote = new PinnedNote(this.element, noteData, serverPath);
 
-		this.noteList = new NoteList(this.element, this.location.section, notes);
-		this.noteList.addElementToPage()
-		this.scrollToDown();
+    if (!this.preloadFeed) {
+      if (
+        this.location.section === `notes` ||
+        this.location.section === `tag`
+      ) {
+        this.pinnedNote.addElementToPage();
+      }
+    }
 
-		const clicksOnNoteList = fromEvent(this.noteList.element, `click`).pipe(
-			throttleTime(350)
-		)
-		this.noteList.saveStream(`clicksOnNoteList`, clicksOnNoteList)
-		this.noteList.subscribeToStream(`clicksOnNoteList`, this.#onClickOnNoteList.bind(this))
-	}
+    this.#createPinnedStreams();
+    this.#subscribeToPinnedStreams();
+  }
 
-	liveLoadingNoteList(notes) {	
-		this.noteList.liveLoadingNotes(notes, this.location.section)
-		this.scrollToDown();
-	}
+  deletePinnedNote() {
+    if (this.pinnedNote) {
+      this.pinnedNote.deleteElement();
+    }
+  }
 
-	renderEditingNote(data) {
-		if(this.editingNote) {
-			this.editingNote.deleteElement();
-			this.editingNote = null;
-		}
+  #createPinnedStreams() {
+    const clicksOnPinnedNote = fromEvent(this.pinnedNote.element, `click`).pipe(
+      throttleTime(350),
+    );
+    this.pinnedNote.saveStream(`clicksOnPinnedNote`, clicksOnPinnedNote);
+  }
 
-		this.noteList.addOverlay()
-		this.disableScrolling();
-		this.scrollButton.hideElement();
-		this.editingNote = new EditingNote(this.element, data.note,  this.#onRequestActionFromEditingNote.bind(this));
-		this.editingNote.updateExistTags(this.existTags);
-	}
+  #subscribeToPinnedStreams() {
+    this.pinnedNote.subscribeToStream(
+      `clicksOnPinnedNote`,
+      this.#onClickOnPinnedNote.bind(this),
+    );
+  }
 
-	createContexMenu(target) {
-		if(this.contextMenu) {
-			this.deleteContextMenu()
-		}
+  renderNoteList(notes) {
+    if (this.preloadFeed) {
+      this.deletePreloadFeed();
+    }
 
-		const contextMenuElement = document.createElement(`aside`);
-		contextMenuElement.classList.add(`context-menu`);
-		contextMenuElement.dataset.id = `contextMenu`;
+    if (this.pinnedNote) {
+      if (
+        this.location.section === `notes` &&
+        this.location.category === `all`
+      ) {
+        this.pinnedNote.addElementToPage();
+      } else {
+        this.pinnedNote.removeElementFromPage();
+      }
+    }
 
-		let contextMenuBody;
-		switch(target.dataset.clickAction) {
-			case "noteContextMenuOpen":
-				contextMenuBody = this.#renderContexMenuNote(target);
-				break;
+    const topScroll = this.noteList ? this.element.scrollTop : null;
 
-			case "fileNoteContextMenuOpen":
-				contextMenuBody = this.#renderContexMenuFileNote(target);
-				break;
+    if (this.noteList) {
+      this.noteList.deleteElement();
+    }
 
-			case "noteAttachmentContextMenuOpen":
-				contextMenuBody = this.#renderContexMenuNoteAttachment(target);
-				break;
-		}
+    if (this.contextMenu) {
+      this.deleteContextMenu();
+    }
 
-		contextMenuElement.append(contextMenuBody);
+    this.noteList = new NoteList(this.element, this.location, notes);
 
-		this.addRightPadding()
-		this.#addOverlayToFeed();
-		this.disableScrolling()
-		this.contextMenu = new ContextMenu(
-			this.element, 
-			target,
-			contextMenuElement,
-			this.#onClickContextMenu.bind(this),
-		);
+    if (this.noteList) {
+      this.noteList.addElementToPage();
 
-		this.contextMenu.setMarginElement(`0.5rem`, `0.2rem`);
-		this.contextMenu.addElementToPage();
-		this.contextMenu.positiongOnPage();
-	}
+      const clicksOnNoteList = fromEvent(this.noteList.element, `click`).pipe(
+        throttleTime(350),
+      );
+      this.noteList.saveStream(`clicksOnNoteList`, clicksOnNoteList);
+      this.noteList.subscribeToStream(
+        `clicksOnNoteList`,
+        this.#onClickOnNoteList.bind(this),
+      );
+    }
 
-	deleteContextMenu() {
-		this.removeRightPadding()
-		this.#removeOverlayFromFeed();
-		this.enableScrolling()
-		this.contextMenu.deleteElement();
-		this.contextMenu = null;
-	}
+    if (this.editingNote) {
+      this.editingNote.addElementToPage();
+    }
 
-	updateExistTags(tags) {
-		this.existTags = tags;
+    if (topScroll > 0) {
+      this.element.scrollTo(0, topScroll);
+    }
 
-		if(this.editingNote) {
-			this.editingNote.updateExistTags(this.existTags)
-		}
-	}
+    this.scrollButton.switchVisibleButton();
+  }
 
-	#requestEditingNote(idNote) {
-		const note = this.noteList.getTargetNoteById(idNote);
-		this.addDataToStream(`requestEditingNote`, note)
-	}
+  liveLoadingNoteList(notes) {
+    this.noteList.liveLoadingNotes(notes, this.location);
+    // this.scrollToDown();
+  }
 
-	#renderContexMenuNote(target) {
-	  const id = target.dataset.note;
-		const targetNote = this.noteList.notes.find(note => note.id === id);
-		const contextMenuBody = document.createElement(`ul`);
-		contextMenuBody.classList.add(`context-menu__list`, `not-selected`)
+  renderEditingNote(data) {
+    if (this.editingNote) {
+      this.editingNote.deleteElement();
+      this.editingNote = null;
+    }
 
-		const pinnedLi = document.createElement(`li`)
-		pinnedLi.classList.add(`context-menu__item`, `note-context-menu__item`)
-		pinnedLi.dataset.note = id;
-		pinnedLi.dataset.targetAction = targetNote.pinned === true ?
-			`unpinNote` :
-			`pinNote` 
-		pinnedLi.textContent = targetNote.pinned === true ?
-			`Открепить` :
-			`Закрепить`
-	
-		const favoriteLi = document.createElement(`li`)
-		favoriteLi.classList.add(`context-menu__item`, `note-context-menu__item`)
-		favoriteLi.dataset.note = id;
-		favoriteLi.dataset.targetAction = targetNote.favorite === true ?
-			`removeFromFavorite` :
-			`addToFavorite`
-		favoriteLi.textContent = targetNote.favorite === true ?
-			`Убрать из избранного` :
-			`Добавить в избранное`
+    this.noteList.addOverlay();
+    this.disableScrolling();
+    this.scrollButton.hideElement();
+    this.editingNote = new EditingNote(
+      this.element,
+      data.note,
+      this.#onRequestActionFromEditingNote.bind(this),
+    );
+    this.editingNote.updateExistTags(this.existTags);
+  }
 
-		const editLi = document.createElement(`li`)
-		editLi.classList.add(`context-menu__item`, `note-context-menu__item`)
-		editLi.dataset.note = id;
-		editLi.dataset.targetAction = `editNote`;
-		editLi.textContent = `Редактировать`;
-	
-		const deleteLi = document.createElement(`li`)
-		deleteLi.classList.add(`context-menu__item`, `note-context-menu__item`)
-		deleteLi.dataset.note = id;
-		deleteLi.dataset.targetAction = `removeNote`;
-		deleteLi.textContent = `Удалить`;
+  createContexMenu(target) {
+    if (this.contextMenu) {
+      this.deleteContextMenu();
+    }
 
-		contextMenuBody.append(
-			pinnedLi, 
-			favoriteLi,
-			editLi,
-			deleteLi,
-		)
-		
-		return contextMenuBody;
-	}
+    const contextMenuElement = document.createElement(`aside`);
+    contextMenuElement.classList.add(`context-menu`);
+    contextMenuElement.dataset.id = `contextMenu`;
 
-	#renderContexMenuFileNote(target) {
-		const id = target.dataset.file;
-		const type = target.dataset.fileType;
+    let contextMenuBody;
+    switch (target.dataset.clickAction) {
+      case 'noteContextMenuOpen':
+        contextMenuBody = this.#renderContexMenuNote(target);
+        break;
 
-		const contextMenuBody = document.createElement(`ul`);
-		contextMenuBody.classList.add(`context-menu__list`, `not-selected`);
+      case 'fileNoteContextMenuOpen':
+        contextMenuBody = this.#renderContexMenuFileNote(target);
+        break;
 
-		if(type === `image` || type === `video`) {
-			contextMenuBody.innerHTML = `
-				<li class="context-menu__item file-note-context-menu__item" data-target-action="showFullScreenFileNote" data-file="${id}" data-file-type=${type}>
+      case 'noteAttachmentContextMenuOpen':
+        contextMenuBody = this.#renderContexMenuNoteAttachment(target);
+        break;
+    }
+
+    contextMenuElement.append(contextMenuBody);
+
+    this.addRightPadding();
+    this.#addOverlayToFeed();
+    this.disableScrolling();
+    this.contextMenu = new ContextMenu(
+      this.element,
+      target,
+      contextMenuElement,
+      this.#onClickContextMenu.bind(this),
+    );
+
+    this.contextMenu.setMarginElement(`0.5rem`, `0.2rem`);
+    this.contextMenu.addElementToPage();
+    this.contextMenu.positiongOnPage();
+  }
+
+  deleteContextMenu() {
+    this.removeRightPadding();
+    this.#removeOverlayFromFeed();
+    this.enableScrolling();
+    this.contextMenu.deleteElement();
+    this.contextMenu = null;
+  }
+
+  updateExistTags(tags) {
+    this.existTags = tags;
+
+    if (this.editingNote) {
+      this.editingNote.updateExistTags(this.existTags);
+    }
+  }
+
+  #requestEditingNote(idNote) {
+    const note = this.noteList.getTargetNoteById(idNote);
+    this.addDataToStream(`requestEditingNote`, note);
+  }
+
+  #renderContexMenuNote(target) {
+    const id = target.dataset.note;
+    const targetNote = this.noteList.notes.find((note) => note.id === id);
+    const contextMenuBody = document.createElement(`ul`);
+    contextMenuBody.classList.add(`context-menu__list`, `not-selected`);
+
+    const pinnedLi = document.createElement(`li`);
+    pinnedLi.classList.add(`context-menu__item`, `note-context-menu__item`);
+    pinnedLi.dataset.note = id;
+    pinnedLi.dataset.targetAction =
+      targetNote.pinned === true ? `unpinNote` : `pinNote`;
+    pinnedLi.textContent =
+      targetNote.pinned === true ? `Открепить` : `Закрепить`;
+
+    const favoriteLi = document.createElement(`li`);
+    favoriteLi.classList.add(`context-menu__item`, `note-context-menu__item`);
+    favoriteLi.dataset.note = id;
+    favoriteLi.dataset.targetAction =
+      targetNote.favorite === true ? `removeFromFavorites` : `addToFavorites`;
+    favoriteLi.textContent =
+      targetNote.favorite === true
+        ? `Убрать из избранного`
+        : `Добавить в избранное`;
+
+    const editLi = document.createElement(`li`);
+    editLi.classList.add(`context-menu__item`, `note-context-menu__item`);
+    editLi.dataset.note = id;
+    editLi.dataset.targetAction = `editNote`;
+    editLi.textContent = `Редактировать`;
+
+    const deleteLi = document.createElement(`li`);
+    deleteLi.classList.add(`context-menu__item`, `note-context-menu__item`);
+    deleteLi.dataset.note = id;
+    deleteLi.dataset.targetAction = `removeNote`;
+    deleteLi.textContent = `Удалить`;
+
+    contextMenuBody.append(pinnedLi, favoriteLi, editLi, deleteLi);
+
+    return contextMenuBody;
+  }
+
+  #renderContexMenuFileNote(target) {
+    const id = target.dataset.file;
+    const type = target.dataset.fileType;
+    const note = target.dataset.note;
+
+    const contextMenuBody = document.createElement(`ul`);
+    contextMenuBody.classList.add(`context-menu__list`, `not-selected`);
+
+    if (type === `image` || type === `video`) {
+      contextMenuBody.innerHTML = `
+				<li class="context-menu__item file-note-context-menu__item" data-target-action="showFullScreenFileNote" data-file="${id}" data-note=${note} data-file-type=${type}>
 		 			На весь экран
 				</li>
-			`
-		}
+			`;
+    }
 
-		contextMenuBody.innerHTML += `
-			<li class="context-menu__item file-note-context-menu__item" data-target-action="downloadFile" data-file="${id}" data-file-type=${type}>
+    contextMenuBody.innerHTML += `
+			<li class="context-menu__item file-note-context-menu__item" data-target-action="downloadFile" data-file="${id}" data-note=${note} data-file-type=${type}>
 	 			Скачать
 			</li>
-			<li class="context-menu__item file-note-context-menu__item" data-target-action="removeFile" data-file="${id}" data-file-type=${type}>
+			<li class="context-menu__item file-note-context-menu__item" data-target-action="removeFile" data-file="${id}" data-note=${note} data-file-type=${type}>
 	 			Удалить
 			</li>
-		`
-		return contextMenuBody;
-	}
+		`;
+    return contextMenuBody;
+  }
 
-	#renderContexMenuNoteAttachment(target) {
-		const idFile = target.dataset.file;
-		const type = target.dataset.fileType;
-		const targetNote = target.closest(`[data-name="feedContentItem"]`);
-		const idNote = targetNote.dataset.id;
+  #renderContexMenuNoteAttachment(target) {
+    const idFile = target.dataset.file;
+    const type = target.dataset.fileType;
+    const targetNote = target.closest(`[data-name="feedContentItem"]`);
+    const idNote = targetNote.dataset.id;
 
-		const contextMenuBody = document.createElement(`ul`);
-		contextMenuBody.classList.add(`context-menu__list`, `not-selected`);
+    const contextMenuBody = document.createElement(`ul`);
+    contextMenuBody.classList.add(`context-menu__list`, `not-selected`);
 
-		if(type === `image` || type === `video`) {
-			contextMenuBody.innerHTML = `
+    if (type === `image` || type === `video`) {
+      contextMenuBody.innerHTML = `
 				<li class="context-menu__item file-context-menu__item" data-target-action="showFullScreenNoteAttachment" data-note="${idNote}" data-file="${idFile}" data-file-type="${type}">
 		 			На весь экран
 				</li>
-			`
-		}
+			`;
+    }
 
-		contextMenuBody.innerHTML += `
+    contextMenuBody.innerHTML += `
 			<li class="context-menu__item file-context-menu__item" data-target-action="downloadFile" data-note="${idNote}" data-file="${idFile}" data-file-type="${type}">
 	 			Скачать
 			</li>
 			<li class="context-menu__item file-note-context-menu__item" data-target-action="removeFile" data-note="${idNote}" data-file="${idFile}" data-file-type="${type}">
 	 			Удалить
 			</li>
-		`
-		return contextMenuBody;
-	}
+		`;
+    return contextMenuBody;
+  }
 
-	#pinNoteFromFeed(idNote) {
-		const targetNote = this.noteList.getTargetNoteById(idNote);
+  // pinNote(note){
+  // 	const noteOnFeedState =	this.noteList.getTargetNoteById(note.id);
 
-		const noteData = {
-			id: targetNote.id,
-			text: targetNote.text,
-		}
+  // 	if(noteOnFeedState) {
+  // 		noteOnFeedState.pinned = true;
+  // 	}
 
-		if(targetNote.attachment.image[0]) {
-			noteData.img = targetNote.attachment.image[0];
-		}
+  // 	this.renderPinnedNote(note);
+  // }
 
-		this.pinNote(noteData);
-	}
+  // unpinNote(note) {
+  // 	const pinnedNote = this.noteList.notes.find(item => item.id === note.id);
 
-	pinNote(note) {
-		this.renderPinnedNote(note);
+  // 	if(pinnedNote) {
+  // 		pinnedNote.pinned = false;
+  // 	}
 
-		const noteOnFeedState =	this.noteList.getTargetNoteById(note.id);
-		
-		if(noteOnFeedState) {
-			noteOnFeedState.pinned = true;
-		}
-	}
+  // 	if(this.pinnedNote) {
+  // 		this.pinnedNote.deleteElement();
+  // 		this.pinnedNote = null;
+  // 	}
+  // }
 
-	#unpinNoteFromFeed(idNote) {
-		this.unpinNote(idNote)
-		this.addDataToStream(`unpinNote`, idNote);
-	}
+  // addNoteToFavorites(note) {
+  // 	const targetNote = this.noteList.getTargetNoteById(note.id);
 
-	unpinNote(idNote) {
-		const pinnedNote = this.noteList.notes.find(note => note.id === idNote);
+  // 	if(targetNote) {
+  // 		targetNote.favorite = true;
+  // 	}
 
-		if(pinnedNote) {
-			pinnedNote.pinned = false;
-		}
+  // 	if(this.location.section === `notes` && this.location.category === `favorites`) {
+  // 		const idFirstNote = this.noteList.notes[0].id;
+  // 		this.addDataToStream(`requestSynchFeed`, {
+  // 			section: `notes`,
+  // 			category: `favorites`,
+  // 			start: idFirstNote,
+  // 			end: null,
+  // 		})
+  // 	}
+  // }
 
-		if(this.pinnedNote) {
-			this.pinnedNote.deleteElement();
-			this.pinnedNote = null;
-		}
-	}
+  // removeNoteFromFavorites(note) {
+  // 	const targetNote = this.noteList.getTargetNoteById(note.id);
 
-	#addNoteToFavoritesFromFeed(idNote) {
-		this.addNoteToFavorites(idNote);
-		this.addDataToStream(`addNoteToFavorite`);
-	}
+  // 	if(targetNote) {
+  // 		targetNote.favorite = false;
+  // 	}
+  // }
 
-	addNoteToFavorites(idNote) {
-		const targetNote = this.noteList.getTargetNoteById(idNote);
+  async #downloadFile(data) {
+    let file;
+    let serverPath = this.server;
 
-		if(targetNote) {
-			targetNote.favorite = true;
-		}
+    if (data.idFile && this.location.section === `files`) {
+      file = this.noteList.getTargetNoteById(data.idFile);
+    }
 
-		if(this.location.section === `notes` && top.location.category === `favorites`) {
-			const idFirstNote = this.noteList.notes[0].id;
-			this.addDataToStream(`requestSynchFeed`, {
-				section: `notes`,
-				category: `favorites`,
-				start: idFirstNote,
-				end: null,
-			})
-		}
-	}
+    if (data.idFile && data.idNote && data.type) {
+      const targetNote = this.noteList.getTargetNoteById(data.idNote);
 
-	#removeNoteFromFavoritesFromFeed(idNote) {
-		this.removeNoteFromFavorites(idNote)
-		this.addDataToStream(`removeNoteFromFavorite`, idNote);
-	}
+      if (targetNote) {
+        const targetAttachment = data.type;
 
-	removeNoteFromFavorites(idNote) {
-		const targetNote = this.noteList.getTargetNoteById(idNote);
+        file = targetNote.attachment[targetAttachment]?.find(
+          (item) => item.id === data.idFile,
+        );
+        if (!targetNote.savedOnServer) serverPath = '';
+      }
+    }
 
-		if(targetNote) {
-			targetNote.favorite = false;
-		}
-	}
+    if (file) {
+      const fileUrl = `${serverPath}${file.src}`;
+      await downloadFile(fileUrl, file.title);
+    }
+  }
 
-	async #downloadFile(data) {
-		let file;
+  // removeFile(data) {
+  // 	if(!data.file || !this.noteList) {
+  // 		return;
+  // 	}
 
-		if(data.idFile && this.location.section === `files`) {
-			file = this.noteList.getTargetNoteById(data.idFile);
-		}
+  // 	if(!data.note) {
+  // 		this.noteList.removeNote(data.file);
+  // 		return
+  // 	};
 
-		if(data.idFile && data.idNote && data.type) {
-			const targetNote = this.noteList.getTargetNoteById(data.idNote); 
-			
-			if(targetNote) {
-				const targetAttachment = data.type
+  // 	this.noteList.removeFileAttachment(data)
+  // }
 
-				file = targetNote.attachment[targetAttachment]?.find(item => item.id === data.idFile)
-			} 
-		}
+  // removeNote(id) {
+  // 	this.noteList?.removeNote(id);
+  // }
 
-		if(file) {
-			const fileUrl = `${this.server}${file.src}`;
-			await downloadFile(fileUrl, file.title)
-		}
-	}
+  // changeNote(note, typeNote) {
+  // 	const id = typeNote === `created` ?
+  // 		note.idCreated :
+  // 		note.id
 
-	removeFile(data) {
-		if(!data.file || !this.noteList) {
-			return;
-		}
+  // 	const targetNote = this.noteList.getTargetNoteById(id)
 
-		if(!data.note) {	
-			this.noteList.removeNote(data.file);
-			return
-		};
+  // 	if(!targetNote) {
+  // 		return
+  // 	}
 
-		this.noteList.removeFileAttachment(data) 
-	}
+  // 	this.noteList.changeNote(note, typeNote)
+  // }
 
-	removeNote(id) {
-		this.noteList?.removeNote(id);
-	}
+  // #saveEditedNote(note) {
+  // 	this.addDataToStream(`saveEditedNote`, note);
+  // 	this.removeEditingNote();
+  // 	this.changeNote(note, `edited`)
+  // }
 
-	changeNote(note, typeNote) {
-		const id = typeNote === `created` ?
-			note.idCreated :
-			note.id
+  removeEditingNote() {
+    this.enableScrolling();
+    this.scrollButton.showElement();
 
-		const targetNote = this.noteList.getTargetNoteById(id) 
+    if (this.noteList) {
+      this.noteList.removeOverlay();
+    }
 
-		if(!targetNote) {
-			return
-		}
+    if (this.editingNote) {
+      this.editingNote.deleteElement();
+      this.editingNote = null;
+    }
+  }
 
-		this.noteList.changeNote(note, typeNote)
-	}
+  scrollToNote(idNote) {
+    const targetNoteElement = this.noteList.getTargetNoteElementById(idNote);
+    this.scrollToElement(targetNoteElement);
+  }
 
-	#saveEditedNote(note) {	
-		this.addDataToStream(`saveEditedNote`, note);
-		this.removeEditingNote();
-		this.changeNote(note, `edited`)
-	}
+  scrollToDown() {
+    const coordsElement = this.element.getBoundingClientRect();
+    const targetScrollElement =
+      this.element.scrollHeight - this.element.clientHeight;
 
-	removeEditingNote() {		
-		this.enableScrolling();
-		this.scrollButton.showElement();
-		
-		if(this.noteList) {
-			this.noteList.removeOverlay();
-		}
+    this.element.scrollTo({
+      top: targetScrollElement,
+      behavior: 'smooth',
+    });
 
-		if(this.editingNote) {	
-			this.editingNote.deleteElement();
-			this.editingNote = null;
-		}
-	}
+    this.scrollButton.hideElement();
+  }
 
-	addCreatedNoteToFeed(note) {		
-		if(this.location.section === `files`) {
-			return;	
-		}
+  scrollToElement(element) {
+    element.scrollIntoView({
+      block: 'center',
+      behavior: 'smooth',
+    });
+  }
 
-		if(this.location.section === `tag` && note.tags.findIndex(item => item.id === this.location.tag) < 0) {
-			return
-			
-		}
+  #renderModal(data) {
+    if (this.modal) {
+      this.modal.deleteElement();
+      this.modal = null;
+    }
 
-		if(!this.noteList) {
-			this.renderNoteList();
-		}
+    let modalBody = null;
+    let modalCallback = null;
 
-		const tempNote = 5;
+    switch (data.action) {
+      case `removeNote`:
+        modalBody = this.#createModalRemoveNote(data.idNote);
+        break;
 
-		this.noteList.addCreatedNoteToFeed(tempNote)
-		console.log(`по сути - нужно из массива с кучей файлов, создать объект аттачмент, с вложениями типов, и для каждого  создать блоб (хотя, блоб лучше создавать `)
-	}
+      case `removeFile`:
+        modalBody = this.#createModalRemoveFile(data);
+        break;
 
+      default:
+        return;
+    }
 
+    if (modalBody) {
+      this.modal = new Modal(modalBody, this.#onClickModal.bind(this));
+      this.modal.addElementToPage();
 
-	scrollToDown() {
-		const coordsElement = this.element.getBoundingClientRect()
-		const targetScrollElement = this.element.scrollHeight - this.element.clientHeight;
-		this.element.scrollTo({
-			top: targetScrollElement,
-			behavior: "smooth",
-		})
+      if (data.action === `removeNote`) {
+        this.#createSwitcherModalConfirmRemoveAttachment();
+      }
+    }
+  }
 
-		this.scrollButton.hideElement()
-	}
+  #createModalRemoveFile(data) {
+    const { idFile, idNote, type } = data;
 
-	scrollToElement(element) {
-		element.scrollIntoView({
-			block: "center",
-			behavior: "smooth" 
-		})
-	}
+    const modalElement = document.createElement(`aside`);
+    modalElement.classList.add(`modal__overlay`, `remove-note`);
 
-	#renderModal(data) {
-		if(this.modal) {
-			this.modal.deleteElement();
-			this.modal = null;
-		}
+    const targetNote =
+      idFile && idNote ? this.noteList.getTargetNoteById(idNote) : null;
 
-		let modalBody = null;
-		let modalCallback = null;
+    const targetFile = targetNote
+      ? targetNote.attachment[type].find((item) => item.id === idFile)
+      : this.noteList.getTargetNoteById(idFile);
 
-		switch(data.action) {
-			case `removeNote`:
-				modalBody = this.#createModalRemoveNote(data.idNote);
-				break;
-			
-			case `removeFile`:
-				modalBody = this.#createModalRemoveFile(data);
-				break;
+    modalElement.dataset.noteId = idNote;
+    modalElement.dataset.fileId = idFile;
+    modalElement.dataset.fileType = type;
+    modalElement.dataset.id = `modalRemoveFile`;
 
-			default:
-				return;
-		}
-
-		if(modalBody) {
-			this.modal = new Modal(modalBody, this.#onClickModal.bind(this));
-			this.modal.addElementToPage();
-
-			if(data.action === `removeNote`) {
-				this.#createSwitcherModalConfirmRemoveAttachment();
-			}
-		}
-	}
-
-	#createModalRemoveFile(data) {
-		const { idFile,	idNote, type } = data;
-
-		const modalElement = document.createElement(`aside`);
-		modalElement.classList.add(`modal__overlay`, `remove-note`);
-
-		const targetNote = (idFile && idNote) ? 
-			this.noteList.getTargetNoteById(idNote) :
-			null;
-		
-		const targetFile = targetNote ? 
-			targetNote.attachment[type].find(item => item.id === idFile) :
-			this.noteList.getTargetNoteById(idFile);
-
-		modalElement.dataset.noteId = idNote;
-		modalElement.dataset.fileId = idFile;
-		modalElement.dataset.fileType = type;
-		modalElement.dataset.id = `modalRemoveFile`;
-
-		modalElement.innerHTML = `
+    modalElement.innerHTML = `
 			<div class="modal__body remove-note__container" data-id="modalRemoveBody">
 				<h2 class="modal__title remove-note__section remove-note__title">
 					Хотите навсегда удалить этот файл?
@@ -642,34 +651,41 @@ export default class FeedMain extends BaseComponent {
 					</button>
 				</div>
 			</div>
-		`
-		return modalElement;
-	}
+		`;
+    return modalElement;
+  }
 
-	#createModalRemoveNote(idNote) {
-		const targetNote = this.noteList.getTargetNoteById(idNote);
-	
-		const modalElement = document.createElement(`aside`);
-		modalElement.classList.add(`modal__overlay`, `remove-note`);
-		modalElement.dataset.noteId = idNote;
-		modalElement.dataset.id = `modalRemoveNote`;
+  #createModalRemoveNote(idNote) {
+    const targetNote = this.noteList.getTargetNoteById(idNote);
 
-		const modalElementBody = document.createElement(`div`);
-		modalElementBody.classList.add(`modal__body`, `remove-note__container`);
-		modalElementBody.dataset.id = `modalRemoveBody`;
+    const modalElement = document.createElement(`aside`);
+    modalElement.classList.add(`modal__overlay`, `remove-note`);
+    modalElement.dataset.noteId = idNote;
+    modalElement.dataset.id = `modalRemoveNote`;
 
-		const modalElementTitle = document.createElement(`h2`);
-		modalElementTitle.classList.add(`modal__title`, `remove-note__section`, `remove-note__title`);
-		modalElementTitle.textContent = `Хотите навсегда удалить запись?`;
-		modalElementBody.append(modalElementTitle);
+    const modalElementBody = document.createElement(`div`);
+    modalElementBody.classList.add(`modal__body`, `remove-note__container`);
+    modalElementBody.dataset.id = `modalRemoveBody`;
 
-		for(let key in targetNote.attachment) {
-			if(targetNote.attachment[key].length > 0) {
-				const confirmRemoveAttachment = document.createElement(`div`);
+    const modalElementTitle = document.createElement(`h2`);
+    modalElementTitle.classList.add(
+      `modal__title`,
+      `remove-note__section`,
+      `remove-note__title`,
+    );
+    modalElementTitle.textContent = `Хотите навсегда удалить запись?`;
+    modalElementBody.append(modalElementTitle);
 
-				confirmRemoveAttachment.classList.add(`remove-note-confirm__section`, `remove-note-confirm__attachment-remove`);
-				confirmRemoveAttachment.dataset.id = `noteRemoveConfirmAttachmentRemove`;
-				confirmRemoveAttachment.innerHTML = `
+    for (let key in targetNote.attachment) {
+      if (targetNote.attachment[key].length > 0) {
+        const confirmRemoveAttachment = document.createElement(`div`);
+
+        confirmRemoveAttachment.classList.add(
+          `remove-note-confirm__section`,
+          `remove-note-confirm__attachment-remove`,
+        );
+        confirmRemoveAttachment.dataset.id = `noteRemoveConfirmAttachmentRemove`;
+        confirmRemoveAttachment.innerHTML = `
 					<div class="remove-note-confirm__attachemnt-remove-text">
 						Также удалить вложенные файлы
 					</div>
@@ -678,15 +694,19 @@ export default class FeedMain extends BaseComponent {
 						<div class="button-icon slider-button__switch remove-note-confirm__attachemnt-remove-switch">
 						</div>
 					</div>
-				`
-				modalElementBody.append(confirmRemoveAttachment);
-			}
-			break;
-		}
+				`;
+        modalElementBody.append(confirmRemoveAttachment);
+        break;
+      }
+    }
 
-		const modalElementButtonBlock = document.createElement(`div`);
-		modalElementButtonBlock.classList.add(`modal__buttons`, `remove-note__section`, `remove-note__buttons`);
-		modalElementButtonBlock.innerHTML = `
+    const modalElementButtonBlock = document.createElement(`div`);
+    modalElementButtonBlock.classList.add(
+      `modal__buttons`,
+      `remove-note__section`,
+      `remove-note__buttons`,
+    );
+    modalElementButtonBlock.innerHTML = `
 			<button class="button remove-note__button" data-id="noteRemoveConfirm">
 				Удалить
 			</button>
@@ -694,219 +714,262 @@ export default class FeedMain extends BaseComponent {
 			<button class="button remove-note__button" data-id="removeCancel">
 				Отмена
 			</button>
-		`
-		modalElementBody.append(modalElementButtonBlock)
-		modalElement.append(modalElementBody)
+		`;
+    modalElementBody.append(modalElementButtonBlock);
+    modalElement.append(modalElementBody);
 
-		return modalElement;
-	}
+    return modalElement;
+  }
 
-	#createSwitcherModalConfirmRemoveAttachment() {
-		this.modal.switchButton = this.modal.element.querySelector(`[data-id="noteRemoveConfirmAttachmentRemoveIcon"]`)
-		if(!this.modal.switchButton) {
-			return
-		}
+  #createSwitcherModalConfirmRemoveAttachment() {
+    this.modal.switchButton = this.modal.element.querySelector(
+      `[data-id="noteRemoveConfirmAttachmentRemoveIcon"]`,
+    );
+    if (!this.modal.switchButton) {
+      return;
+    }
 
-		const clicksOnSwitchButton = fromEvent(this.modal.switchButton, `click`).pipe(
-			throttleTime(150)
-		)
+    const clicksOnSwitchButton = fromEvent(
+      this.modal.switchButton,
+      `click`,
+    ).pipe(throttleTime(150));
 
-		this.modal.saveStream(`clicksOnSwitchButton`, clicksOnSwitchButton);
-		this.modal.subscribeToStream(`clicksOnSwitchButton`, this.#onClickSwitchConfirmRemoveAttachment.bind(this));
+    this.modal.saveStream(`clicksOnSwitchButton`, clicksOnSwitchButton);
+    this.modal.subscribeToStream(
+      `clicksOnSwitchButton`,
+      this.#onClickSwitchConfirmRemoveAttachment.bind(this),
+    );
 
-		this.modal.removeAttachment = this.modal.switchButton.dataset.confirm === `true` ?
-			true :
-			false;
-	}
+    this.modal.removeAttachment =
+      this.modal.switchButton.dataset.confirm === `true` ? true : false;
+  }
 
-	#removeModal() {
-		this.modal.deleteElement();
-		this.modal = null;
-	}
+  #removeModal() {
+    this.modal.deleteElement();
+    this.modal = null;
+  }
 
-	#onClickModal(event) {
-		if(!event.target.closest(`[data-id="modalRemoveBody"]`)) {
-			this.#removeModal();
-		}
+  #onClickModal(event) {
+    if (!event.target.closest(`[data-id="modalRemoveBody"]`)) {
+      this.#removeModal();
+    }
 
-		switch(event.target.dataset.id) {
-			case `removeCancel`:
-				this.#removeModal();
-				break;
+    switch (event.target.dataset.id) {
+      case `removeCancel`:
+        this.#removeModal();
+        break;
 
-			case `fileRemoveConfirm`:
-				const fileData = {
-					note: this.modal.element.dataset.noteId,
-					file: this.modal.element.dataset.fileId,
-					type: this.modal.element.dataset.fileType, 
-				}
-				this.removeFile(fileData);
-				this.addDataToStream(`removeFile`, fileData);
-				this.#removeModal()
-				break;
+      case `fileRemoveConfirm`:
+        const fileData = {
+          id: this.modal.element.dataset.fileId,
+          note: {
+            id: this.modal.element.dataset.noteId,
+            dates: {
+              edited: Date.now(),
+            },
+          },
+          type: this.modal.element.dataset.fileType,
+        };
+        this.addDataToStream(`removeFile`, fileData);
+        this.#removeModal();
+        break;
 
-			case `noteRemoveConfirm`:
-				const idNote = this.modal.element.dataset.noteId;
-				const removeAttachment = this.modal.removeAttachment
-				this.removeNote(this.modal.element.dataset.noteId);
-				this.addDataToStream(`removeNote`, {
-					note: idNote,
-					removeAttachment,
-				});
-				this.#removeModal()
-				break;
-		}
-	}
+      case `noteRemoveConfirm`:
+        const idNote = this.modal.element.dataset.noteId;
+        const removeAttachment = this.modal.removeAttachment;
+        const noteForRemoving = {
+          id: idNote,
+          removeAttachment,
+        };
+        if (removeAttachment) {
+          const targetNote = this.noteList.getTargetNoteById(idNote);
+          if (targetNote) {
+            noteForRemoving.attachment = targetNote.attachment;
+          }
+        }
+        this.addDataToStream(`removeNote`, noteForRemoving);
+        this.#removeModal();
+        break;
+    }
+  }
 
-	#onScrollingFeed(event) {
-		this.scrollButton.switchVisibleButton(event)
-		if(this.element.scrollTop === 0) {
-			this.addDataToStream(`requestLiveLoading`, event)
-		}
-	}
+  #onScrollingFeed(event) {
+    this.scrollButton.switchVisibleButton(event);
+    if (this.element.scrollTop === 0) {
+      this.addDataToStream(`requestLiveLoading`, event);
+    }
+  }
 
-	#onClickSwitchConfirmRemoveAttachment() {
-		if(this.modal.removeAttachment) {
-			this.modal.switchButton.classList.remove(`slider-button_active`);
-			this.modal.switchButton.dataset.confirm = false;
-			this.modal.removeAttachment = false;		
-			return;
+  #onClickSwitchConfirmRemoveAttachment() {
+    if (this.modal.removeAttachment) {
+      this.modal.switchButton.classList.remove(`slider-button_active`);
+      this.modal.switchButton.dataset.confirm = false;
+      this.modal.removeAttachment = false;
+      return;
+    }
 
-		}
-		
-		this.modal.switchButton.classList.add(`slider-button_active`);
-		this.modal.switchButton.dataset.confirm = true;
-		this.modal.removeAttachment = true;
-	}
+    this.modal.switchButton.classList.add(`slider-button_active`);
+    this.modal.switchButton.dataset.confirm = true;
+    this.modal.removeAttachment = true;
+  }
 
-	#onClickOnPinnedNote(event) {	
-		const notePinnedElement = event.target.closest(`[data-id="feedPinnedNote"]`) 
-		const idPinnedNote = notePinnedElement.dataset.note;
+  #onClickOnPinnedNote(event) {
+    const notePinnedElement = event.target.closest(
+      `[data-id="feedPinnedNote"]`,
+    );
+    const idPinnedNote = notePinnedElement.dataset.note;
 
-		if(event.target.closest(`[data-id="feedPinnedUnpin"]`)) {
-			this.#unpinNoteFromFeed(idPinnedNote);
-			return; 
-		} 
+    if (event.target.closest(`[data-id="feedPinnedUnpin"]`)) {
+      this.addDataToStream(`unpinNote`, {
+        id: idPinnedNote,
+      });
+      return;
+    }
 
-		const targetNoteElement = this.noteList.element.querySelector(`[data-id="${idPinnedNote}"]`);
+    const targetNoteElement = this.noteList.element.querySelector(
+      `[data-id="${idPinnedNote}"]`,
+    );
 
-		if(targetNoteElement) {
-			this.scrollToElement(targetNoteElement)
-			return;
-		}
+    if (targetNoteElement) {
+      this.scrollToElement(targetNoteElement);
+      return;
+    }
 
-		this.addDataToStream(`getPinnedNote`, idPinnedNote)
-	}
+    this.addDataToStream(`getPinnedNote`, {
+      id: idPinnedNote,
+    });
+  }
 
-	#onClickOnNoteList(event) {	
-		const targetClick = event.target.closest(`[data-click-action]`);
+  #onClickOnNoteList(event) {
+    const targetClick = event.target.closest(`[data-click-action]`);
 
-		if(!targetClick) {
-			return;
-		}
-		
-		if(targetClick.dataset.clickAction === `noteSelectTagCategory` && targetClick.dataset.newTag !== `true`) {
-			this.addDataToStream(`requestNotesByTag`, targetClick);
-			return;
-		} 
-		
-		event.stopPropagation();
- 		this.createContexMenu(targetClick)
-	}
+    if (!targetClick) {
+      return;
+    }
 
-	#onRequestActionFromEditingNote(data) {
-		switch(data.action) {
-			case `cancel`:
- 				this.removeEditingNote();
- 				break;
+    if (
+      targetClick.dataset.clickAction === `noteSelectTagCategory` &&
+      targetClick.dataset.newTag !== `true`
+    ) {
+      this.addDataToStream(`requestNotesByTag`, targetClick);
+      return;
+    }
 
-			case `save`:
-				this.#saveEditedNote(data.note);
-				break;
-		}
-	}
+    event.stopPropagation();
+    this.createContexMenu(targetClick);
+  }
 
-	#onClickContextMenu(event) {
-		const isContextMenu = event.target.closest(`.context-menu`);
+  #onRequestActionFromEditingNote(data) {
+    switch (data.action) {
+      case `cancel`:
+        this.removeEditingNote();
+        break;
 
-		if(!isContextMenu) {
-			this.deleteContextMenu();
-			return;
-		}
+      case `save`:
+        this.addDataToStream(`saveEditedNote`, data.note);
+        this.removeEditingNote();
+        break;
+    }
+  }
 
-		const targetActionElement = event.target.closest(`[data-target-action]`);
-		if(!targetActionElement) {
-			this.deleteContextMenu();
-			return;
-		}
-	
-		const targetAction = targetActionElement.dataset.targetAction;
-		const idNote = targetActionElement.dataset.note || null;
-		const idFile = targetActionElement.dataset.file || null;
-		const fileType = targetActionElement.dataset.fileType || null;
+  #onClickContextMenu(event) {
+    const isContextMenu = event.target.closest(`.context-menu`);
 
-		this.deleteContextMenu()
+    if (!isContextMenu) {
+      this.deleteContextMenu();
+      return;
+    }
 
-		switch(targetAction) {
-			case `unpinNote`:
-				this.#unpinNoteFromFeed(idNote);
-				break;
+    const targetActionElement = event.target.closest(`[data-target-action]`);
+    if (!targetActionElement) {
+      this.deleteContextMenu();
+      return;
+    }
 
-			case `pinNote`:
-				this.#pinNoteFromFeed(idNote);
-				break;
+    const targetAction = targetActionElement.dataset.targetAction;
+    const idNote = targetActionElement.dataset.note || null;
+    const idFile = targetActionElement.dataset.file || null;
+    const fileType = targetActionElement.dataset.fileType || null;
 
-			case `removeFromFavorite`:
-				this.#removeNoteFromFavoritesFromFeed(idNote);
-				break;
+    this.deleteContextMenu();
 
-			case `addToFavorite`:
-				this.#addNoteToFavoritesFromFeed(idNote);
-				break;
-			
-			case `showFullScreenFileNote`:
-				this.addDataToStream(`showFullScreenMedia`, {
-					type: `fileNote`,
-					idFile: idFile,	
-					idNote: null,				
-				});
-				break;
+    switch (targetAction) {
+      case `unpinNote`:
+        this.addDataToStream(`unpinNote`, {
+          id: idNote,
+        });
+        break;
 
-			case `showFullScreenNoteAttachment`:
-				this.addDataToStream(`showFullScreenMedia`, {
-					type: `noteAttachment`,
-					idFile:	idFile,
-					idNote: idNote,
-				});
-				break;
+      case `pinNote`:
+        this.addDataToStream(`pinNote`, {
+          id: idNote,
+        });
+        break;
 
-			case `downloadFile`:
-				this.#downloadFile({
-					idFile:	idFile,
-					idNote: idNote,
-					type: fileType,
-				})
-				break;
+      case `removeFromFavorites`:
+        this.addDataToStream(`removeNoteFromFavorites`, {
+          id: idNote,
+        });
+        // this.removeNoteFromFavorites({
+        // 	id: idNote
+        // });
+        break;
 
-			case `editNote`:
-				this.#requestEditingNote(idNote)
-				break;
+      case `addToFavorites`:
+        this.addDataToStream(`addNoteToFavorites`, {
+          id: idNote,
+        });
+        // this.addNoteToFavorites({
+        // 	id: idNote
+        // });
+        break;
 
-			case `removeNote`:
-				this.#renderModal({
-					idNote: idNote,
-					action: `removeNote`
-				});
-				break;
+      case `showFullScreenFileNote`:
+        this.addDataToStream(`showFullScreenMedia`, {
+          type: `fileNote`,
+          idFile: idFile,
+          idNote: null,
+          savedOnServer: true,
+        });
+        break;
 
-			case `removeFile`:
-				this.#renderModal({
-					idFile:	idFile,
-					idNote: idNote,
-					type: fileType,
-					action: `removeFile`
-				});
-				break;
-		}
-	}
+      case `showFullScreenNoteAttachment`:
+        const targetNote = this.noteList.getTargetNoteById(idNote);
+        this.addDataToStream(`showFullScreenMedia`, {
+          type: `noteAttachment`,
+          idFile: idFile,
+          idNote: idNote,
+          savedOnServer: targetNote.savedOnServer,
+        });
+        break;
+
+      case `downloadFile`:
+        this.#downloadFile({
+          idFile: idFile,
+          idNote: idNote,
+          type: fileType,
+        });
+        break;
+
+      case `editNote`:
+        this.#requestEditingNote(idNote);
+        break;
+
+      case `removeNote`:
+        this.#renderModal({
+          idNote: idNote,
+          action: `removeNote`,
+        });
+        break;
+
+      case `removeFile`:
+        this.#renderModal({
+          idFile: idFile,
+          idNote: idNote,
+          type: fileType,
+          action: `removeFile`,
+        });
+        break;
+    }
+  }
 }

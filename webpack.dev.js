@@ -28,7 +28,9 @@ module.exports = merge(common, {
       // },
     ],
   },
-
+  optimization: {
+    runtimeChunk: 'single'
+  },
   plugins: [
     // Only update what has changed on hot reload
     new webpack.HotModuleReplacementPlugin(),

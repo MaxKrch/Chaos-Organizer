@@ -1,18 +1,16 @@
 const validateEmail = (email) => {
-	const regEmail = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-	const chek = regEmail.test(email);
+  const regEmail =
+    /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+  const chek = regEmail.test(email);
 
-	return chek;
-}
+  return chek;
+};
 
 const validatePassword = (pasword) => {
-	const regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{5,20}$/
-	const chek = regPass.test(pasword);
+  const regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{5,20}$/;
+  const chek = regPass.test(pasword);
 
-	return chek;
-}
+  return chek;
+};
 
-export {
-	validateEmail,
-	validatePassword
-}
+export { validateEmail, validatePassword };

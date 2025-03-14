@@ -78,6 +78,7 @@ $feed-scroll-down-margin: 0.8rem
 
 		&__category
 			overflow: hidden
+			font-size: 0.9rem
 			white-space: nowrap
 	
 		&__network
@@ -134,6 +135,7 @@ $feed-scroll-down-margin: 0.8rem
 			cursor: pointer
 			line-height: $pinned-text-line-height
 			flex-basis: 100%
+			padding-left: $spacing-small
 
 		&__unpin
 			cursor: pointer
@@ -227,7 +229,7 @@ $feed-scroll-down-margin: 0.8rem
 				background-position: center
 				background-image: url('../img/icons/102.png')
 				left: $spacing-normal
-				top: $spacing-small
+				top: $spacing-normal
 				width: $note-block-file-icon-size
 				height: $note-block-file-icon-size
 
@@ -274,7 +276,7 @@ $feed-scroll-down-margin: 0.8rem
 			background-color: $color-light-main
 			padding: $spacing-small
 			display: grid
-			grid-template-columns: minmax(40%, 50%) minmax(50%, 60%)
+			grid-template-columns: minmax(40%, 70%) minmax(30%, 60%)
 			grid-template-rows: repeat(2, auto)
 			gap: $spacing-normal
 
@@ -384,7 +386,8 @@ $feed-scroll-down-margin: 0.8rem
 			height: $feed-block-file-options-size
 
 		&__body
-			height: 100%
+			// height: 100%
+			background-color: $color-light-main
 
 	&-scroll-down
 		position: fixed

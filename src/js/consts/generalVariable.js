@@ -1,9 +1,5 @@
 const general = {
-	appId: `app`
-}
+  appId: `app`,
+};
 
-
-
-export {
-	general
-}
+export { general };

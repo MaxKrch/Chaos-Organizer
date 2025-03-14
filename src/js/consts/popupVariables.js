@@ -1,7 +1,5 @@
 const popupVariable = {
-	container: `#app-container`
-}
+  container: `#app-container`,
+};
 
-export {
-	popupVariable
-}
+export { popupVariable };

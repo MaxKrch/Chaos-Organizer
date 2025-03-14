@@ -9,181 +9,233 @@ import { routes } from '../../consts/index.js';
 import { fromEvent, debounceTime } from 'rxjs';
 
 export default class NoteList extends BaseComponent {
-	constructor(container, section, notes) {
-		super(container);
-		this.body = null;
-		this.notes = [];
-		this.activeSection = null;
-		this.textHint = null;
+  constructor(container, section, notes) {
+    super(container);
+    this.body = null;
+    this.element = null;
+    this.notes = [];
+    this.blobURLs = [];
+    this.location = null;
+    this.textHint = null;
 
-		this.#initElement(notes, section);
-	}
+    this.#initElement(notes, section);
+  }
 
-	#initElement(notes, section) {
-		this.activeSection = section === `files` ?
-			`files` :
-			`notes`
+  #initElement(notes, location) {
+    this.location = location;
+    this.#renderElement(notes);
+    this.#createStreams();
+    this.#subscribeToStreams();
+  }
 
-		this.#renderElement(notes, section);
-		this.#createStreams();
-		this.#subscribeToStreams();
-	}
+  #renderElement(notes) {
+    const typeActiveLocation =
+      this.location.section == `files` ? `files` : `notes`;
 
-	#renderElement(notes) {
-		this.element = document.createElement(`section`);
-		this.element.classList.add(`feed-content`, `feed-${this.activeSection}`);
+    this.element = document.createElement(`section`);
+    this.element.classList.add(`feed-content`, `feed-${typeActiveLocation}`);
 
-		this.body = document.createElement(`ul`);
-		this.body.classList.add(`feed-content__list`, `feed-${this.activeSection}__list`);
-		
-		const listNotes = [];
-		
-		if(notes && Array.isArray(notes)) {
-			notes.forEach(note => {
-				const noteElement = new Note(note, this.activeSection, routes.server);
-	
-				this.notes.push(note)
-				listNotes.push(noteElement);
-			})
-			this.body.append(...listNotes);
-		}
+    this.body = document.createElement(`ul`);
+    this.body.classList.add(
+      `feed-content__list`,
+      `feed-${typeActiveLocation}__list`,
+    );
 
-		this.element.append(this.body);
-	}
+    const listNotes = [];
+    if (notes && Array.isArray(notes)) {
+      notes.forEach((note) => {
+        if (!note.savedOnServer) this.createBlobURLs(note);
 
-	#createStreams() {
-		const mouseMoveOnElement = fromEvent(this.element, `mousemove`).pipe(
-			debounceTime(150)
-		)
+        const serverURL =
+          this.location.section === `files` || note.savedOnServer
+            ? routes.server
+            : '';
+        const noteElement = new Note(note, this.location, serverURL);
 
-		this.saveStream(`mouseMoveOnElement`, mouseMoveOnElement);
-	}
+        this.notes.push(note);
+        listNotes.push(noteElement);
+      });
+      this.body.append(...listNotes);
+    }
 
-	#subscribeToStreams() {
-		this.subscribeToStream(`mouseMoveOnElement`, this.#onMouseMoveOnElement.bind(this));
-	}
+    this.element.append(this.body);
+  }
 
-	liveLoadingNotes(notes) {
-		if(!notes && !Array.isArray(notes)) {
-			console.log(`Empty element`);
-			return;
-		}
+  deleteElement() {
+    this.clearBlobURLs();
+    super.deleteElement();
+  }
 
-		const loadingNotes = [];
-		notes.forEach(note => {
-			const noteElement = new Note(note, this.activeSection, routes.server);
+  createBlobURLs(note) {
+    for (let key in note.attachment) {
+      note.attachment[key].forEach((item) => {
+        item.src =
+          item.file instanceof File ? URL.createObjectURL(item.file) : ``;
+        if (item.src) this.blobURLs.push(item.src);
+      });
+    }
+  }
 
-			this.notes.push(note)
-			loadingNotes.push(noteElement);
-		})
-		this.body.append(...loadingNotes);
-	}
+  clearBlobURLs() {
+    this.blobURLs.forEach((item) => URL.revokeObjectURL(item));
+    this.blobURLs = [];
+  }
 
-	replaceElement(note, noteElement) {
-		const newNoteElement = new Note(note, this.activeSection, routes.server);
-		noteElement.replaceWith(newNoteElement);
-	}
+  #createStreams() {
+    const mouseMoveOnElement = fromEvent(this.element, `mousemove`).pipe(
+      debounceTime(150),
+    );
 
-	removeFileAttachment(data) {		
-		const targetNoteElement = this.getTargetNoteElementById(data.note);
-		const targetNote = this.getTargetNoteById(data.note);
+    this.saveStream(`mouseMoveOnElement`, mouseMoveOnElement);
+  }
 
-		if(!targetNoteElement || !targetNote) {
-			return;
-		}
+  #subscribeToStreams() {
+    this.subscribeToStream(
+      `mouseMoveOnElement`,
+      this.#onMouseMoveOnElement.bind(this),
+    );
+  }
 
-		const targetAttachments = targetNote.attachment[data.type];
-		const indexTargetFile = targetAttachments.findIndex(item => item.id === data.file);
+  liveLoadingNotes(notes) {
+    if (!notes && !Array.isArray(notes)) {
+      console.log(`Empty element`);
+      return;
+    }
 
-		if(indexTargetFile < 0) {
-			return;
-		}
+    const loadingNotes = [];
+    notes.forEach((note) => {
+      const noteElement = new Note(note, this.location, routes.server);
 
-		targetAttachments.splice(indexTargetFile, 1);
+      this.notes.push(note);
+      loadingNotes.push(noteElement);
+    });
+    this.body.append(...loadingNotes);
+  }
 
-		this.replaceElement(targetNote, targetNoteElement);
-	}
+  replaceElement(note, noteElement) {
+    const serverUrl = note.savedOnServer ? routes.server : '';
 
-	removeNote(id) {
-		const targetNoteElement = this.getTargetNoteElementById(id);
-		const indexTargetNote = this.notes.findIndex(item => item.id === id);
+    const newNoteElement = new Note(note, this.location, serverUrl);
+    noteElement.replaceWith(newNoteElement);
+  }
 
-		if(!targetNoteElement || indexTargetNote < 0) {
-			return;
-		}
+  removeFileAttachment(data) {
+    const targetNoteElement = this.getTargetNoteElementById(data.note);
+    const targetNote = this.getTargetNoteById(data.note);
 
-		this.notes.splice(indexTargetNote, 1)
-		targetNoteElement.remove()
-	}
+    if (!targetNoteElement || !targetNote) {
+      return;
+    }
 
-	changeNote(note, typeNote) {
-		const id = typeNote === `created` ?
-			note.idCreated :
-			note.id
+    const targetAttachments = targetNote.attachment[data.type];
+    const indexTargetFile = targetAttachments.findIndex(
+      (item) => item.id === data.file,
+    );
 
-		const targetNoteElement = this.getTargetNoteElementById(id);		
-		const targetNote = this.getTargetNoteById(id);
+    if (indexTargetFile < 0) {
+      return;
+    }
 
-		if(!targetNoteElement || !targetNote) {
-			return;
-		}
+    targetAttachments.splice(indexTargetFile, 1);
 
-		if(this.textHint) {
-			this.#removeTextHintSendingNote();		
-		}
+    this.replaceElement(targetNote, targetNoteElement);
+  }
 
-		if(typeNote === `created`) {
-			for(let key in targetNote.attachment) {
-				if(Array.isArray(targetNote.attachment[key])) {
-					targetNote.attachment[key].forEach(item => URL.revokeObjectURL(item.url))
-				}
-			}
-		}	
+  removeNote(id) {
+    const targetNoteElement = this.getTargetNoteElementById(id);
+    const indexTargetNote = this.notes.findIndex((item) => item.id === id);
 
-		this.notes.splice(indexTargetNote, 1, note);
-		this.replaceElement(note, targetNoteElement);
-	}
+    if (!targetNoteElement || indexTargetNote < 0) {
+      return;
+    }
 
-	addCreatedNoteToFeed(note) {
-		const noteElement = new TempNote(note, this.activeSection);
-		this.notes.push(note);
-		this.body.append(noteElement)
-	}
+    this.notes.splice(indexTargetNote, 1);
+    targetNoteElement.remove();
+  }
 
-	getTargetNoteById(id) {
-		const targetNote = this.notes.find(item => item.id === id);
-		return targetNote;
-	}
+  changeNote(note, typeNote) {
+    // const id = typeNote === `created` ?
+    // 	note.idCreated :
+    // note.id
 
-	getTargetNoteElementById(id) {
-		const targetNoteElement = this.element.querySelector(`[data-name="feedContentItem"][data-id="${id}"]`);
-		return targetNoteElement;
-	}
+    const targetNoteElement = this.getTargetNoteElementById(note.id);
+    const targetNote = this.getTargetNoteById(note.id);
 
-	#createTextHintSendingNote(target) {
-		if(this.textHint) {
-			this.#removeTextHintSendingNote()
-		}
+    if (!targetNoteElement || !targetNote) {
+      return;
+    }
 
-		const targetNote = target.closest(`[data-name="feedContentItem"]`)
-		this.textHint = new TextHint(this.container, target, `Ожидает отправки на сервер`)
-	}
+    const indexTargetNote = this.notes.indexOf(targetNote);
 
-	#removeTextHintSendingNote() {
-		this.textHint.deleteElement();
-		this.textHint = null;
-	}
+    if (this.textHint) {
+      this.#removeTextHintSendingNote();
+    }
 
-	#onMouseMoveOnElement(event) {
-		const isSendindStatusElement = event.target.closest(`[data-name="feedNoteSending"]`);
+    if (typeNote === `created`) {
+      for (let key in targetNote.attachment) {
+        if (Array.isArray(targetNote.attachment[key])) {
+          targetNote.attachment[key].forEach((item) =>
+            URL.revokeObjectURL(item.url),
+          );
+        }
+      }
+    }
+    //Получить новый текст элемента и заменить им старый
+    this.notes.splice(indexTargetNote, 1, note);
+    this.replaceElement(note, targetNoteElement);
+  }
 
-		if(isSendindStatusElement && isSendindStatusElement.dataset.sendingStatus === `await`) {
-			this.#createTextHintSendingNote(isSendindStatusElement);
-			return;
-		}
-		
-		if(this.textHint) {
-			this.#removeTextHintSendingNote()
-		}
-	}
+  addCreatedNoteToFeed(note) {
+    const noteElement = new TempNote(note, this.location);
+    this.notes.push(note);
+    this.body.append(noteElement);
+  }
+
+  getTargetNoteById(id) {
+    const targetNote = this.notes.find((item) => item.id === id);
+    return targetNote;
+  }
+
+  getTargetNoteElementById(id) {
+    const targetNoteElement = this.element.querySelector(
+      `[data-name="feedContentItem"][data-id="${id}"]`,
+    );
+    return targetNoteElement;
+  }
+
+  #createTextHintSendingNote(target) {
+    if (this.textHint) {
+      this.#removeTextHintSendingNote();
+    }
+
+    const targetNote = target.closest(`[data-name="feedContentItem"]`);
+    this.textHint = new TextHint(
+      this.container,
+      target,
+      `Отправка на сервер...`,
+    );
+  }
+
+  #removeTextHintSendingNote() {
+    this.textHint.deleteElement();
+    this.textHint = null;
+  }
+
+  #onMouseMoveOnElement(event) {
+    const isSendindStatusElement = event.target.closest(
+      `[data-name="feedNoteSending"]`,
+    );
+
+    if (
+      isSendindStatusElement &&
+      isSendindStatusElement.dataset.sendingStatus === `await`
+    ) {
+      this.#createTextHintSendingNote(isSendindStatusElement);
+      return;
+    }
+
+    if (this.textHint) {
+      this.#removeTextHintSendingNote();
+    }
+  }
 }

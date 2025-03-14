@@ -1,29 +1,27 @@
 const sidebarStaticElements = {
-	allNotes: {
-		description: `Все записи`,
-	},
-	favorites: {
-		description: `Избранное`,
-	},
-	files: {
-		videos:	{
-			description: `Видео`,
-		},
-		audios:	{
-			description: `Аудио`,
-		},
-		images:	{
-			description: `Изображения`,
-		},
-		otherFiles: {
-			description: `Другие файлы`,
-		},
-	},
-	tags:	{
-		description: `Мои теги`,
-	}
-}
+  allNotes: {
+    description: `Все записи`,
+  },
+  favorites: {
+    description: `Избранное`,
+  },
+  files: {
+    video: {
+      description: `Видео`,
+    },
+    audio: {
+      description: `Аудио`,
+    },
+    image: {
+      description: `Изображения`,
+    },
+    other: {
+      description: `Другие файлы`,
+    },
+  },
+  tags: {
+    description: `Мои теги`,
+  },
+};
 
-export { 
-	sidebarStaticElements 
-}
+export { sidebarStaticElements };

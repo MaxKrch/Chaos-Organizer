@@ -1,60 +1,97 @@
-import BaseComponent from '../../helpers/BaseComponent'
+import BaseComponent from '../../helpers/BaseComponent';
 import ContextMenu from '../popups/ContextMenu';
-import Modal from '../popups/Modal';
+import ModalNotSavedNotesFiles from '../popups/ModalNotSavedNotesFiles';
 import { Subject } from 'rxjs';
 
 import CreatingNote from '../CreatingNote';
 
 export default class FeedFooter extends BaseComponent {
-	constructor(container) {
-		super(container);
+  constructor(container) {
+    super(container);
 
-		this.creatingNote = null;
-	}
+    this.creatingNote = null;
+    this.modal = null;
+  }
 
-	initionRender() {
-		this.#createElement();
-		this.#createStreams();
-		this.#subscribeToStreams()
-		this.addElementToPage();
+  initionRender() {
+    this.#createElement();
+    this.#createStreams();
+    this.#subscribeToStreams();
+    this.addElementToPage();
 
-		this.creatingNote = new CreatingNote(this.element, this.#onRequestActionFromCreatingPanel.bind(this));
-	}
+    this.creatingNote = new CreatingNote(
+      this.element,
+      this.#onRequestActionFromCreatingPanel.bind(this),
+    );
+  }
 
-	#createElement() {
-		this.element = document.createElement(`footer`);
-		this.element.classList.add(`feed-footer`)
-	}
+  #createElement() {
+    this.element = document.createElement(`footer`);
+    this.element.classList.add(`feed-footer`);
+  }
 
-	#createStreams() {
-		this.saveStream(`requestEnableFullPanelCreatingNote`, new Subject());
-		this.saveStream(`requestDisableFullPanelCreatingNote`, new Subject());
-		this.saveStream(`requestSaveCreatedNote`, new Subject())
-	}
+  #createStreams() {
+    this.saveStream(`requestEnableFullPanelCreatingNote`, new Subject());
+    this.saveStream(`requestDisableFullPanelCreatingNote`, new Subject());
+    this.saveStream(`requestSaveCreatedNote`, new Subject());
+  }
 
-	#subscribeToStreams() {}
+  #subscribeToStreams() {}
 
-	saveCreatingNotesToStorage() {
-		this.creatingNote.saveNoteToLocalStorage();
-	}
+  saveCreatingNotesToStorage() {
+    this.creatingNote.saveNoteToLocalStorage();
+  }
 
-	clearCreatingNote() {
-		this.creatingNote.clearDataCreatingNote()
-	}
+  clearCreatingNote() {
+    this.creatingNote.clearDataCreatingNote();
+  }
 
-	#onRequestActionFromCreatingPanel(data) {
-		switch(data.action) {
-			case `enableFullPanelCreatingNote`:
-				this.addDataToStream(`requestEnableFullPanelCreatingNote`, data.action);
-				break;
+  showModalSavedNote(messages) {
+    if (this.modal) {
+      this.removeModal();
+    }
 
-			case `disableFullPanelCreatingNote`:
-				this.addDataToStream(`requestDisableFullPanelCreatingNote`, data.action);
-				break;
+    this.modal = new ModalNotSavedNotesFiles(
+      this.#onClickByModal.bind(this),
+      messages,
+    );
+  }
 
-			case `saveCreatedNote`:	
-				this.addDataToStream(`requestSaveCreatedNote`, data.note);
-				break
-		}
-	}
+  removeModal() {
+    if (this.modal) {
+      this.modal.deleteElement();
+      this.modal = null;
+    }
+  }
+
+  #onClickByModal(event) {
+    if (!event.target.closest(`[data-id="modalUploadFilesErrorBody"]`)) {
+      this.removeModal();
+      return;
+    }
+
+    if (event.target.closest(`[data-target-action="closeUploadFilesError"]`)) {
+      this.removeModal();
+      return;
+    }
+  }
+
+  #onRequestActionFromCreatingPanel(data) {
+    switch (data.action) {
+      case `enableFullPanelCreatingNote`:
+        this.addDataToStream(`requestEnableFullPanelCreatingNote`, data.action);
+        break;
+
+      case `disableFullPanelCreatingNote`:
+        this.addDataToStream(
+          `requestDisableFullPanelCreatingNote`,
+          data.action,
+        );
+        break;
+
+      case `saveCreatedNote`:
+        this.addDataToStream(`requestSaveCreatedNote`, data.note);
+        break;
+    }
+  }
 }

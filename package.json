@@ -8,8 +8,7 @@
     "build": "webpack --config webpack.prod.js",
     "show:dist": "live-server dist",
     "lint": "eslint . --fix",
-    "test": "jest --coverage",
-    "watch": "tsc -w"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",

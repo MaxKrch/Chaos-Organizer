@@ -1,7 +1,5 @@
 const authVariables = {
-	storageToken: `token`, 
-}
+  storageToken: `token`,
+};
 
-export {
-	authVariables
-}
+export { authVariables };

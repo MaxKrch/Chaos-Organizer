@@ -1,17 +1,17 @@
 import BaseComponent from '../helpers/BaseComponent';
 
 export default class PreloadFeed extends BaseComponent {
-	constructor(container, type) {
-		super(container);
-		this.pinnedNote = false;
-		this.#renderElement(type)
-	}
+  constructor(container, type) {
+    super(container);
+    this.pinnedNote = false;
+    this.#renderElement(type);
+  }
 
-	#renderElement(type) {
-		if(type === `notes`) {
-			this.pinnedNote = document.createElement(`section`);						
-			this.pinnedNote.classList.add(`feed-pinned`);
-			this.pinnedNote.innerHTML = `
+  #renderElement(type) {
+    if (type === `notes`) {
+      this.pinnedNote = document.createElement(`section`);
+      this.pinnedNote.classList.add(`feed-pinned`);
+      this.pinnedNote.innerHTML = `
 				<div class="active-background-gradient feed-pinned__item feed-pinned__img">
 				</div>
 					
@@ -22,15 +22,15 @@ export default class PreloadFeed extends BaseComponent {
 					<p class="active-background-gradient preload-feed__pinned-text preload-feed__pinned-text-str2">
 					</p>
 				</div>
-			`
-		}
-		
-		this.element = document.createElement(`section`);
-		this.element.classList.add(`feed-content`);
+			`;
+    }
 
-		if(type === `files`) {
-			this.element.classList.add(`feed-files`);
-			this.element.innerHTML = `
+    this.element = document.createElement(`section`);
+    this.element.classList.add(`feed-content`);
+
+    if (type === `files`) {
+      this.element.classList.add(`feed-files`);
+      this.element.innerHTML = `
 				<ul class="feed-content__list feed-files__list">
 					<li class="feed-content__item active-background-gradient-light preload-feed-file preload-feed-file-1">
 					</li>
@@ -42,12 +42,12 @@ export default class PreloadFeed extends BaseComponent {
 					</li>
 				</ul>
 			</section>	
-			`
-			return;
-		}
+			`;
+      return;
+    }
 
-		this.element.classList.add(`feed-notes`);
-		this.element.innerHTML = `
+    this.element.classList.add(`feed-notes`);
+    this.element.innerHTML = `
 			<ul class="feed-content__list">
 				<li class="feed-content__item preload-feed-note" data-note="121544">
 					<header class="feed-note__header active-background-gradient">
@@ -119,20 +119,20 @@ export default class PreloadFeed extends BaseComponent {
 						</footer>			
 					</li>
 				</ul>
-			`
-	}
+			`;
+  }
 
-	addElementToPage() {
-		if(this.pinnedNote) {
-			this.container.append(this.pinnedNote);
-		}
-		super.addElementToPage()
-	}
+  addElementToPage() {
+    if (this.pinnedNote) {
+      this.container.append(this.pinnedNote);
+    }
+    super.addElementToPage();
+  }
 
-	deleteElement() {
-		if(this.pinnedNote) {
-			this.pinnedNote.remove()
-		}
-		super.deleteElement()
-	}
+  deleteElement() {
+    if (this.pinnedNote) {
+      this.pinnedNote.remove();
+    }
+    super.deleteElement();
+  }
 }

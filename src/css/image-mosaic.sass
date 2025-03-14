@@ -42,33 +42,14 @@
 				grid-column: span 3
 
 	&-vertical-media-muptiple-three-and-one
-		grid-template-columns: repeat(6, auto)
+		grid-template-columns: repeat(3, auto)
 		grid-template-rows: repeat(3, auto)
 		grid-auto-flow: row
 
 		& .image-mosaic__item
 			&:first-child
-				grid-row: span 2
-				grid-column: span 4
-
-			&:nth-child(2)
+				grid-row: span 3
 				grid-column: span 2
-
-			&:nth-child(3)
-				grid-column: span 2
-
-			&:nth-child(4)
-				grid-column: span 3
-
-			&:nth-child(5)
-				grid-column: span 3
-
-			&:nth-child(6)
-				grid-column: span 3
-
-			&:nth-child(7)
-				grid-column: span 3
-
 
 	&-horizontal-media-muptiple-three-and-one
 		grid-template-columns: repeat(3, auto)
@@ -78,7 +59,6 @@
 		& .image-mosaic__item
 			&:first-child
 				grid-column: span 3
-
 
 	&-vertical-media-muptiple-three-and-two
 		grid-template-columns: repeat(6, auto)

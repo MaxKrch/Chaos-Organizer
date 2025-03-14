@@ -1,299 +1,288 @@
 import Notice from '../components/popups/Notice';
 import Streams from '../helpers/Streams';
 
-import { Subject, scan, BehaviorSubject, shareReplay } from 'rxjs';
-import { initialState, orderedKeysInitialState, idbParams } from '../consts/index.js';
+import { BehaviorSubject } from 'rxjs';
+import {
+  initialState,
+  orderedKeysInitialState,
+  idbParams,
+} from '../consts/index.js';
 
 export default class Store extends Streams {
-	constructor() {
-		super();
-		this.idb = null;
-		this.createdObjectStores = null;
-	}
+  constructor() {
+    super();
+    this.idb = null;
+    this.createdObjectStores = null;
+  }
 
-	async init() {			
-		try {
-			await this.#connectingWithIDB();
+  async init() {
+    try {
+      await this.#connectingWithIDB();
 
-			if(this.createdObjectStores) {
-				await this.#saveInitialStateToIDB();
-			}
-		
-		} catch(err) {
-			console.log(`Fail connection with database: ${err}`)
+      if (this.createdObjectStores) {
+        await this.#saveInitialStateToIDB();
+      }
+    } catch (err) {
+      console.log(`Fail connection with database: ${err}`);
+    } finally {
+      await this.#creatingStreams();
+      this.#subscribeToStreams();
+    }
+  }
 
-		} finally {		
-			await this.#creatingStreams();
-			this.#subscribeToStreams();
-		}
-	}
+  async #creatingStreams() {
+    let loadedStoreFromIdb = null;
 
-	async #creatingStreams() {	
-		let loadedStoreFromIdb = null;
+    try {
+      loadedStoreFromIdb = await this.#loadStoreFromIdb();
+    } catch (err) {
+      console.log(`Fail load store from idb: ${err}`);
+    }
 
-		try	{
-			loadedStoreFromIdb = await this.#loadStoreFromIdb();
-			
-		} catch(err) {
-			console.log(`Fail load store from idb: ${err}`)
-		}
+    orderedKeysInitialState.forEach((store) => {
+      let state;
 
-		orderedKeysInitialState.forEach(store => {
-			let state;
+      if (loadedStoreFromIdb && loadedStoreFromIdb[store]) {
+        state = loadedStoreFromIdb[store];
+      } else {
+        state = initialState[store];
+      }
 
-			if(loadedStoreFromIdb && loadedStoreFromIdb[store]) {
-				state = loadedStoreFromIdb[store]
-	
-			}	else {
-				state = initialState[store]
-			}	
+      this.saveStream(store, new BehaviorSubject(state));
+    });
+  }
 
-			this.saveStream(store, new BehaviorSubject(state));
-		})
-	}
+  #subscribeToStreams() {}
 
-	#subscribeToStreams() {
-	}
+  getStateValue(store) {
+    try {
+      const currentStore = this.streams[store].stream$;
+      const value = currentStore.getValue();
 
-	getStateValue(store) {
-		try {
-			const currentStore = this.streams[store].stream$;
-			const value = currentStore.getValue();
+      return value;
+    } catch (err) {
+      console.log(`Ошибка запроса: ${err}`);
+      return false;
+    }
+  }
 
-			return value;
-		} catch (err) {
-			console.log(`Ошибка запроса: ${err}`);
-			return false;
-		}		
-	}
+  async #connectingWithIDB() {
+    return new Promise((res, rej) => {
+      const requestOpen = window.indexedDB.open(
+        idbParams.dbTitle,
+        idbParams.dbVersion,
+      );
 
-	async #connectingWithIDB() {
-		return new Promise((res, rej) => {
-			const requestOpen = window.indexedDB.open(idbParams.dbTitle, idbParams.dbVersion);
+      requestOpen.onupgradeneeded = (event) => {
+        this.idb = requestOpen.result;
 
-			requestOpen.onupgradeneeded = (event) => {
-				this.idb = requestOpen.result;
+        switch (event.oldVersion) {
+          case 0:
+            this.#initStoreIDB();
+            break;
 
-				switch(event.oldVersion) {
-					case 0:
-						this.#initStoreIDB()
-						break;
+          default:
+            this.#upgradeStoreIDB();
+        }
+      };
 
-					default:
-						this.#upgradeStoreIDB()
-				}
-			}
+      requestOpen.onerror = (event) => {
+        console.log(`Fail connection with database: ${requestOpen.error}`);
+        rej(requestOpen.error);
+      };
 
-			requestOpen.onerror = (event) => {
-				console.log(`Fail connection with database: ${requestOpen.error}`);
-				rej(requestOpen.error);
-			}
+      requestOpen.onsuccess = () => {
+        this.idb = requestOpen.result;
+        this.idb.onversionchange = () => {
+          this.idb.close();
+          this.#renderPopupErrorDB(`Приложение обновилось`);
+        };
+        res();
+      };
 
-			requestOpen.onsuccess = () => {
-				this.idb = requestOpen.result;
-				this.idb.onversionchange = () => {
-					this.idb.close();
-					this.#renderPopupErrorDB(`Приложение обновилось`);
-				}
-				res();
-			}
+      requestOpen.onblocked = () => {
+        console.log(`Database failed to open: ${requestOpen.error}`);
 
-			requestOpen.onblocked = () => {
-				console.log(`Database failed to open: ${requestOpen.error}`);
-					
-				rej(requestOpen.error);
-			}	
-		})
-	}
+        rej(requestOpen.error);
+      };
+    });
+  }
 
-	#initStoreIDB() {
-		this.createdObjectStores = [];
-		
-		idbParams.objectStores.forEach(key => {
-			this.idb.createObjectStore(key);
-			this.createdObjectStores.push(key);
-		});
-	}
-	
-	#upgradeStoreIDB() {
-		const oldObjectStoreNames = Array.from(this.idb.objectStoreNames);
+  #initStoreIDB() {
+    this.createdObjectStores = [];
 
-		oldObjectStoreNames.forEach(key => {
-			if(key in idbParams.objectStores) {
-				return;
-			}
-			this.idb.deleteObjectStore(key)
-		});
-		
+    idbParams.objectStores.forEach((key) => {
+      this.idb.createObjectStore(key);
+      this.createdObjectStores.push(key);
+    });
+  }
 
-		idbParams.objectStores.forEach(key => {
-			if(!this.idb.objectStoreNames.contains(key)) {
-				this.idb.createObjectStore(key);
+  #upgradeStoreIDB() {
+    const oldObjectStoreNames = Array.from(this.idb.objectStoreNames);
 
-				if(!this.createdObjectStores) {
-					this.createdObjectStores = []
-				}
-				
-				this.createdObjectStores.push(key);
-			}
-		})
-	}
+    oldObjectStoreNames.forEach((key) => {
+      if (key in idbParams.objectStores) {
+        return;
+      }
+      this.idb.deleteObjectStore(key);
+    });
 
-	async #saveInitialStateToIDB() {
-		const trans = this.idb.transaction(this.createdObjectStores, `readwrite`);
+    idbParams.objectStores.forEach((key) => {
+      if (!this.idb.objectStoreNames.contains(key)) {
+        this.idb.createObjectStore(key);
 
-		this.createdObjectStores.forEach(store => {
-			const currentStore = trans.objectStore(store);
-			const initValueStore = initialState[store];
-			
-			if (typeof initValueStore !== `object`) {
-				currentStore.add(initValueStore, 0);
-				return;
-			}
-			for(let key in initValueStore) {
-				currentStore.add(initValueStore[key], key)
-			}
-		})
-	}
+        if (!this.createdObjectStores) {
+          this.createdObjectStores = [];
+        }
 
-	async #loadStoreFromIdb() {
-		return new Promise(async (res, rej) => {
-			try {
-				if(!this.idb) {
-					await this.#connectingWithIDB();
+        this.createdObjectStores.push(key);
+      }
+    });
+  }
 
-					if(this.createdObjectStores) {
-						await this.#saveInitialStateToIDB();
-					}
-				}
+  async #saveInitialStateToIDB() {
+    const trans = this.idb.transaction(this.createdObjectStores, `readwrite`);
 
-				const objectStoreNames = Array.from(this.idb.objectStoreNames);
-				const trans = this.idb.transaction(objectStoreNames, `readonly`);
-				const storeFromIdb = {}
+    this.createdObjectStores.forEach((store) => {
+      const currentStore = trans.objectStore(store);
+      const initValueStore = initialState[store];
 
-				for(let store of objectStoreNames) {
-					const currentStore = trans.objectStore(store);
-					const getKeys = currentStore.getAllKeys();
+      if (typeof initValueStore !== `object`) {
+        currentStore.add(initValueStore, 0);
+        return;
+      }
+      for (let key in initValueStore) {
+        currentStore.add(initValueStore[key], key);
+      }
+    });
+  }
 
-					getKeys.onsuccess = async () => {
-						const keysStore = getKeys.result;
-					
-						if(keysStore.length === 0) {
-							storeFromIdb[store] = null;
-							return;
-						}
+  async #loadStoreFromIdb() {
+    return new Promise(async (res, rej) => {
+      try {
+        if (!this.idb) {
+          await this.#connectingWithIDB();
 
-						const isArray = Array.isArray(initialState[store])
-						storeFromIdb[store] = isArray ?
-							[] :
-							{}
+          if (this.createdObjectStores) {
+            await this.#saveInitialStateToIDB();
+          }
+        }
 
-						for(let key of keysStore) {
-							const getValueByKey = currentStore.get(key)
-	
-							getValueByKey.onsuccess = () => {
-								const value = getValueByKey.result;
-								isArray ?
-									storeFromIdb[store].push(value) :
-									storeFromIdb[store][key] = value;
-							}
+        const objectStoreNames = Array.from(this.idb.objectStoreNames);
+        const trans = this.idb.transaction(objectStoreNames, `readonly`);
+        const storeFromIdb = {};
 
-							getValueByKey.onerror = () => {
-								isArray ?
-									storeFromIdb[store].push(null) :
-									storeFromIdb[store][key] = null;
-							}
-						}
-					}
+        for (let store of objectStoreNames) {
+          const currentStore = trans.objectStore(store);
+          const getKeys = currentStore.getAllKeys();
 
-					getKeys.onerror = () => {
-						storeFromIdb[store] = null;
-					}
-				} 
-				trans.oncomplete = () => res(storeFromIdb);
+          getKeys.onsuccess = async () => {
+            const keysStore = getKeys.result;
 
-			} catch (err) {
-				rej(err)
-			}
-		})
-	}
+            if (keysStore.length === 0) {
+              storeFromIdb[store] = null;
+              return;
+            }
 
-	async #saveStoreToIDB(store, state) {
-		try {
-			if(!this.idb) {
-				await this.#connectingWithIDB()
-			}
+            const isArray = Array.isArray(initialState[store]);
+            storeFromIdb[store] = isArray ? [] : {};
 
-			const trans = this.idb.transaction(store, `readwrite`);
-			const currentStore = trans.objectStore(store)
+            for (let key of keysStore) {
+              const getValueByKey = currentStore.get(key);
 
-			for(let key in state) {	
-				currentStore.put(state[key], key)
-			}
+              getValueByKey.onsuccess = () => {
+                const value = getValueByKey.result;
+                isArray
+                  ? storeFromIdb[store].push(value)
+                  : (storeFromIdb[store][key] = value);
+              };
 
-		} catch(err) {
-			console.log(`Fail save store to IDB: ${err}`)
-		}
-	}
-	
-	upgradeStores(stores) {
-		for(let store in stores) {
-			try {
-				const oldState = this.getStateValue(store);
-				
-				if(!oldState) {
-					return;
-				}
+              getValueByKey.onerror = () => {
+                isArray
+                  ? storeFromIdb[store].push(null)
+                  : (storeFromIdb[store][key] = null);
+              };
+            }
+          };
 
-				const changeStore = stores[store];
+          getKeys.onerror = () => {
+            storeFromIdb[store] = null;
+          };
+        }
+        trans.oncomplete = () => res(storeFromIdb);
+      } catch (err) {
+        rej(err);
+      }
+    });
+  }
 
-				if(!changeStore) {
-					return oldState;
-				}
-			
-				let newState = JSON.parse(JSON.stringify(oldState))
-				
-				if(typeof currentStore === `object`) {
-					for(let key in changeStore) {
-						newState[key] = changeStore[key];
-					}
-				} else {
-	
-					newState = changeStore;
-				}
-			
-				const isSavingToIDB = idbParams.objectStores.includes(store);
-			
-				if(isSavingToIDB) {
-					this.#saveStoreToIDB(store, newState)
-				}
-			
-				this.addDataToStream(store, newState);
+  async #saveStoreToIDB(store, state) {
+    try {
+      if (!this.idb) {
+        await this.#connectingWithIDB();
+      }
 
-			} catch(err) {
-				console.log(`Error upgrade store: ${err}`);
-			}
-		}
-	}
+      const trans = this.idb.transaction(store, `readwrite`);
+      const currentStore = trans.objectStore(store);
 
-	#renderPopupErrorDB(title) {
-		new Promise((res, rej) => {
-			new Notice({
-				title: title,
-				description: `Обновите страницу, чтобы продолжить работу`,
-				confirm: {
-					title: `Обновить`,
-					callback: res
-				},
-				cancel: {
-					title: `Позже`,
-					callback: rej
-				}
-			})
-		}).then(() => {
-			window.location.reload()
-		}).catch(() => {
-			console.log(`Connecting with database closed`)
-		})
-	}
+      currentStore.clear();
+
+      if (Array.isArray(state)) {
+        state.forEach((item, index) => currentStore.put(item, index));
+        return;
+      }
+
+      if (typeof state === `object`) {
+        for (let key in state) {
+          currentStore.put(state[key], key);
+        }
+        return;
+      }
+
+      currentStore.put(state, 0);
+    } catch (err) {
+      console.log(`Fail save store to IDB: ${err}`);
+    }
+  }
+
+  upgradeStores(stores) {
+    for (let store in stores) {
+      try {
+        const oldState = this.getStateValue(store);
+        const newState = stores[store];
+        const isSavingToIDB = idbParams.objectStores.includes(store);
+
+        if (isSavingToIDB) {
+          this.#saveStoreToIDB(store, newState);
+        }
+
+        this.addDataToStream(store, newState);
+      } catch (err) {
+        console.log(`Error upgrade store: ${err}`);
+      }
+    }
+  }
+
+  #renderPopupErrorDB(title) {
+    new Promise((res, rej) => {
+      new Notice({
+        title: title,
+        description: `Обновите страницу, чтобы продолжить работу`,
+        confirm: {
+          title: `Обновить`,
+          callback: res,
+        },
+        cancel: {
+          title: `Позже`,
+          callback: rej,
+        },
+      });
+    })
+      .then(() => {
+        window.location.reload();
+      })
+      .catch(() => {
+        console.log(`Connecting with database closed`);
+      });
+  }
 }

@@ -5,195 +5,205 @@ import { ajax } from 'rxjs/ajax';
 import { Subject, switchMap, catchError, of, map, timer } from 'rxjs';
 
 export default class Authorization extends Streams {
-	#fingerPrint = false;
-	#storageToken = authVariables.storageToken;	
+  #fingerPrint = false;
+  #storageToken = authVariables.storageToken;
 
-	constructor() {
-		super();
-		this.server = routes.server;
-		this.path = routes.auth;
-		this.headers = {
-			'Content-Type': 'application/json;charset=utf-8'
-		}
-		this.subscribeOnRefreshTimer = null;
-		this.awaitingRefreshingToken = null;
-		this.rememberUser = false;
-	}
+  constructor() {
+    super();
+    this.server = routes.server;
+    this.path = routes.auth;
+    this.headers = {
+      'Content-Type': 'application/json;charset=utf-8',
+    };
+    this.subscribeOnRefreshTimer = null;
+    this.awaitingRefreshingToken = null;
+    this.rememberUser = false;
+  }
 
-	async init() {
-		this.#createStreams();
-		this.#subscribeToStreams();
-		await this.#getFingerPrint();
-		this.startRefreshingTokensByTime();
-	}
+  async init() {
+    this.#createStreams();
+    this.#subscribeToStreams();
+    await this.#getFingerPrint();
+  }
 
-	#createStreams() {
-		const timerRefreshTokens = timer(720000, 720000);
-		this.saveStream(`timerRefreshTokens`, timerRefreshTokens)
+  #createStreams() {
+    const timerRefreshTokens = timer(720000, 720000);
+    this.saveStream(`timerRefreshTokens`, timerRefreshTokens);
 
-		this.saveStream(`successRefreshTokens`, new Subject());
-		this.saveStream(`errorRefreshTokens`, new Subject());
-	}
+    this.saveStream(`successRefreshTokens`, new Subject());
+    this.saveStream(`errorRefreshTokens`, new Subject());
+  }
 
-	#subscribeToStreams() {
-		this.subscribeToStream(`successRefreshTokens`, this.saveRefreshToken.bind(this));
-		this.subscribeToStream(`errorRefreshTokens`, this.removeRefreshToken.bind(this))
-	}
+  #subscribeToStreams() {
+    this.subscribeToStream(
+      `successRefreshTokens`,
+      this.saveRefreshToken.bind(this),
+    );
+    this.subscribeToStream(
+      `errorRefreshTokens`,
+      this.removeRefreshToken.bind(this),
+    );
+  }
 
-	async #getFingerPrint() {
-		const visitorPrint = await getFingerPrint();
-		this.#fingerPrint = visitorPrint.visitorId;
-	}
+  async #getFingerPrint() {
+    const visitorPrint = await getFingerPrint();
+    this.#fingerPrint = visitorPrint.visitorId;
+  }
 
-	getRefreshToken() {
-		return this.#loadRefreshTokenFromStorage()
-	}
+  getRefreshToken() {
+    return this.#loadRefreshTokenFromStorage();
+  }
 
-	saveRefreshToken(tokens) {
-		this.#saveRefreshTokenToStorage(tokens)
-	}
+  saveRefreshToken(tokens) {
+    this.#saveRefreshTokenToStorage(tokens);
+  }
 
-	removeRefreshToken() {
-		this.#removeTokenFromStorage()
-	}
-	
-	#saveRefreshTokenToStorage(tokens) {
-		if(!tokens) {
-			console.log(`empty data`);
-			return;
-		}
+  removeRefreshToken() {
+    this.#removeTokenFromStorage();
+  }
 
-		const currentStorage = this.rememberUser === false 
-			?	sessionStorage 
-			:	localStorage
+  #saveRefreshTokenToStorage(tokens) {
+    if (!tokens) {
+      return;
+    }
 
-		const refreshToken = JSON.stringify(tokens.refresh)
-		currentStorage.setItem(this.#storageToken, refreshToken)
-	}
+    const currentStorage =
+      this.rememberUser === false ? sessionStorage : localStorage;
 
-	switchRememberUser(user) {
-		this.rememberUser = user.remember
-	}
+    const refreshToken = JSON.stringify(tokens.refresh);
+    currentStorage.setItem(this.#storageToken, refreshToken);
+  }
 
-	#loadRefreshTokenFromStorage() {
-		const loadedTokenJSONFromStorage = localStorage.getItem(this.#storageToken);
+  switchRememberUser(user) {
+    this.rememberUser = user.remember;
+  }
 
-		const loadedTokenJSON = loadedTokenJSONFromStorage 
-			?	loadedTokenJSONFromStorage 
-			:	sessionStorage.getItem(this.#storageToken);
+  #loadRefreshTokenFromStorage() {
+    const loadedTokenJSONFromStorage = localStorage.getItem(this.#storageToken);
 
-		const loadedToken = loadedTokenJSON 
-			?	JSON.parse(loadedTokenJSON) 
-			:	null;
+    const loadedTokenJSON = loadedTokenJSONFromStorage
+      ? loadedTokenJSONFromStorage
+      : sessionStorage.getItem(this.#storageToken);
 
-		return loadedToken;
-	}
+    const loadedToken = loadedTokenJSON ? JSON.parse(loadedTokenJSON) : null;
 
-	#removeTokenFromStorage(storage) {
-		// if(storage) {
-		// 	const currentStorage = storage === `session` ?
-		// 		sessionStorage :
-		// 		localStorage;
+    return loadedToken;
+  }
 
-		// 	currentStorage.removeItem(this.#storageToken);
+  #removeTokenFromStorage(storage) {
+    if (storage) {
+      const currentStorage =
+        storage === `session` ? sessionStorage : localStorage;
 
-		// 	return;
-		// }
+      currentStorage.removeItem(this.#storageToken);
 
-		sessionStorage.removeItem(this.#storageToken);
-		localStorage.removeItem(this.#storageToken);
-	}
+      return;
+    }
 
-	async requestRefreshTokens() {
-		const response = {
-			success: false,
-			error: null,
-		}
+    sessionStorage.removeItem(this.#storageToken);
+    localStorage.removeItem(this.#storageToken);
+  }
 
-		if(this.awaitingRefreshingToken) {
-			clearTimeout(this.awaitingRefreshingToken);
-			this.awaitingRefreshingToken = null;
-		}
+  async requestRefreshTokens() {
+    const response = {
+      success: false,
+      error: null,
+    };
 
-		const token = this.#loadRefreshTokenFromStorage();
+    if (this.awaitingRefreshingToken) {
+      clearTimeout(this.awaitingRefreshingToken);
+      this.awaitingRefreshingToken = null;
+    }
 
-		if(!token) {
-			return;
-		}
+    const token = this.#loadRefreshTokenFromStorage();
 
-		if(!this.#fingerPrint) {
-			await this.#getFingerPrint()
-		}
+    if (!token) {
+      return;
+    }
 
-		try {
-			const requestUrl = `${this.server}${this.path.refreshTokens}`;
-			const requestBody = JSON.stringify({
-				refreshToken: token,
-				fingerPrint: this.#fingerPrint,
-			})
+    if (!this.#fingerPrint) {
+      await this.#getFingerPrint();
+    }
 
-			const requestOptions = {
-				headers: this.headers,
-				method: `POST`,
-				body: requestBody,
-			}
+    try {
+      const requestUrl = `${this.server}${this.path.refreshTokens}`;
+      const requestBody = JSON.stringify({
+        refreshToken: token,
+        fingerPrint: this.#fingerPrint,
+      });
 
-			const responseFromServerJSON = await fetch(requestUrl, requestOptions);
+      const requestOptions = {
+        headers: this.headers,
+        method: `POST`,
+        body: requestBody,
+      };
 
-			if(!responseFromServerJSON.ok) {
-				throw(`Server error`);
-			}
+      const responseFromServerJSON = await fetch(requestUrl, requestOptions);
 
-			const responseFromServer = await responseFromServerJSON.json();
-			
-			if(!responseFromServer.success) {
-				this.addDataToStream(`errorRefreshTokens`, responseFromServer.error);
-				response.error = responseFromServer.error;
+      if (!responseFromServerJSON.ok) {
+        throw `Server error`;
+      }
 
-				return response;
-			}
-			
-			if(responseFromServer.success) {
-				this.addDataToStream(`successRefreshTokens`, responseFromServer.tokens)
-				response.success = true;
+      const responseFromServer = await responseFromServerJSON.json();
 
-				return response;
-			}
+      if (!responseFromServer.success) {
+        this.addDataToStream(`errorRefreshTokens`, responseFromServer.error);
+        response.error = responseFromServer.error;
 
-		} catch(err) {
-			const requestRefreshTokensBinded = this.requestRefreshTokens.bind(this);
-			this.awaitingRefreshingToken = setTimeout(requestRefreshTokensBinded, 150000);
+        return response;
+      }
 
-			response.error = err === `Server error`
-				? `Server error` 
-				: `Unknown error`
+      if (responseFromServer.success) {
+        this.addDataToStream(`successRefreshTokens`, responseFromServer.tokens);
+        response.success = true;
 
-			return response;
-		}
-	}
+        return response;
+      }
+    } catch (err) {
+      const requestRefreshTokensBinded = this.requestRefreshTokens.bind(this);
+      this.awaitingRefreshingToken = setTimeout(
+        requestRefreshTokensBinded,
+        150000,
+      );
 
-	switchRefreshingTokensByStatus(network) {
-		network === `online` ?
-			this.startRefreshingTokensByTime() :
-			this.stopRefreshingTokensByTime()
-	}
+      response.error =
+        err === `Server error` ? `Server error` : `Unknown error`;
 
-	startRefreshingTokensByTime() {
-		if(this.subscribeOnRefreshTimer) {
-			this.unSubscribeFromStream(`timerRefreshTokens`, this.subscribeOnRefreshTimer)
-		}
-		this.subscribeOnRefreshTimer = this.subscribeToStream(`timerRefreshTokens`, this.requestRefreshTokens.bind(this));
-	}
+      return response;
+    }
+  }
 
-	stopRefreshingTokensByTime() {
-		if(this.subscribeOnRefreshTimer) {
-			this.unSubscribeFromStream(`timerRefreshTokens`, this.subscribeOnRefreshTimer);
-			this.subscribeOnRefreshTimer = null;
-		}
-	}
+  switchRefreshingTokensByStatus(network) {
+    network === `online`
+      ? this.startRefreshingTokensByTime()
+      : this.stopRefreshingTokensByTime();
+  }
 
-	removeUser() {
-		this.rememberUser = false;
-		this.#removeTokenFromStorage(`local`);
-	}
+  startRefreshingTokensByTime() {
+    if (this.subscribeOnRefreshTimer) {
+      this.unSubscribeFromStream(
+        `timerRefreshTokens`,
+        this.subscribeOnRefreshTimer,
+      );
+    }
+    this.subscribeOnRefreshTimer = this.subscribeToStream(
+      `timerRefreshTokens`,
+      this.requestRefreshTokens.bind(this),
+    );
+  }
+
+  stopRefreshingTokensByTime() {
+    if (this.subscribeOnRefreshTimer) {
+      this.unSubscribeFromStream(
+        `timerRefreshTokens`,
+        this.subscribeOnRefreshTimer,
+      );
+      this.subscribeOnRefreshTimer = null;
+    }
+  }
+
+  removeUser() {
+    this.rememberUser = false;
+    this.#removeTokenFromStorage(`local`);
+  }
 }

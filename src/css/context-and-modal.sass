@@ -12,6 +12,7 @@ $login-error-height: 1.75rem
 	&-add-tags
 		&__back
 			padding: $spacing-small
+			margin-bottom: -$spacing-small
 
 			&-container 
 				display: flex
@@ -238,9 +239,17 @@ $login-error-height: 1.75rem
 			&:hover
 				background-color: $color-light-second
 
+.flles-upload-error
+	&__description-item
+		padding: $spacing-small
+
+	&__button
+		min-width: 250px
+
 .remove-note
 	&__file-title
-		font-size: 1.2rem
+		font-size: 0.9rem
+		overflow: hidden
 		
 	&__button
 		min-width: 125px
@@ -260,3 +269,4 @@ $login-error-height: 1.75rem
 	background-color: $color-light-main
 	box-shadow: $shadow-dark
 	position: absolute
+

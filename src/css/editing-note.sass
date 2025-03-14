@@ -99,10 +99,14 @@ $editing-note-button-size: 1rem
 		width: 9rem
 		opacity: 0
 
-	&__attachment-inline
-		display: flex
-		gap: $spacing-normal
-		flex-wrap: wrap
-		padding: $spacing-small
+	&__attachment
+		&-inline
+			display: flex
+			gap: $spacing-normal
+			flex-wrap: wrap
+			padding: $spacing-small
 
-
+		&-block
+			display: flex
+			flex-direction: column
+			gap: $spacing-small

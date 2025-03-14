@@ -7,6 +7,10 @@ const webpack = require('webpack');
 
 module.exports = {
 	target: 'web',
+	// entry: {
+  //   'main': path.resolve(__dirname, './src/index.js'),
+  //   'service-worker': path.resolve(__dirname, './src/service-worker.js')
+  // },
 	output: {
 		clean: true,
 		path: path.resolve(__dirname, 'dist'),
@@ -17,8 +21,7 @@ module.exports = {
 				.split('/')
 				.slice(1)
 			const filePath = filePathArray.join('/');
-
-			if(filePathArray[1] === 'ui') {
+			if(filePathArray[1] === 'ui' || filePathArray[1] === 'icons') {
 				return `${filePath}/[name][ext]`
 			}
 			return `${filePath}/[name]-[hash][ext]`
@@ -87,14 +90,5 @@ module.exports = {
 			filename: '[name].css',
 			chunkFilename: '[id].css',
 		}),
-		// new WorkboxPlugin.GenerateSW({
-		//   clientsClaim: true,
-		//   skipWaiting: true,
-		//   cleanupOutdatedCaches: true
-		// }) // Auto SW from Google
-		// new WorkboxPlugin.InjectManifest({
-		//   swSrc: './src/service-worker.js',
-		//   swDest: 'service-worker.js',
-		// })
 	],
 };

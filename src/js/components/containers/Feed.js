@@ -1,6 +1,5 @@
-import BaseComponent from '../../helpers/BaseComponent'
+import BaseComponent from '../../helpers/BaseComponent';
 import ContextMenu from '../popups/ContextMenu';
-import Modal from '../popups/Modal';
 import FullScreenMedia from '../FullScreenMedia';
 
 import FeedHeader from '../FeedHeader';
@@ -10,273 +9,337 @@ import FeedFooter from './FeedFooter';
 import { fromEvent, throttleTime, filter, Subject } from 'rxjs';
 
 export default class Feed extends BaseComponent {
-	constructor(container) {
-		super(container);
+  constructor(container) {
+    super(container);
 
-		this.existTags = null;
+    this.existTags = null;
 
-		this.header = null; 
-		this.main = null; 
-		this.footer = null; 
-		
-		this.modal = null;
-		this.contextMenu = null;
-		this.fullScreenMedia = null;
-	}
+    this.header = null;
+    this.main = null;
+    this.footer = null;
 
-	initionRender() {
-		this.#createElement();
-		this.addElementToPage();
+    this.contextMenu = null;
+    this.fullScreenMedia = null;
+  }
 
-		this.header = new FeedHeader(this.element); 
-		this.main = new FeedMain(this.element); 	
-		this.footer = new FeedFooter(this.element);
+  initionRender() {
+    this.#createElement();
+    this.addElementToPage();
 
-		this.header.initionRender();
-		this.main.initionRender();
-		this.footer.initionRender();
+    this.header = new FeedHeader(this.element);
+    this.main = new FeedMain(this.element);
+    this.footer = new FeedFooter(this.element);
 
-		this.main.scrollButton.positiongElementOnPage()
+    this.header.initionRender();
+    this.main.initionRender();
+    this.footer.initionRender();
 
-		this.#createStreams();
-		this.#subscribeToStreams();
-	}
+    this.main.scrollButton.positiongElementOnPage();
 
-	#createElement() {
-		this.element = document.createElement(`article`);
-		this.element.dataset.id = `appFeed`
-		this.element.classList.add(`feed`);
-	}
+    this.#createStreams();
+    this.#subscribeToStreams();
+  }
 
-	shiftContent() {
-		this.element.classList.add(`feed_shifted`);
-	}
+  #createElement() {
+    this.element = document.createElement(`article`);
+    this.element.dataset.id = `appFeed`;
+    this.element.classList.add(`feed`);
+  }
 
-	unShiftContent() {
-		this.element.classList.remove(`feed_shifted`);
-	}
+  shiftContent() {
+    this.element.classList.add(`feed_shifted`);
+  }
 
-	createStreamClickOnSectionOverlay() {
-		const stream = fromEvent(this.element, `click`).pipe(
-			filter(item => item.target.closest('[data-overlay="true"]')),
-			throttleTime(500),
-		)
+  unShiftContent() {
+    this.element.classList.remove(`feed_shifted`);
+  }
 
-		this.saveStream(`clickOnSectionOverlay`, stream)
-	}
+  createStreamClickOnSectionOverlay() {
+    const stream = fromEvent(this.element, `click`).pipe(
+      filter((item) => item.target.closest('[data-overlay="true"]')),
+      throttleTime(500),
+    );
 
-	#createStreams() {
-		this.saveStream(`requestLogin`, new Subject());
-		this.saveStream(`requestLogout`, new Subject());
+    this.saveStream(`clickOnSectionOverlay`, stream);
+  }
 
-		this.saveStream(`selectTagCategory`, new Subject());
+  #createStreams() {
+    this.saveStream(`requestLogin`, new Subject());
+    this.saveStream(`requestLogout`, new Subject());
 
-		this.saveStream(`getPinnedNote`, new Subject());
-		this.saveStream(`pinNote`, new Subject());
-		this.saveStream(`unpinNote`, new Subject());
+    this.saveStream(`selectTagCategory`, new Subject());
 
-		this.saveStream(`addNoteToFavorite`, new Subject());
-		this.saveStream(`removeNoteFromFavorite`, new Subject());
+    this.saveStream(`getPinnedNote`, new Subject());
+    this.saveStream(`pinNote`, new Subject());
+    this.saveStream(`unpinNote`, new Subject());
 
-		this.saveStream(`saveEditedNote`, new Subject());
-		this.saveStream(`saveCreatedNote`, new Subject());
+    this.saveStream(`addNoteToFavorites`, new Subject());
+    this.saveStream(`removeNoteFromFavorites`, new Subject());
 
-		this.saveStream(`removeNote`, new Subject());
-		this.saveStream(`removeFile`, new Subject())
+    this.saveStream(`saveEditedNote`, new Subject());
+    this.saveStream(`saveCreatedNote`, new Subject());
 
-		this.saveStream(`requestNotes`, new Subject());
-		this.saveStream(`requestLiveLoading`, new Subject());
-		this.saveStream(`requestSynchFeed`, new Subject());
+    this.saveStream(`removeNote`, new Subject());
+    this.saveStream(`removeFile`, new Subject());
 
-	}
+    this.saveStream(`requestNotes`, new Subject());
+    this.saveStream(`requestLiveLoading`, new Subject());
+    this.saveStream(`requestSynchFeed`, new Subject());
+  }
 
-	#subscribeToStreams() {
-		this.header.subscribeToStream(`requestLogin`, this.#requestLogin.bind(this))
-		this.header.subscribeToStream(`requestLogout`, this.#requestLogout.bind(this))
-		
-		this.main.subscribeToStream(`requestNotesByTag`, this.#requestNotesByTag.bind(this));
-		this.main.subscribeToStream(`requestLiveLoading`, this.#requestLiveLoading.bind(this))
-		this.main.subscribeToStream(`requestSynchFeed`, this.#requestSynchFeed.bind(this));
+  #subscribeToStreams() {
+    this.header.subscribeToStream(
+      `requestLogin`,
+      this.#requestLogin.bind(this),
+    );
+    this.header.subscribeToStream(
+      `requestLogout`,
+      this.#requestLogout.bind(this),
+    );
 
-		this.main.subscribeToStream(`getPinnedNote`, this.#getPinnedNote.bind(this));
-		this.main.subscribeToStream(`pinNote`, this.#pinNote.bind(this));
-		this.main.subscribeToStream(`unpinNote`, this.#unpinNote.bind(this));
+    this.main.subscribeToStream(
+      `requestNotesByTag`,
+      this.#requestNotesByTag.bind(this),
+    );
+    this.main.subscribeToStream(
+      `requestLiveLoading`,
+      this.#requestLiveLoading.bind(this),
+    );
+    this.main.subscribeToStream(
+      `requestSynchFeed`,
+      this.#requestSynchFeed.bind(this),
+    );
 
-		this.main.subscribeToStream(`showFullScreenMedia`, this.#showFullScreenMedia.bind(this));
+    this.main.subscribeToStream(
+      `getPinnedNote`,
+      this.#getPinnedNote.bind(this),
+    );
+    this.main.subscribeToStream(`pinNote`, this.#pinNote.bind(this));
+    this.main.subscribeToStream(`unpinNote`, this.#unpinNote.bind(this));
+    this.main.subscribeToStream(
+      `addNoteToFavorites`,
+      this.#addNoteToFavorites.bind(this),
+    );
+    this.main.subscribeToStream(
+      `removeNoteFromFavorites`,
+      this.#removeNoteFromFavorites.bind(this),
+    );
 
-		this.main.subscribeToStream(`removeFile`, this.#requestRemoveFile.bind(this));
-		this.main.subscribeToStream(`removeNote`, this.#requestRemoveNote.bind(this));
-	
-		this.main.subscribeToStream(`requestEditingNote`, this.#requestEditingNote.bind(this));
-		this.main.subscribeToStream(`saveEditedNote`, this.#requestSaveEditedNote.bind(this));
+    this.main.subscribeToStream(
+      `showFullScreenMedia`,
+      this.#showFullScreenMedia.bind(this),
+    );
 
-		this.footer.subscribeToStream(`requestEnableFullPanelCreatingNote`, this.#enableFullPanelCreatingNote.bind(this));
-		this.footer.subscribeToStream(`requestDisableFullPanelCreatingNote`, this.#disableFullPanelCreatingNote.bind(this));
+    this.main.subscribeToStream(
+      `removeFile`,
+      this.#requestRemoveFile.bind(this),
+    );
+    this.main.subscribeToStream(
+      `removeNote`,
+      this.#requestRemoveNote.bind(this),
+    );
 
-		this.footer.subscribeToStream(`requestSaveCreatedNote`, this.#requestSaveCreatedNote.bind(this));
-	}
+    this.main.subscribeToStream(
+      `requestEditingNote`,
+      this.#requestEditingNote.bind(this),
+    );
+    this.main.subscribeToStream(
+      `saveEditedNote`,
+      this.#requestSaveEditedNote.bind(this),
+    );
 
-	createPinnedNote(pinnedNote) {		
-		this.main.renderPinnedNote(pinnedNote);
-	}
+    this.footer.subscribeToStream(
+      `requestEnableFullPanelCreatingNote`,
+      this.#enableFullPanelCreatingNote.bind(this),
+    );
+    this.footer.subscribeToStream(
+      `requestDisableFullPanelCreatingNote`,
+      this.#disableFullPanelCreatingNote.bind(this),
+    );
 
-	createNoteList(noteList) {
- 		// this.main.setActiveLocation(location)
-		this.main.renderNoteList(noteList)
-	}
+    this.footer.subscribeToStream(
+      `requestSaveCreatedNote`,
+      this.#requestSaveCreatedNote.bind(this),
+    );
+  }
 
-	updateExistTags(tags) {
-		if(!tags) {
-			return;
-		}
+  updatePinnedNote(pinnedNote) {
+    pinnedNote
+      ? this.main.renderPinnedNote(pinnedNote)
+      : this.main.deletePinnedNote();
+  }
 
-		this.existTags = tags;
-		this.main.updateExistTags(this.existTags)
-		this.footer.creatingNote.updateExistTags(this.existTags);		
-	}
+  createNoteList(noteList) {
+    // this.main.setActiveLocation(location)
+    this.main.renderNoteList(noteList);
+  }
 
-	#requestLogin(event) {
-		this.addDataToStream(`requestLogin`, event)
-	}
+  updateExistTags(tags) {
+    if (!tags) {
+      return;
+    }
 
-	#requestLogout(event) {
-		this.addDataToStream(`requestLogout`, event)
-	}
+    this.existTags = tags;
+    this.main.updateExistTags(this.existTags);
+    this.footer.creatingNote.updateExistTags(this.existTags);
+  }
 
-	#unpinNote(idNote) {
-		this.addDataToStream(`unpinNote`, idNote);
-	}
+  #requestLogin(event) {
+    this.addDataToStream(`requestLogin`, event);
+  }
 
-	#getPinnedNote(idNote) {
-		this.addDataToStream(`getPinnedNote`, idNote);
-	}
+  #requestLogout(event) {
+    this.addDataToStream(`requestLogout`, event);
+  }
 
-	#pinNote(idNote) {
-		this.addDataToStream(`pinNote`, idNote)
-	}
+  #unpinNote(note) {
+    this.addDataToStream(`unpinNote`, note);
+  }
 
-	#requestNotesByTag(target) {
-		const targetNotes = {
-			section: `tag`,
-			tag: target.dataset.tag,
-			start: null,
-			end: null,
-		}
+  #getPinnedNote(note) {
+    this.addDataToStream(`getPinnedNote`, note);
+  }
 
-		this.addDataToStream(`requestNotes`, targetNotes)
-	}
+  #pinNote(note) {
+    this.addDataToStream(`pinNote`, note);
+  }
 
-	#requestSynchFeed(target) {
-		this.addDataToStream(`requestSynchFeed`, target)
-	}
+  #addNoteToFavorites(note) {
+    this.addDataToStream(`addNoteToFavorites`, note);
+  }
 
-	#requestLiveLoading(target) {
-		this.addDataToStream(`requestLiveLoading`, target)
-	}
+  #removeNoteFromFavorites(note) {
+    this.addDataToStream(`removeNoteFromFavorites`, note);
+  }
 
-	#showFullScreenMedia(target) {
-		if(this.fullScreenMedia) {
-			this.#removeFullScrenMedia()
-		}
+  #requestNotesByTag(target) {
+    const targetTag = this.existTags.find(
+      (tag) => tag.id === target.dataset.tag,
+    );
 
-		const targetId = target.type === `fileNote` ?
-			target.idFile :
-			target.idNote
+    const targetNotes = {
+      section: `tag`,
+      tag: targetTag,
+      start: null,
+      end: null,
+    };
 
-		const targetNote = this.main.noteList.notes.find(note => note.id === targetId);
+    this.addDataToStream(`requestNotes`, targetNotes);
+  }
 
-		const media = target.type === `fileNote` ?
-			targetNote :
-			[]
+  #requestSynchFeed(target) {
+    this.addDataToStream(`requestSynchFeed`, target);
+  }
 
-		if(target.type === `noteAttachment`) {
-			if(targetNote.attachment.video) {
-				targetNote.attachment.video.forEach(video => media.push({
-					...video,
-					type: `video`,
-				}))
-			}
+  #requestLiveLoading(target) {
+    this.addDataToStream(`requestLiveLoading`, target);
+  }
 
-			if(targetNote.attachment.image) {
-				targetNote.attachment.image.forEach(image => media.push({
-					...image,
-					type: `image`,
-				}))
-			}
-		}
+  #showFullScreenMedia(target) {
+    if (this.fullScreenMedia) {
+      this.#removeFullScrenMedia();
+    }
 
-		const data = {
-			media,
-			source: target.type,
-			idFile: target.idFile,
-			idNote: target.idNote,
-		}
+    const targetId = target.type === `fileNote` ? target.idFile : target.idNote;
 
-		this.fullScreenMedia = new FullScreenMedia(this.element, data, this.onClickByFullScreenMedia.bind(this))
-	}
+    const targetNote = this.main.noteList.notes.find(
+      (note) => note.id === targetId,
+    );
 
-	#removeFullScrenMedia() {
-		this.fullScreenMedia.deleteElement()
-		this.fullScreenMedia = 0;
-	}
+    const media = target.type === `fileNote` ? targetNote : [];
 
-	onClickByFullScreenMedia(target) {
-		switch(target.action) {
-			case `remove`:
-				this.main.removeFile(target.data)
-				this.addDataToStream(`removeFile`, target.data.file)				
-				break;
-		}
+    if (target.type === `noteAttachment`) {
+      if (targetNote.attachment.video) {
+        targetNote.attachment.video.forEach((video) =>
+          media.push({
+            ...video,
+            type: `video`,
+          }),
+        );
+      }
 
-		this.#removeFullScrenMedia()
-	}
+      if (targetNote.attachment.image) {
+        targetNote.attachment.image.forEach((image) =>
+          media.push({
+            ...image,
+            type: `image`,
+          }),
+        );
+      }
+    }
 
-	#requestRemoveFile(data) {
-		this.addDataToStream(`removeFile`, data)			
-	}
+    const data = {
+      media,
+      savedOnServer: targetNote.savedOnServer,
+      source: target.type,
+      idFile: target.idFile,
+      idNote: target.idNote,
+    };
 
-	#requestRemoveNote(data) {
-		this.addDataToStream(`removeNote`, data)			
-	}
+    this.fullScreenMedia = new FullScreenMedia(
+      this.element,
+      data,
+      this.onClickByFullScreenMedia.bind(this),
+    );
+  }
 
-	#requestEditingNote(note) {
-		this.main.renderEditingNote({
-			note: note,
-			tags: this.existTags,
-		})
-	}
+  #removeFullScrenMedia() {
+    this.fullScreenMedia.deleteElement();
+    this.fullScreenMedia = 0;
+  }
 
-	#requestSaveEditedNote(note) {
-		this.addDataToStream(`saveEditedNote`, note);
-	}
+  onClickByFullScreenMedia(target) {
+    switch (target.action) {
+      case `remove`:
+        this.main.removeFile(target.data);
+        this.addDataToStream(`removeFile`, target.data.file);
+        break;
+    }
 
-	#requestSaveCreatedNote(note) {
-		this.addDataToStream(`saveCreatedNote`, note);
-	}
+    this.#removeFullScrenMedia();
+  }
 
-	#enableFullPanelCreatingNote() {
-		this.main.scrollButton.positiongElementOnPage();
-		this.main.scrollButton.hideElement()
-	
-		if(this.main.noteList) {
-			this.main.noteList.addOverlay()		
-		}
-	}
+  #requestRemoveFile(data) {
+    this.addDataToStream(`removeFile`, data);
+  }
 
-	#disableFullPanelCreatingNote() {
-		this.main.scrollButton.positiongElementOnPage();
-		
-		if(!this.main.editingNote) {
-			if(this.main.noteList) {
-				this.main.noteList.removeOverlay();
-			}
+  #requestRemoveNote(data) {
+    this.addDataToStream(`removeNote`, data);
+  }
 
-			this.main.scrollButton.showElement();
-		}
-	}
+  #requestEditingNote(note) {
+    this.main.renderEditingNote({
+      note: note,
+      tags: this.existTags,
+    });
+  }
 
-	updateLocalCreatedNoteOnSavedNode(note) {
-		//получить ноут из локал сторадже пришла запись, есои ее айдиКреатед сопадает с айлди запис в ожидающих сохраения - сравнивается дата обновления. Если не свпадает - нужно обновить айдишки, после чего уже локальную версию добавть в лентук на смену и отправить на обновление this.feed.updateLocalCreatedNoteOnSavedNode(note)
-		this.main.changeNote()
-	}
+  #requestSaveEditedNote(note) {
+    this.addDataToStream(`saveEditedNote`, note);
+  }
+
+  #requestSaveCreatedNote(note) {
+    this.addDataToStream(`saveCreatedNote`, note);
+  }
+
+  #enableFullPanelCreatingNote() {
+    this.main.scrollButton.positiongElementOnPage();
+    this.main.scrollButton.hideElement();
+
+    if (this.main.noteList) {
+      this.main.noteList.addOverlay();
+    }
+  }
+
+  #disableFullPanelCreatingNote() {
+    this.main.scrollButton.positiongElementOnPage();
+
+    if (!this.main.editingNote) {
+      if (this.main.noteList) {
+        this.main.noteList.removeOverlay();
+      }
+
+      this.main.scrollButton.showElement();
+    }
+  }
 }

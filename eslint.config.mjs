@@ -18,7 +18,13 @@ const gitignorePath = path.resolve(__dirname, '.gitignore');
 
 export default [
   {
-    ignores: ['**/dist', '**/coverage', '**/docs', '**/webpack.*.js'],
+    ignores: [
+      '**/dist',
+      '**/coverage',
+      '**/docs',
+      '**/webpack.*.js',
+      '**/service-worker.js',
+    ],
   },
   includeIgnoreFile(gitignorePath),
   ...compat.extends('eslint:recommended', 'plugin:prettier/recommended'),
@@ -31,7 +37,7 @@ export default [
         ...globals.browser,
         ...globals.jest,
         ...globals.worker,
-        ...globals.serviceworker
+        ...globals.serviceworker,
       },
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -175,7 +181,7 @@ export default [
       ],
     },
   },
-   ...compat.extends('plugin:jest/recommended').map((config) => ({
+  ...compat.extends('plugin:jest/recommended').map((config) => ({
     ...config,
     files: ['**/*.test.js'],
   })),

@@ -1,16 +1,15 @@
-self.addEventListener(`message`, async event => {
-	try {
-		const { url, title } = event.data;
-		const responseFromServer = await fetch(url);
-		
-		const fileBlob = await responseFromServer.blob();
-		const fileLink = URL.createObjectURL(fileBlob)
+self.addEventListener(`message`, async (event) => {
+  try {
+    const { url, title } = event.data;
+    const responseFromServer = await fetch(url);
 
-		self.postMessage(fileLink);
+    const fileBlob = await responseFromServer.blob();
+    const fileLink = URL.createObjectURL(fileBlob);
 
-	} catch(err) {
-		console.log(`Не получилось загрузить файл: ${err}`)
-		
-		return null;
-	}
-})
+    self.postMessage(fileLink);
+  } catch (err) {
+    console.log(`Не получилось загрузить файл: ${err}`);
+
+    return null;
+  }
+});

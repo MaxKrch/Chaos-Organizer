@@ -46,7 +46,7 @@ $create-note-vertical-arrow-width: 2rem
 			overflow: auto
 			flex-direction: column
 			justify-content: center
-			word-break: break-all
+			// word-break: break-all
 			max-height: calc(var(--viewport-height) * 0.5)
 
 			&:focus
@@ -200,6 +200,7 @@ $create-note-vertical-arrow-width: 2rem
 
 			&-item	
 				height: $create-note-attachment-inline-item-size
+				width: $create-note-attachment-inline-item-size
 				flex: 0 0 $create-note-attachment-inline-item-size
 				position: relative
 				border: 1px solid transparent
@@ -257,6 +258,15 @@ $create-note-vertical-arrow-width: 2rem
 
 			&-file
 				height: 100%
+				text-overflow: ellipsis
+				overflow: hidden
+				white-space: nowrap
+				display: flex
+				align-items: center
+
+				&:before
+					top: $spacing-small
+
 
 			&-remove
 				height: $create-note-attachment-block-remove-size

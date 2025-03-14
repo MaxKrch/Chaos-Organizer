@@ -1,115 +1,116 @@
 import Streams from '../helpers/Streams';
-import { Subject, BehaviorSubject, switchMap, shareReplay, map, catchError, of } from 'rxjs';
+import {
+  Subject,
+  BehaviorSubject,
+  switchMap,
+  shareReplay,
+  map,
+  catchError,
+  of,
+} from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 import { routes, connectionOptions } from '../consts/index.js';
 
 export default class Connection extends Streams {
-	#token = null;
+  #token = null;
 
-	constructor() {
-		super();
-		this.server = routes.server;
-		this.paths = routes.serverPaths;
-		this.headers = {
-   		'Content-Type': 'application/json;charset=utf-8'
-  	}
-	}
+  constructor() {
+    super();
+    this.server = routes.server;
+    this.paths = routes.serverPaths;
+    this.headers = {
+      form: {},
+      json: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
+    };
+  }
 
-	async init() {
-		this.#createStreams();
-		this.#subscribeToStreams();
-	}
+  async init() {
+    this.#createStreams();
+    this.#subscribeToStreams();
+  }
 
-	#createStreams() {
-	}
+  #createStreams() {}
 
-	#subscribeToStreams() {
-	}
+  #subscribeToStreams() {}
 
-	setAccessToken(tokens) {
-		this.#token = tokens.access;
-	}
+  setAccessToken(tokens) {
+    this.#token = tokens.access;
+  }
 
-	removeAccessToken() {
-		this.#token = null;
-	}
+  removeAccessToken() {
+    this.#token = null;
+  }
 
-	async requestToServer(requestData) {
-		const response = {
-			success: false,
-			error: null,
-			data: null,
-			refreshed: false,
-			tokens: null,
-		}
+  async requestToServer(requestData) {
+    const response = {
+      success: false,
+      error: null,
+      data: null,
+    };
 
-		try {			
-			const { target, action, tokens, data = {} } = requestData;
-			const path = `${this.paths.target[target]}/${this.paths.action[action]}`;
+    try {
+      const { target, type, body, method, urlOptions = null } = requestData;
+      let requestUrl = `${this.server}${this.paths[target]}`;
 
-			const method = connectionOptions.method[action];
+      if (urlOptions) {
+        requestUrl += urlOptions;
+      }
 
-			const headers = {
-				...this.headers,
-				'Authorization': `Bearer ${tokens.access}`
-			}
-	
-			const body = JSON.stringify({
-				...data,
-				refresh: tokens.refresh,
-			})
-			
-			const requestUrl = `${this.server}${path}`;
-			const requestOptions =  {
-				headers,
-	  		method,
-	  		body: requestBody,
-			}
+      const headers = {
+        ...this.headers[type],
+        Authorization: `Bearer ${this.#token}`,
+      };
+      const requestOptions = {
+        headers,
+        method,
+        body,
+      };
 
-			const responseFromServerJSON = await fetch(requestUrl, requestOptions)
+      if (requestData.signal) {
+        requestOptions.signal = requestData.signal;
+      }
 
-			const responseFromServer = await responseFromServerJSON.json();
+      const responseFromServerJSON = await fetch(requestUrl, requestOptions);
 
-			if(!responseFromServer.success) {
-				response.error.type = responseFromServer.error;
-			}
+      if (!responseFromServerJSON.ok) {
+        response.error = `Server error`;
+        return response;
+      }
 
-			if(responseFromServer.success) {
-				response.success = true;
-				response.data = responseFromServer.data;
-			}
+      const responseFromServer = await responseFromServerJSON.json();
 
-			if(responseFromServer.tokens.refreshed) {
-				response.tokens = responseFromServer.tokens;
-			}
-	
-		} catch(err) {
-			response.error.type = `request`;
-			response.error.description = err;
-			console.log(`Сервер недоступен: ${err}`)
+      if (!responseFromServer.success) {
+        response.error = responseFromServer.error;
+        return response;
+      }
 
-		} finally {
-			return response;
-		}
+      response.data = responseFromServer.data;
+      response.success = true;
+      return response;
+    } catch (err) {
+      response.error =
+        err.name === `AbortError` ? `AbortError` : `Unknown error`;
 
-	}
+      return response;
+    }
+  }
 
+  async #sendRequestToServer(request) {
+    const requestToServer = ajax(request).pipe(
+      map((value) => value.response),
+      catchError((err) => {
+        return of({
+          success: false,
+          error: {
+            type: `request`,
+            description: err.message,
+          },
+        });
+      }),
+    );
 
-	async #sendRequestToServer(request) {
-		const requestToServer = ajax(request).pipe(
-			map(value => value.response),			
-			catchError((err) => {
-				return of({
-					success: false,
-					error: {
-						type: `request`,
-						description: err.message,
-					},
-				})
-			})
-		);
-
-		this.addDataToStream(`requestToServer`, requestToServer)
-	}
-
+    this.addDataToStream(`requestToServer`, requestToServer);
+  }
 }
