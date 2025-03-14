@@ -1752,7 +1752,9 @@ export default class App extends Streams {
         ? `tag-${location.tag.id}`
         : this.routes.categories[location.section][location.category].path;
 
-    window.history.pushState({}, '', path);
+    const fullPath = `${this.routes.site}${path}`
+
+    window.history.pushState({}, '', fullPath);
   }
 
   #showSidebar() {

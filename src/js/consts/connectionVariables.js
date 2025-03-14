@@ -1,6 +1,6 @@
 const routes = {
   // server: `http://192.168.1.103:7070`,
-  site: `maxkrch.github.io/Chaos-Organizer`,
+  site: `/Chaos-Organizer`,
   server: `https://chaos-organizer-backend-4g9o.onrender.com`,
   sse: `/user/sse`,
   auth: {
