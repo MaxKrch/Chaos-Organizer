@@ -100,13 +100,18 @@ const onFetch = async (event) => {
 
 const requestFrontendFile = async (event) => {
   const cache = await caches.open(KEY_LAST_CACHE_FILES);
-  const cachedFile = await cache.match(event.request);
+  const cachedFile = await cache.match(event.request.clone());
 
   if (cachedFile) {
+    requestNewFrontendFile(event)
     return cachedFile;
   }
 
-  return fetch(event.request).catch((err) =>
+  return requestNewFrontendFile(event)
+};
+
+const requestNewFrontentFile = async (event) => {
+  const response = await fetch(event.request.clone()).catch((err) =>
     postMessageToApp(
       {
         type: `fetchError`,
@@ -115,7 +120,19 @@ const requestFrontendFile = async (event) => {
       event.clientId,
     ),
   );
-};
+
+  if (response?.status >= 200 && response?.status < 300) {
+    event.waitUntil(
+      saveRequestToCache(
+        event.request,
+        response.clone(),
+        KEY_LAST_CACHE_FILES,
+      ),
+    );
+  }
+
+  return response;
+}
 
 const requestNotesImages = async (event) => {
   const cachedImage = await getResponseFromCache(
