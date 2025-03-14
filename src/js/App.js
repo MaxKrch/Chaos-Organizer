@@ -1751,7 +1751,7 @@ export default class App extends Streams {
       location.section === `tag`
         ? `tag-${location.tag.id}`
         : this.routes.categories[location.section][location.category].path;
-        site
+ 
     const fullPath = `${this.routes.site}${path}`
     window.history.pushState({}, '', fullPath);
   }
