@@ -1387,6 +1387,8 @@ export default class CreatingNote extends BaseComponent {
       tags: this.note.tags,
       geolocation: this.note.geolocation,
       attachment: noteAttachment,
+      favorite: false,
+      pinned: false,
       dates: {
         created: Date.now(),
         edited: null,
