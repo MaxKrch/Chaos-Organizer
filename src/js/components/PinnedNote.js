@@ -1,9 +1,4 @@
 import BaseComponent from '../helpers/BaseComponent';
-import ContextMenu from './popups/ContextMenu';
-import Modal from './popups/Modal';
-import { routes } from '../consts/index.js';
-
-import { fromEvent, throttleTime } from 'rxjs';
 
 export default class PinnedNote extends BaseComponent {
   constructor(container, note, serverPath) {

@@ -6,7 +6,7 @@ import NoteList from '../containers/NoteList';
 import FeedScrollButton from '../FeedScrollButton';
 import PreloadFeed from '../PreloadFeed';
 import EditingNote from '../EditingNote';
-import { general, routes } from '../../consts/index.js';
+import { routes } from '../../consts/index.js';
 import downloadFile from '../../helpers/downloadFile';
 import { Subject, fromEvent, throttleTime, debounceTime } from 'rxjs';
 
@@ -164,7 +164,7 @@ export default class FeedMain extends BaseComponent {
 
     this.pinnedNote = new PinnedNote(this.element, noteData, serverPath);
 
-    if (!this.preloadFeed) {
+    if (!this.preloadFeed && this.pinnedNote) {
       if (
         this.location.section === `notes` ||
         this.location.section === `tag`
@@ -562,7 +562,6 @@ export default class FeedMain extends BaseComponent {
   }
 
   scrollToDown() {
-    const coordsElement = this.element.getBoundingClientRect();
     const targetScrollElement =
       this.element.scrollHeight - this.element.clientHeight;
 
@@ -588,7 +587,6 @@ export default class FeedMain extends BaseComponent {
     }
 
     let modalBody = null;
-    let modalCallback = null;
 
     switch (data.action) {
       case `removeNote`:
@@ -759,7 +757,7 @@ export default class FeedMain extends BaseComponent {
         this.#removeModal();
         break;
 
-      case `fileRemoveConfirm`:
+      case `fileRemoveConfirm`: {
         const fileData = {
           id: this.modal.element.dataset.fileId,
           note: {
@@ -773,8 +771,9 @@ export default class FeedMain extends BaseComponent {
         this.addDataToStream(`removeFile`, fileData);
         this.#removeModal();
         break;
+      }
 
-      case `noteRemoveConfirm`:
+      case `noteRemoveConfirm`: {
         const idNote = this.modal.element.dataset.noteId;
         const removeAttachment = this.modal.removeAttachment;
         const noteForRemoving = {
@@ -790,6 +789,7 @@ export default class FeedMain extends BaseComponent {
         this.addDataToStream(`removeNote`, noteForRemoving);
         this.#removeModal();
         break;
+      }
     }
   }
 
@@ -933,7 +933,7 @@ export default class FeedMain extends BaseComponent {
         });
         break;
 
-      case `showFullScreenNoteAttachment`:
+      case `showFullScreenNoteAttachment`: {
         const targetNote = this.noteList.getTargetNoteById(idNote);
         this.addDataToStream(`showFullScreenMedia`, {
           type: `noteAttachment`,
@@ -942,6 +942,7 @@ export default class FeedMain extends BaseComponent {
           savedOnServer: targetNote.savedOnServer,
         });
         break;
+      }
 
       case `downloadFile`:
         this.#downloadFile({

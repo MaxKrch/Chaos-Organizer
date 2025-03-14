@@ -121,7 +121,7 @@ export default class ModalRecordMedia extends Modal {
     }
   }
 
-  #renderMediaBlock(data) {
+  #renderMediaBlock() {
     this.staticElements.media.container = document.createElement(`div`);
     this.staticElements.media.container.classList.add(
       `stream-media-upload-error__section`,
@@ -197,7 +197,7 @@ export default class ModalRecordMedia extends Modal {
 
   #createStreams() {}
 
-  #subscribeToStreams(callback) {}
+  #subscribeToStreams() {}
 
   deleteElement() {
     if (this.file?.blobUrl) {

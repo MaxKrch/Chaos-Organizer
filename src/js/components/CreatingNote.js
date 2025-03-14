@@ -4,15 +4,7 @@ import ContextMenuAddingTag from './popups/ContextMenuAddingTag';
 import ModalGeolocation from './popups/ModalGeolocation';
 import ModalRecordMedia from './popups/ModalRecordMedia';
 
-import {
-  Subject,
-  fromEvent,
-  debounceTime,
-  throttleTime,
-  filter,
-  merge,
-  map,
-} from 'rxjs';
+import { Subject, fromEvent, throttleTime, filter, merge, map } from 'rxjs';
 
 import { formatCoords } from '../helpers/validateAndFormatCoords';
 import {
@@ -23,7 +15,7 @@ import {
 } from '../consts/index.js';
 
 export default class CreatingNote extends BaseComponent {
-  constructor(container, callbackForSave) {
+  constructor(container, callbackForActions) {
     super(container);
 
     this.staticElements = {
@@ -87,11 +79,11 @@ export default class CreatingNote extends BaseComponent {
 
     this.#renderElement();
     this.#createStreams();
-    this.#subscribeToStreams(callbackForSave);
+    this.#subscribeToStreams(callbackForActions);
     this.#loadNoteFromLocalStorage();
   }
 
-  #renderElement(callbackForSave) {
+  #renderElement() {
     this.element = document.createElement(`div`);
     this.element.classList.add(`creatingNote`);
     this.element.dataset.id = `panelCreateNoteContainer`;
@@ -195,8 +187,8 @@ export default class CreatingNote extends BaseComponent {
     this.saveStream(`addingFiles`, addingFiles);
   }
 
-  #subscribeToStreams(callbackForSave) {
-    this.subscribeToStream(`requestAction`, callbackForSave);
+  #subscribeToStreams(callbackForActions) {
+    this.subscribeToStream(`requestAction`, callbackForActions);
     this.subscribeToStream(`clicksOnApp`, this.#onClickByAppElement.bind(this));
     this.subscribeToStream(
       `dropFilesOnPage`,
@@ -990,26 +982,26 @@ export default class CreatingNote extends BaseComponent {
     this.geolocation.coords = [latitude, longitude];
   }
 
-  #onErrorGeolocation(event) {
+  #onErrorGeolocation() {
     this.geolocation.coords = null;
   }
 
-  #onFilesEnterToPage(event) {
+  #onFilesEnterToPage() {
     if (this.contextMenu) {
       this.contextMenu.deleteElement();
     }
     this.#showDropArea();
   }
 
-  #onFilesEnterToDropArea(event) {
+  #onFilesEnterToDropArea() {
     this.#activeDropArea();
   }
 
-  #onFilesLeaveFromDropArea(event) {
+  #onFilesLeaveFromDropArea() {
     this.#deActiveDropArea();
   }
 
-  #onFilesLeaveFromApp(event) {
+  #onFilesLeaveFromApp() {
     this.#hideDropArea();
   }
 
@@ -1083,7 +1075,7 @@ export default class CreatingNote extends BaseComponent {
     this.saveNoteToLocalStorage();
   }
 
-  #onInputTextCreatingNote(event) {
+  #onInputTextCreatingNote() {
     const textCreatingNote = String(
       this.staticElements.main.text.textContent.trim(),
     );
@@ -1100,7 +1092,7 @@ export default class CreatingNote extends BaseComponent {
     }
   }
 
-  #onPressEscOnTextInput(event) {
+  #onPressEscOnTextInput() {
     this.staticElements.main.text.blur();
     this.container.dispatchEvent(
       new MouseEvent(`click`, {

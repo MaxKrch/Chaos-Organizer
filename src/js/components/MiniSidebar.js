@@ -1,4 +1,4 @@
-import { Subject, fromEvent, map, filter, throttleTime } from 'rxjs';
+import { Subject, fromEvent, throttleTime } from 'rxjs';
 import BaseComponent from '../helpers/BaseComponent';
 
 export default class MiniSidebar extends BaseComponent {

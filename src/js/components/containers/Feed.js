@@ -1,5 +1,4 @@
 import BaseComponent from '../../helpers/BaseComponent';
-import ContextMenu from '../popups/ContextMenu';
 import FullScreenMedia from '../FullScreenMedia';
 
 import FeedHeader from '../FeedHeader';
@@ -18,7 +17,6 @@ export default class Feed extends BaseComponent {
     this.main = null;
     this.footer = null;
 
-    this.contextMenu = null;
     this.fullScreenMedia = null;
   }
 
@@ -248,6 +246,10 @@ export default class Feed extends BaseComponent {
 
     const media = target.type === `fileNote` ? targetNote : [];
 
+    if (target.type === `fileNote`) {
+      media.type = this.main.location.category;
+    }
+
     if (target.type === `noteAttachment`) {
       if (targetNote.attachment.video) {
         targetNote.attachment.video.forEach((video) =>
@@ -268,9 +270,12 @@ export default class Feed extends BaseComponent {
       }
     }
 
+    const savedOnServer =
+      target.type === `fileNote` ? true : targetNote.savedOnServer;
+
     const data = {
       media,
-      savedOnServer: targetNote.savedOnServer,
+      savedOnServer,
       source: target.type,
       idFile: target.idFile,
       idNote: target.idNote,

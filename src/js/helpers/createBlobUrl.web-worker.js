@@ -1,6 +1,6 @@
 self.addEventListener(`message`, async (event) => {
   try {
-    const { url, title } = event.data;
+    const { url } = event.data;
     const responseFromServer = await fetch(url);
 
     const fileBlob = await responseFromServer.blob();

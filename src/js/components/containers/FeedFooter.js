@@ -1,5 +1,4 @@
 import BaseComponent from '../../helpers/BaseComponent';
-import ContextMenu from '../popups/ContextMenu';
 import ModalNotSavedNotesFiles from '../popups/ModalNotSavedNotesFiles';
 import { Subject } from 'rxjs';
 

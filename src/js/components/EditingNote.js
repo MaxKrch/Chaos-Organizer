@@ -1,14 +1,6 @@
 import BaseComponent from '../helpers/BaseComponent';
 import ContextMenuAddingTag from './popups/ContextMenuAddingTag';
-import Modal from './popups/Modal';
-import {
-  Subject,
-  fromEvent,
-  throttleTime,
-  debounceTime,
-  filter,
-  map,
-} from 'rxjs';
+import { Subject, fromEvent, throttleTime } from 'rxjs';
 import { routes } from '../consts/index.js';
 
 export default class EditingNote extends BaseComponent {
@@ -436,19 +428,21 @@ export default class EditingNote extends BaseComponent {
         this.#createContextMenuAddingTag();
         break;
 
-      case `removeTagFromNote`:
+      case `removeTagFromNote`: {
         const targetTagElement = targetElement.closest(
           `[data-name="tagContainer"]`,
         );
         this.#removeTagFromNote(targetTagElement);
         break;
+      }
 
-      case `removeAttachmentFromNote`:
+      case `removeAttachmentFromNote`: {
         const targetAttachmentElement = targetElement.closest(
           `[data-name="attachmentContainer"]`,
         );
         this.#removeAttachmentFromNote(targetAttachmentElement);
         break;
+      }
 
       case `cancelEditingNote`:
         this.addDataToStream(`requestAction`, {

@@ -24,6 +24,8 @@ export default [
       '**/docs',
       '**/webpack.*.js',
       '**/service-worker.js',
+      '**/jest.config.js',
+      '**/postcss.config.js',
     ],
   },
   includeIgnoreFile(gitignorePath),

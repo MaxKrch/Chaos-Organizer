@@ -73,7 +73,7 @@ export default class ModalNotSavedNotesFiles extends Modal {
     this.staticElements.description.append(...messagesElements);
   }
 
-  #renderCloseElement(data) {
+  #renderCloseElement() {
     this.staticElements.buttons.container = document.createElement(`div`);
     this.staticElements.buttons.container.classList.add(
       `modal__buttons`,

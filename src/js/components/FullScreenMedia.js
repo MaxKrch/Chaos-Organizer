@@ -1,7 +1,6 @@
 import BaseComponent from '../helpers/BaseComponent';
-import ContextMenu from './popups/ContextMenu';
 import Modal from './popups/Modal';
-import { Subject, fromEvent, throttleTime, debounceTime } from 'rxjs';
+import { Subject, fromEvent, throttleTime } from 'rxjs';
 import { routes } from '../consts/index.js';
 import downloadFile from '../helpers/downloadFile';
 
@@ -51,7 +50,6 @@ export default class FullscreenMedia extends BaseComponent {
     this.visibleNavigation = false;
     this.awaitingPlay = null;
     this.awaitingDownload = null;
-    this.contextMenu = null;
     this.modal = null;
 
     this.#initComponent(data, subscriber);
@@ -114,11 +112,11 @@ export default class FullscreenMedia extends BaseComponent {
       this.staticElements.media.slides = {
         slide: this.#createMediaFile(this.files.active),
       };
-      this.staticElements.media.slides.classList.add(
+      this.staticElements.media.slides.slide.classList.add(
         `fullscreen-media__media_active`,
       );
       this.staticElements.media.container.append(
-        this.staticElements.media.slides[slide],
+        this.staticElements.media.slides.slide,
       );
     }
 
@@ -256,7 +254,7 @@ export default class FullscreenMedia extends BaseComponent {
     switch (file.type) {
       case `video`:
         mediaFileMainElement = this.#renderMainVideoElement(file);
-        mediaFileBackElement = this.#renderBackVideoElement(file);
+        mediaFileBackElement = this.#renderBackVideoElement();
         mediaFileBackElement.srcObject = mediaFileMainElement.captureStream();
 
         mediaFileMainElement.addEventListener(`canplay`, (event) => {
@@ -307,7 +305,7 @@ export default class FullscreenMedia extends BaseComponent {
     return mainVideo;
   }
 
-  #renderBackVideoElement(file) {
+  #renderBackVideoElement() {
     const backVideo = document.createElement(`video`);
     backVideo.classList.add(`fullscreen-media__media-file`);
 
@@ -475,10 +473,10 @@ export default class FullscreenMedia extends BaseComponent {
     this.staticElements.header.container.classList.remove(
       `fullscreen-media__header_show`,
     );
-    this.staticElements.navigation.left.classList.remove(
+    this.staticElements.navigation.left?.classList.remove(
       `fullscreen-media__arrow-left_show`,
     );
-    this.staticElements.navigation.right.classList.remove(
+    this.staticElements.navigation.right?.classList.remove(
       `fullscreen-media__arrow-right_show`,
     );
     this.visibleNavigation = false;
@@ -681,7 +679,7 @@ export default class FullscreenMedia extends BaseComponent {
     );
   }
 
-  #showModalRemoveFile(event) {
+  #showModalRemoveFile() {
     if (this.modal) {
       this.modal.deleteElement();
       this.modal = null;
@@ -735,7 +733,7 @@ export default class FullscreenMedia extends BaseComponent {
         this.#removeModalRemoveFile();
         break;
 
-      case `fileRemoveConfirm`:
+      case `fileRemoveConfirm`: {
         const fileData = {
           ...this.id,
           type: this.files.active.type,
@@ -746,6 +744,7 @@ export default class FullscreenMedia extends BaseComponent {
         });
         this.#removeModalRemoveFile();
         break;
+      }
     }
   }
 

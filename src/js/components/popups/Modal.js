@@ -1,5 +1,5 @@
 import BaseComponent from '../../helpers/BaseComponent';
-import { merge, fromEvent, throttleTime } from 'rxjs';
+import { fromEvent, throttleTime } from 'rxjs';
 
 import { general } from '../../consts/index.js';
 

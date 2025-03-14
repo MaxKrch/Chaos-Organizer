@@ -86,7 +86,7 @@ export default class Store extends Streams {
         }
       };
 
-      requestOpen.onerror = (event) => {
+      requestOpen.onerror = () => {
         console.log(`Fail connection with database: ${requestOpen.error}`);
         rej(requestOpen.error);
       };
@@ -158,15 +158,21 @@ export default class Store extends Streams {
   }
 
   async #loadStoreFromIdb() {
-    return new Promise(async (res, rej) => {
-      try {
-        if (!this.idb) {
-          await this.#connectingWithIDB();
+    try {
+      if (!this.idb) {
+        await this.#connectingWithIDB();
 
-          if (this.createdObjectStores) {
-            await this.#saveInitialStateToIDB();
-          }
+        if (this.createdObjectStores) {
+          await this.#saveInitialStateToIDB();
         }
+      }
+    } catch {
+      console.log(`Not connecting with idb`);
+    }
+
+    return new Promise((res, rej) => {
+      try {
+        if (!this.idb) rej('Not connecting with idb');
 
         const objectStoreNames = Array.from(this.idb.objectStoreNames);
         const trans = this.idb.transaction(objectStoreNames, `readonly`);
@@ -248,7 +254,6 @@ export default class Store extends Streams {
   upgradeStores(stores) {
     for (let store in stores) {
       try {
-        const oldState = this.getStateValue(store);
         const newState = stores[store];
         const isSavingToIDB = idbParams.objectStores.includes(store);
 

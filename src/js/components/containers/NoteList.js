@@ -1,8 +1,6 @@
 import BaseComponent from '../../helpers/BaseComponent';
 import Note from '../Note';
 import TempNote from '../TempNote';
-import ContextMenu from '../popups/ContextMenu';
-import Modal from '../popups/Modal';
 import TextHint from '../popups/TextHint';
 import { routes } from '../../consts/index.js';
 
@@ -208,7 +206,6 @@ export default class NoteList extends BaseComponent {
       this.#removeTextHintSendingNote();
     }
 
-    const targetNote = target.closest(`[data-name="feedContentItem"]`);
     this.textHint = new TextHint(
       this.container,
       target,

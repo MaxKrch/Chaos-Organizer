@@ -1,6 +1,3 @@
-import BaseComponent from '../helpers/BaseComponent';
-import ContextMenu from './popups/ContextMenu';
-import Modal from './popups/Modal';
 import moment from 'moment';
 
 import addActiveLinks from '../helpers/addActiveLinks';
@@ -284,7 +281,7 @@ export default class Note {
       const fullLink = `${this.serverPath}${item.file.src}`;
 
       switch (item.type) {
-        case `video`:
+        case `video`: {
           const poster = item.file.poster
             ? `poster="${this.serverPath}${item.file.poster}"`
             : ``;
@@ -293,6 +290,7 @@ export default class Note {
 						</video>
 					`;
           break;
+        }
 
         case `image`:
           attachmentElement.innerHTML = `

@@ -2,7 +2,7 @@ const validateCoords = (coords) => {
   if (!coords) return;
 
   const regex =
-    /^(\+|\-)?\d{0,3}((\.|\,)\d{0,7})?\s+(\+|\-)?\d{0,3}((\.|\,)\d{0,7})?$/;
+    /^(\+|-)?\d{0,3}((\.|,)\d{0,7})?\s+(\+|-)?\d{0,3}((\.|,)\d{0,7})?$/;
   const isValidCoords = regex.test(coords);
 
   return isValidCoords;
@@ -13,7 +13,7 @@ const formatCoords = (coords) => {
 
   const arrayCoords = coords.split(/\s+/);
   const formatedCoords = arrayCoords.map((item) => {
-    const clearedCoord = item.replace(/(\+)|(\,)/g, (match, plus, comma) => {
+    const clearedCoord = item.replace(/(\+)|(,)/g, (match, plus, comma) => {
       if (plus) {
         return ``;
       }

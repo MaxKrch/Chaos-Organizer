@@ -6,7 +6,7 @@ import { routes, SSEMessageEvents } from '../consts/index.js';
 export default class SSE extends Streams {
   #token = null;
 
-  constructor(test) {
+  constructor() {
     super();
     this.route = `${routes.server}${routes.sse}`;
     this.connection = null;
@@ -105,7 +105,7 @@ export default class SSE extends Streams {
     }
   }
 
-  #onOpenConnection(event) {
+  #onOpenConnection() {
     console.log(`Open connection with server sse`);
     this.addDataToStream(`connectSSE`, {
       event: `connect`,
@@ -118,7 +118,7 @@ export default class SSE extends Streams {
     console.log(`Error connection with server sse`);
   }
 
-  #onCloseConnection(event) {
+  #onCloseConnection() {
     console.log(`Close connection with server sse`);
   }
 }

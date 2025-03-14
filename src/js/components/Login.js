@@ -6,7 +6,6 @@ import {
 import { routes, loginStreams } from '../consts/index.js';
 import {
   Subject,
-  switchMap,
   map,
   fromEvent,
   throttleTime,
@@ -14,7 +13,6 @@ import {
   merge,
   filter,
 } from 'rxjs';
-import { ajax } from 'rxjs/ajax';
 import getFingerPrint from '../helpers/getFingerPrint';
 
 export default class Login extends BaseComponent {
@@ -562,7 +560,7 @@ export default class Login extends BaseComponent {
     }
   }
 
-  #onKeyEnter(event) {
+  #onKeyEnter() {
     const targetAction = this.staticElements.body.dataset.action;
     const targetBtn = this.staticElements.buttons[targetAction];
 
@@ -660,6 +658,8 @@ export default class Login extends BaseComponent {
       if (responseFromServer.success) {
         response.success = true;
       }
+
+      return response;
     } catch (err) {
       if (err.name === 'AbortError') {
         response.aborted = true;
@@ -667,7 +667,7 @@ export default class Login extends BaseComponent {
         console.log(`Сервер недоступен: ${err}`);
         response.error = `Server error`;
       }
-    } finally {
+
       return response;
     }
   }
@@ -812,12 +812,11 @@ export default class Login extends BaseComponent {
     }
   }
 
-  async #registerUser(button) {
+  async #registerUser() {
     if (
       this.staticElements.email.input.currectData === `false` &&
       this.staticElements.password.input.currectData === `false`
     ) {
-      console.log(`Incorrect data`);
       return;
     }
 

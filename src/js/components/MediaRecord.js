@@ -212,7 +212,7 @@ export default class MediaRecord extends BaseComponent {
     }
   }
 
-  #startMediaRecord(data) {
+  #startMediaRecord() {
     if (this.recordStopped) {
       this.#clearMediaStream();
       return;
@@ -232,7 +232,7 @@ export default class MediaRecord extends BaseComponent {
     const addMediaDataToArrayBinded = this.addMediaDataToArrayBinded.bind(this);
     const saveRecordedMediaBinded = this.saveRecordedMedia.bind(this);
 
-    this.mediaRecorder.onstart = (event) => {
+    this.mediaRecorder.onstart = () => {
       startStreamMediaOnPageBinded();
       startTimerRecordBinded();
     };
@@ -241,7 +241,7 @@ export default class MediaRecord extends BaseComponent {
       addMediaDataToArrayBinded(event.data);
     };
 
-    this.mediaRecorder.onstop = (event) => {
+    this.mediaRecorder.onstop = () => {
       saveRecordedMediaBinded();
     };
 

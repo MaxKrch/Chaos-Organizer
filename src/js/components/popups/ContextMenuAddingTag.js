@@ -157,7 +157,7 @@ export default class ContextMenuAddingTag extends ContextMenu {
     );
   }
 
-  #chekAvailableNewTag(event) {
+  #chekAvailableNewTag() {
     const newTag = this.staticElements.inputNewTag.value.trim();
 
     if (newTag.length < 3) {
@@ -233,14 +233,12 @@ export default class ContextMenuAddingTag extends ContextMenu {
           return;
         }
 
-        const tag = {
-          title: this.staticElements.inputNewTag.value.trim(),
-          new: true,
-        };
-
         this.addDataToStream(`requestAction`, {
           action: `addTagToNote`,
-          tag,
+          tag: {
+            title: this.staticElements.inputNewTag.value.trim(),
+            new: true,
+          },
         });
 
         break;

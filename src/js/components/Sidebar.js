@@ -2,14 +2,13 @@ import BaseComponent from '../helpers/BaseComponent';
 import ContextMenu from './popups/ContextMenu';
 import ModalSidebarChangeTag from './popups/ModalSidebarChangeTag';
 
-import { sidebarStaticElements, routes, general } from '../consts/index.js';
+import { sidebarStaticElements } from '../consts/index.js';
 import {
   Subject,
   merge,
   fromEvent,
   throttleTime,
   filter,
-  map,
   debounceTime,
 } from 'rxjs';
 

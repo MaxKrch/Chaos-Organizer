@@ -1,15 +1,5 @@
 import Streams from '../helpers/Streams';
-import {
-  Subject,
-  BehaviorSubject,
-  switchMap,
-  shareReplay,
-  map,
-  catchError,
-  of,
-} from 'rxjs';
-import { ajax } from 'rxjs/ajax';
-import { routes, connectionOptions } from '../consts/index.js';
+import { routes } from '../consts/index.js';
 
 export default class Connection extends Streams {
   #token = null;
@@ -95,22 +85,5 @@ export default class Connection extends Streams {
 
       return response;
     }
-  }
-
-  async #sendRequestToServer(request) {
-    const requestToServer = ajax(request).pipe(
-      map((value) => value.response),
-      catchError((err) => {
-        return of({
-          success: false,
-          error: {
-            type: `request`,
-            description: err.message,
-          },
-        });
-      }),
-    );
-
-    this.addDataToStream(`requestToServer`, requestToServer);
   }
 }

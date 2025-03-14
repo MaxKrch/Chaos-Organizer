@@ -39,7 +39,6 @@ export default class ContextMenu extends BaseComponent {
 
   positiongOnPage() {
     if (!this.container || !this.parent || !this.element) {
-      console.log(`empty element`);
       return;
     }
 

@@ -1,5 +1,5 @@
 import Modal from './Modal';
-import { Subject, debounceTime, fromEvent } from 'rxjs';
+import { debounceTime, fromEvent } from 'rxjs';
 import { routes } from '../../consts/index.js';
 
 export default class ModalSidebarChangeTag extends Modal {
@@ -20,10 +20,10 @@ export default class ModalSidebarChangeTag extends Modal {
     this.onInputTagValue =
       this.tag.action === `change` ? onInputTagValue : null;
 
-    this.#initElement(onInputTagValue);
+    this.#initElement();
   }
 
-  #initElement(onInputTagValue) {
+  #initElement() {
     this.#renderElement();
     this.#createStreams();
     this.#subscribeToStreams();

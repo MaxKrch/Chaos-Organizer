@@ -17,11 +17,9 @@ import { routes, general, initialState } from './consts/index.js';
 
 export default class App extends Streams {
   constructor(container) {
-    if (!container) {
-      return;
-    }
-
     super();
+
+    if (!container) return;
 
     this.startLocation = null;
 
@@ -324,7 +322,7 @@ export default class App extends Streams {
     }
   }
 
-  #onErrorLoginUser(data) {
+  #onErrorLoginUser() {
     this.store.upgradeStores({
       feedNotes: initialState.feedNotes,
       pinnedNote: initialState.pinnedNote,
@@ -591,7 +589,6 @@ export default class App extends Streams {
 
   async #updateFeedNotesFromSW(data) {
     const location = this.store.getStateValue(`location`);
-    const feedNotes = this.store.getStateValue(`feedNotes`);
 
     if (data.location.section !== location.section) return;
     if (
@@ -713,7 +710,7 @@ export default class App extends Streams {
     await this.#requestNewFeedNotes(bodyRequest);
   }
 
-  async #liveLoadingNotes(data) {
+  async #liveLoadingNotes() {
     if (this.liveLoadingRequest) {
       return;
     }
@@ -804,7 +801,6 @@ export default class App extends Streams {
     }
 
     if (location.section === `tag`) {
-      const feedNotes = this.store.getStateValue(`feedNotes`);
       const isTargetTagLocation = note.tags.find(
         (item) => item.id === location.tag.id,
       );
@@ -977,7 +973,7 @@ export default class App extends Streams {
     );
 
     if (indexWaitingNote > -1) {
-      waitingChangeNotes.unpinnedNotes.splice(indexTargetTag, 1);
+      waitingChangeNotes.unpinnedNotes.splice(indexWaitingNote, 1);
       this.store.upgradeStores({
         waitingChangeNotes,
       });
@@ -1258,7 +1254,7 @@ export default class App extends Streams {
       }
     }
 
-    this.store.upgradeStores(dataForStoreUpgrade);
+    if (stateChanged) this.store.upgradeStores(dataForStoreUpgrade);
 
     const body = {
       note,
@@ -1345,6 +1341,7 @@ export default class App extends Streams {
     if (indexAwaitingRemoveFile > -1) {
       waitingRemoveFiles.splice(indexAwaitingRemoveFile, 1);
       dataForStoreUpgrade.waitingRemoveFiles = waitingRemoveFiles;
+      stateChanged = true;
     }
 
     const waitingChangeNotes = this.store.getStateValue(`waitingChangeNotes`);
@@ -1395,7 +1392,7 @@ export default class App extends Streams {
       }
     }
 
-    this.store.upgradeStores(dataForStoreUpgrade);
+    if (stateChanged) this.store.upgradeStores(dataForStoreUpgrade);
 
     const body = {
       file,

@@ -1,8 +1,7 @@
 import Streams from '../helpers/Streams';
 import getFingerPrint from '../helpers/getFingerPrint.js';
 import { routes, authVariables } from '../consts/index.js';
-import { ajax } from 'rxjs/ajax';
-import { Subject, switchMap, catchError, of, map, timer } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 
 export default class Authorization extends Streams {
   #fingerPrint = false;

@@ -1,9 +1,5 @@
 import BaseComponent from '../helpers/BaseComponent';
-import ContextMenu from './popups/ContextMenu';
-import Modal from './popups/Modal';
-
 import { fromEvent, throttleTime, filter, Subject } from 'rxjs';
-
 import { feedHeaderStaticElements, routes } from '../consts/index.js';
 
 export default class FeedHeader extends BaseComponent {
@@ -204,13 +200,11 @@ export default class FeedHeader extends BaseComponent {
 
   #onClickBySignButton(event) {
     if (!event) {
-      console.log(`empty event`);
       return;
     }
 
-    const action =
-      event.target.dataset.auth === 'true'
-        ? this.addDataToStream(`requestLogout`, `logout`)
-        : this.addDataToStream(`requestLogin`, `login`);
+    event.target.dataset.auth === 'true'
+      ? this.addDataToStream(`requestLogout`, `logout`)
+      : this.addDataToStream(`requestLogin`, `login`);
   }
 }

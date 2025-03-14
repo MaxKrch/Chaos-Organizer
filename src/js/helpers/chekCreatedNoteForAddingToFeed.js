@@ -1,5 +1,5 @@
 export default function chekCreatedNoteForAddingToFeed(data) {
-  const { location, feedNotes, note } = data;
+  const { location, note } = data;
 
   if (location.section === `files`) {
     return false;

@@ -71,7 +71,7 @@ export default class ModalGeolocation extends Modal {
     this.saveStream(`pressEnterGeolocation`, pressEnterGeolocation);
   }
 
-  #subscribeToStreams(subscriber) {
+  #subscribeToStreams() {
     this.subscribeToStream(
       `inputCoordsGeolocation`,
       this.#onInputCoordsGeolocation.bind(this),
@@ -207,7 +207,7 @@ export default class ModalGeolocation extends Modal {
     this.staticElements.buttons.confirm.dataset.active = true;
   }
 
-  #onInputCoordsGeolocation(event) {
+  #onInputCoordsGeolocation() {
     this.coords = this.staticElements.coords.input.value.trim();
 
     if (this.coords.length < 3) {
@@ -224,7 +224,7 @@ export default class ModalGeolocation extends Modal {
       : this.showGeolocationError();
   }
 
-  #onPressEnterGeolocation(event) {
+  #onPressEnterGeolocation() {
     this.staticElements.buttons.confirm.dispatchEvent(
       new MouseEvent(`click`, {
         bubbles: true,
