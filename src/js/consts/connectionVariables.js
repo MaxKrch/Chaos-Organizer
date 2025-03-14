@@ -1,6 +1,6 @@
 const routes = {
-  server: `http://192.168.1.103:7070`,
-  // server: `http://192.168.1.102:7070`,
+  // server: `http://192.168.1.103:7070`,
+  server: `https://chaos-organizer-backend-4g9o.onrender.com`,
   sse: `/user/sse`,
   auth: {
     chekEmail: '/account/validateemail',

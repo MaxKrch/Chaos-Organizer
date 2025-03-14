@@ -2,7 +2,7 @@
 
 ---
 
-[![Build status](https://ci.appveyor.com/api/projects/status/fd6ptqhm74xdasqe/branch/main?svg=true)](https://ci.appveyor.com/project/MaxKrch/ahj-lesson12-task3/branch/main)
+[![Build status](https://ci.appveyor.com/api/projects/status/ov2mwgn37ynfvi92/branch/master?svg=true)](https://ci.appveyor.com/project/MaxKrch/chaos-organizer/branch/master)
 
 [GitHub Pages](https://maxkrch.github.io/Chaos-Organizer/)
 
@@ -98,5 +98,5 @@
   В случае успешного ответа - отправка полученных записей в приложение.  
 
   6.4. При установки новой версии Service Worker - модальное окно с предложением обновить приложение.
-  При подтверждении - активируется новый Service Worker (через skipWaiting), страницы перезагружаются.
+  При подтверждении - активируется новый Service Worker (через skipWaiting), страницы перезагружаются.  
 ![](https://i.imgur.com/9bwrBdW.png)
