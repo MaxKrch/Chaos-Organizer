@@ -342,6 +342,7 @@ export default class App extends Streams {
     this.auth.removeRefreshToken();
     this.sse.removeAccessToken();
     this.connection.removeAccessToken();
+    this.sse.disConnect()
   }
 
   async #onRequestLogoutUser() {

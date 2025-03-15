@@ -14,7 +14,7 @@ const REPEAT_REQUESTS = {
   NOTES: {
     timer: null,
     next: 0,
-    delay: 5000,
+    delay: 2000,
     count: 0,
     limit: 10,
     location: null,
@@ -126,7 +126,7 @@ const requestNewFrontendFile = async (event) => {
       event.request,
       response.clone(),
       KEY_LAST_CACHE_FILES,
-    );
+      );
   }
 
   return response;
@@ -183,7 +183,7 @@ const requestFeedNotes = async (event) => {
       return response;
     }
 
-    repeatRequestNotes(event.request.clone(), event.clientId);
+    newRepeatRequestNotes(event.request.clone(), event.clientId);
 
     const cachedNotes = await getResponseNotesFromCache(
       event.request,
@@ -281,29 +281,31 @@ const postMessageToApp = async (message, clientId) => {
   client.postMessage(message);
 };
 
-const repeatRequestNotes = async (request, clientId) => {
+const newRepeatRequestNotes = async (request, clientId) => {
   if (REPEAT_REQUESTS.NOTES.timer) {
     clearTimeout(REPEAT_REQUESTS.NOTES.timer);
     clearRepeatRequestNotes();
   }
 
+  REPEAT_REQUESTS.NOTES.clientId = clientId;
+
+  const bodyRequest = await request.clone().json();
+
+  REPEAT_REQUESTS.NOTES.location = {
+    section: bodyRequest.section,
+  };
+
+  REPEAT_REQUESTS.NOTES.location.section === `tag`
+    ? (REPEAT_REQUESTS.NOTES.location.id = bodyRequest.tag)
+    : (REPEAT_REQUESTS.NOTES.location.category = bodyRequest.category);
+  
+  repeatRequestNotes(request)
+}
+
+const repeatRequestNotes = async (request) => {
   if (REPEAT_REQUESTS.NOTES.count >= REPEAT_REQUESTS.NOTES.limit) {
     clearRepeatRequestNotes();
     return;
-  }
-
-  if (clientId) REPEAT_REQUESTS.NOTES.clientId = clientId;
-
-  if (!REPEAT_REQUESTS.NOTES.location) {
-    const bodyRequest = await request.clone().json();
-
-    REPEAT_REQUESTS.NOTES.location = {
-      section: bodyRequest.section,
-    };
-
-    REPEAT_REQUESTS.NOTES.location.section === `tag`
-      ? (REPEAT_REQUESTS.NOTES.location.id = bodyRequest.tag)
-      : (REPEAT_REQUESTS.NOTES.location.category = bodyRequest.category);
   }
 
   const response = await fetch(request.clone()).catch((err) =>

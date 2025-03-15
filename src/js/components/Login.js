@@ -60,7 +60,10 @@ export default class Login extends BaseComponent {
     this.#renderElement();
     this.#saveStaticElements();
     this.#createStreams();
-    this.staticElements.email.input.blur()
+    
+    if(this.staticElements.password.input.value.trim() > 0) {
+      this.#chekingPassword(this.staticElements.password.input)
+    }
   }
 
   #renderElement() {
