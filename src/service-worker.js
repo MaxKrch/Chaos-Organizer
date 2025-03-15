@@ -110,7 +110,7 @@ const requestFrontendFile = async (event) => {
   return requestNewFrontendFile(event)
 };
 
-const requestNewFrontentFile = async (event) => {
+const requestNewFrontendFile = async (event) => {
   const response = await fetch(event.request.clone()).catch((err) =>
     postMessageToApp(
       {
@@ -122,12 +122,10 @@ const requestNewFrontentFile = async (event) => {
   );
 
   if (response?.status >= 200 && response?.status < 300) {
-    event.waitUntil(
-      saveRequestToCache(
-        event.request,
-        response.clone(),
-        KEY_LAST_CACHE_FILES,
-      ),
+    await saveRequestToCache(
+      event.request,
+      response.clone(),
+      KEY_LAST_CACHE_FILES,
     );
   }
 
@@ -155,12 +153,10 @@ const requestNotesImages = async (event) => {
   );
 
   if (response?.status >= 200 && response?.status < 300) {
-    event.waitUntil(
-      saveRequestToCache(
-        event.request,
-        response.clone(),
-        KEY_LAST_CACHE_IMAGES,
-      ),
+    await saveRequestToCache(
+      event.request,
+      response.clone(),
+      KEY_LAST_CACHE_IMAGES,
     );
   }
 
@@ -179,12 +175,10 @@ const requestFeedNotes = async (event) => {
       ),
     );
     if (response?.status >= 200 && response?.status < 300) {
-      event.waitUntil(
-        saveRequestNotesToCache(
-          event.request,
-          response.clone(),
-          KEY_LAST_CACHE_NOTES,
-        ),
+      await saveRequestNotesToCache(
+        event.request,
+        response.clone(),
+        KEY_LAST_CACHE_NOTES,
       );
       return response;
     }

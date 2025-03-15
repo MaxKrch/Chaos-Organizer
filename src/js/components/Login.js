@@ -60,6 +60,7 @@ export default class Login extends BaseComponent {
     this.#renderElement();
     this.#saveStaticElements();
     this.#createStreams();
+    this.staticElements.body.click()
   }
 
   #renderElement() {
