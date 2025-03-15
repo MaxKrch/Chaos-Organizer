@@ -1,8 +1,8 @@
 const routes = {
-  server: `http://192.168.1.105:7070`,
-  // site: `/Chaos-Organizer`,
-  site: ``,
-  // server: `https://chaos-organizer-backend-4g9o.onrender.com`,
+  server: `https://chaos-organizer-backend-4g9o.onrender.com`,
+  // server: `http://192.168.1.105:7070`,
+  site: `/Chaos-Organizer`,
+  // site: ``,
   sse: `/user/sse`,
   auth: {
     chekEmail: '/account/validateemail',
