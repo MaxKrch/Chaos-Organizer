@@ -180,6 +180,7 @@ export default class FeedMain extends BaseComponent {
   deletePinnedNote() {
     if (this.pinnedNote) {
       this.pinnedNote.deleteElement();
+      this.pinnedNote = null;
     }
   }
 

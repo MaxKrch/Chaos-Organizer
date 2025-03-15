@@ -759,6 +759,9 @@ export default class App extends Streams {
   }
 
   async #requestNewFeedNotes(bodyRequest) {
+    const user = this.store.getStateValue(`user`);
+    if (!user.auth) return;
+  
     const oldLocation = this.store.getStateValue(`location`);
     const oldFeedNotes = this.store.getStateValue(`feedNotes`);
     const newLocation = {
@@ -1489,7 +1492,7 @@ export default class App extends Streams {
       success: false,
       error: null,
       notes: null,
-    };
+    };   
 
     try {
       this.feed.header.addAwaitingStatusSection();
@@ -1654,7 +1657,7 @@ export default class App extends Streams {
       if(network === `offline`) this.store.upgradeStores({
         network: `connecting`
       });
-      
+
       const firstResponseFromServer =
         await this.connection.requestToServer(data);
       const oldStatusNetwork = this.store.getStateValue(`network`);
