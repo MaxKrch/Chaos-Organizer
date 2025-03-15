@@ -44,8 +44,8 @@ const FILES_FOR_CACHE = [
 ];
 
 const HOST_NAMES = {
-  FRONTEND: 'localhost',
-  // FRONTEND: 'maxkrch.github.io'
+  // FRONTEND: 'localhost',
+  FRONTEND: 'maxkrch.github.io'
 };
 
 self.addEventListener('install', (event) => {
