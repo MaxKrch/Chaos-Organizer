@@ -345,6 +345,12 @@ export default class App extends Streams {
   }
 
   async #onRequestLogoutUser() {
+    if (this.requestAbortController) {
+      this.requestAbortController.abort();
+      this.requestAbortController = null;
+      this.liveLoadingRequest = false;
+    }
+    
     this.feed.header.addAwaitingStateAccount();
     const tokens = this.store.getStateValue(`tokens`);
 

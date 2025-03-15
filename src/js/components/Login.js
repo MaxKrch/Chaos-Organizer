@@ -60,7 +60,7 @@ export default class Login extends BaseComponent {
     this.#renderElement();
     this.#saveStaticElements();
     this.#createStreams();
-    this.staticElements.email.input.dispatchEvent(new InputEvent(`input`))
+    this.staticElements.email.input.blur()
   }
 
   #renderElement() {
