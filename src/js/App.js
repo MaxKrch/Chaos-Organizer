@@ -1650,6 +1650,11 @@ export default class App extends Streams {
     };
 
     try {
+      const network = this.store.getStateValue(`network`);
+      if(network === `offline`) this.store.upgradeStores({
+        network: `connecting`
+      });
+      
       const firstResponseFromServer =
         await this.connection.requestToServer(data);
       const oldStatusNetwork = this.store.getStateValue(`network`);
